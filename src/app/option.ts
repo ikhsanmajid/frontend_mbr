@@ -1,5 +1,6 @@
 import type { AuthOptions, NextAuthOptions } from "next-auth"
 import Credentials from "next-auth/providers/credentials"
+import { apiURL } from "./lib/admin/users/userAPIRequest"
 
 
 export const authOptions = {
@@ -14,7 +15,7 @@ export const authOptions = {
                 password: {}
             },
             async authorize(credentials: any) {
-                const user = await fetch('http://localhost:3001/login', {
+                const user = await fetch(`'${apiURL}/login'`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
@@ -65,7 +66,7 @@ export const authOptions = {
         },
         async redirect({ url, baseUrl }) {
             // Redirect jika token expired
-            return url.startsWith(baseUrl ) ? url + '?expired=true' : baseUrl + '/login?expired=true"';
+            return url.startsWith(baseUrl) ? url + '?expired=true' : baseUrl + '/login?expired=true"';
         },
         async session({ session, token }) {
             if (session?.user) {
