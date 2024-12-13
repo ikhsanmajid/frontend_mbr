@@ -1,5 +1,4 @@
 "use client"
-import axios from "axios"
 import { apiURL } from "../lib/admin/users/userAPIRequest"
 import { useEffect } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
@@ -9,15 +8,16 @@ export default function ServerOffline() {
     const searchParams = useSearchParams()
     const dest = searchParams.get("dest") as string
     const handleRedirect = async () => {
-        axios.get(apiURL).then(data => {
-            if (data.statusText == "OK") {
+        try {
+            const response = await fetch(apiURL)
+            if (response.ok) {
                 router.push(dest)
             }
-        }).catch(e => {
+        } catch (e) {
             return (
                 <></>
             )
-        })
+        }
     }
 
     useEffect(() => {
