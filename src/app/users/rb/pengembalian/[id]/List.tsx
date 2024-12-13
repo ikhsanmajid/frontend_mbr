@@ -38,7 +38,7 @@ export default function ListPengembalianUser({ session, idProduk }: { session: s
                 </div>
                 <div className="card-body">
                     <div className="row">
-                        <FilterComponentPengembalian statusKembali={(status: "all" | "belum") => setStatusKembali(status)} />
+                        <FilterComponentPengembalian />
                     </div>
 
                     <div className="row">

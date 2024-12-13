@@ -22,6 +22,7 @@ export default function ServerOffline() {
 
     useEffect(() => {
         handleRedirect()
+        //eslint-disable-next-line
     }, [dest])
 
     return (
