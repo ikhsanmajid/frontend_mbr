@@ -1,6 +1,7 @@
 import type { AuthOptions, NextAuthOptions } from "next-auth"
 import Credentials from "next-auth/providers/credentials"
-import { apiURL } from "./lib/admin/users/userAPIRequest"
+
+export const apiURL = process.env.NEXT_PUBLIC_APIENDPOINT_URL as string
 
 
 export const authOptions = {
@@ -15,7 +16,7 @@ export const authOptions = {
                 password: {}
             },
             async authorize(credentials: any) {
-                const user = await fetch(`'${apiURL}/login'`, {
+                const user = await fetch(`${apiURL}/login`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
