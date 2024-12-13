@@ -1,0 +1,11 @@
+.border-skyblue {
+   border-color: skyblue !important;
+}
+
+.bg-whitesmoke {
+   background-color: whitesmoke;
+}
+
+.modal-80w {
+   min-width: 80%;
+}

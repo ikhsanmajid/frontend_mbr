@@ -1,0 +1,44 @@
+{
+  "name": "monitoring-mbr",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^6.6.0",
+    "@fortawesome/free-regular-svg-icons": "^6.6.0",
+    "@fortawesome/free-solid-svg-icons": "^6.6.0",
+    "@fortawesome/react-fontawesome": "^0.2.2",
+    "@tanstack/react-table": "^8.20.5",
+    "@types/bootstrap": "^5.2.10",
+    "@types/react-bootstrap": "^0.32.37",
+    "axios": "^1.7.3",
+    "bootstrap": "^5.3.3",
+    "nanoid": "^5.0.8",
+    "next": "14.2.5",
+    "next-auth": "^4.24.7",
+    "package.json": "^2.0.1",
+    "react": "^18",
+    "react-bootstrap": "^2.10.4",
+    "react-datepicker": "^7.5.0",
+    "react-dom": "^18",
+    "react-hot-toast": "^2.4.1",
+    "react-select": "^5.8.3",
+    "swr": "^2.2.5",
+    "use-debounce": "^10.0.4",
+    "zod": "^3.23.8",
+    "zustand": "^5.0.2"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "eslint": "^8",
+    "eslint-config-next": "14.2.5",
+    "typescript": "^5"
+  }
+}
