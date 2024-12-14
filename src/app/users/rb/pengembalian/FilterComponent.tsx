@@ -17,17 +17,14 @@ export default function FilterComponentPengembalian({ session }: { session: stri
     const [productList, setProductList] = useState<{ value: number; label: string }[]>([]);
 
 
-    const idProduk = useFilterState(state => state.idProduk)
+
     const setIdProduk = useFilterState(state => state.setIdProduk)
-    const statusKembali = useFilterState(state => state.statusKembali)
     const setStatusKembali = useFilterState(state => state.setStatusKembali)
     const date1 = useFilterState(state => state.date1)
     const setDate1 = useFilterState(state => state.setDate1)
     const date2 = useFilterState(state => state.date2)
     const setDate2 = useFilterState(state => state.setDate2)
-    const startDate = useFilterState(state => state.startDate)
     const setStartDate = useFilterState(state => state.setStartDate)
-    const endDate = useFilterState(state => state.endDate)
     const setEndDate = useFilterState(state => state.setEndDate)
 
 
@@ -69,8 +66,8 @@ export default function FilterComponentPengembalian({ session }: { session: stri
 
         setIdProduk(idProdukChoosen)
         setStatusKembali(statusKembaliChoosen)
-        setStartDate(`${date1!.getMonth() + 1}-${date1?.getFullYear()}`);
-        setEndDate(`${date2!.getMonth() + 1}-${date2?.getFullYear()}`)
+        if (date1 !== null) setStartDate(`${date1!.getMonth() + 1}-${date1?.getFullYear()}`);
+        if (date2 !== null) setEndDate(`${date2!.getMonth() + 1}-${date2?.getFullYear()}`)
     }
 
     function handleChangeStatus(e: React.ChangeEvent<HTMLInputElement>) {

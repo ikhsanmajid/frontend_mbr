@@ -619,7 +619,7 @@ export async function usedPermintaanNomor(id: number, session: string) {
 }
 
 //ANCHOR - Get Permintaan RB User
-export function GetPermintaanRB(session: string | undefined, limit?: number, offset?: number, params?: { status?: string, used?: string | boolean, keyword?: string }) {
+export function GetPermintaanRB(session: string | undefined, limit?: number, offset?: number, params?: { status?: string, used?: string | boolean, keyword?: string | null, idProduk?: number | null }) {
     const [listPermintaan, setListPermintaan] = useState<any>(null);
     const [isLoadingListPermintaan, setIsLoadingListPermintaan] = useState<boolean>(true);
     const [error, setError] = useState<any>(null);
@@ -637,7 +637,7 @@ export function GetPermintaanRB(session: string | undefined, limit?: number, off
 
             if (params !== undefined) {
                 for (const [key, value] of Object.entries(params)) {
-                    if (value != "") {
+                    if (value != "" && value != null) {
                         query += `${key}=${value}&`
                     }
                 }
@@ -658,7 +658,7 @@ export function GetPermintaanRB(session: string | undefined, limit?: number, off
             setIsLoadingListPermintaan(false)
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [session, limit, offset, params?.status, params?.used, params?.keyword])
+    }, [session, limit, offset, params?.status, params?.used, params?.keyword, params?.idProduk])
 
     useEffect(() => {
         fetchData()
@@ -674,7 +674,7 @@ export function GetPermintaanRB(session: string | undefined, limit?: number, off
 }
 
 //ANCHOR - Get Permintaan RB Admin
-export function GetPermintaanRBAdmin(session: string | undefined, limit?: number, offset?: number, params?: {}) {
+export function GetPermintaanRBAdmin(session: string | undefined, limit?: number, offset?: number, params?: { status?: string, used?: string | boolean, keyword?: string | null, idProduk?: number | null, idBagian?: number | null, year?: number | null }) {
     const [listPermintaan, setListPermintaan] = useState<any>(null);
     const [isLoadingListPermintaan, setIsLoadingListPermintaan] = useState<boolean>(true);
     const [error, setError] = useState<any>(null);
@@ -692,7 +692,7 @@ export function GetPermintaanRBAdmin(session: string | undefined, limit?: number
 
             if (params !== undefined) {
                 for (const [key, value] of Object.entries(params)) {
-                    if (value != "") {
+                    if (value != "" && value != null) {
                         query += `${key}=${value}&`
                     }
                 }
@@ -713,7 +713,7 @@ export function GetPermintaanRBAdmin(session: string | undefined, limit?: number
             setIsLoadingListPermintaan(false)
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [session, limit, offset])
+    }, [session, limit, offset, params?.status, params?.used, params?.keyword, params?.idProduk, params?.idBagian, params?.year])
 
     useEffect(() => {
         fetchData()
@@ -900,7 +900,7 @@ export function FetchAllKategori(session: string | undefined, limit?: number, of
 
 
 //ANCHOR - Pengembalian RB
-export function GetAllReturnRBByProduct(session: string, id: any, limit?: number, offset?: number, params?: { status?: string, startDate?: string | null, endDate?: string | null }) {
+export function GetAllReturnRBByProduct(session: string, id: any, limit?: number, offset?: number, params?: { number?: string | null, status?: string, startDate?: string | null, endDate?: string | null }) {
     const [listPengembalian, setListPengembalian] = useState<any>(null);
     const [isLoadingListPengembalian, setIsLoadingListPengembalian] = useState<boolean>(true);
     const [error, setError] = useState<any>(null);
@@ -943,7 +943,7 @@ export function GetAllReturnRBByProduct(session: string, id: any, limit?: number
             setIsLoadingListPengembalian(false)
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [session, id, limit, offset, params?.status, params?.startDate, params?.endDate])
+    }, [session, id, limit, offset, params?.status, params?.startDate, params?.endDate, params?.number])
 
     useEffect(() => {
         fetchData()
@@ -1083,7 +1083,7 @@ export function GetAllNomorReturnRBByIDDetailPermintaan(session: string, idDetai
 
 
 //ANCHOR - Pengembalian RB - Admin
-export function GetAllReturnRBAdminByProduct(session: string, id: any, limit?: number, offset?: number, params?: { status?: string, startDate?: string | null, endDate?: string | null }) {
+export function GetAllReturnRBAdminByProduct(session: string, id: any, limit?: number, offset?: number, params?: { number?: string | null, status?: string, startDate?: string | null, endDate?: string | null }) {
     const [listPengembalian, setListPengembalian] = useState<any>(null);
     const [isLoadingListPengembalian, setIsLoadingListPengembalian] = useState<boolean>(true);
     const [error, setError] = useState<any>(null);
@@ -1126,7 +1126,7 @@ export function GetAllReturnRBAdminByProduct(session: string, id: any, limit?: n
             setIsLoadingListPengembalian(false)
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [session, id, limit, offset, params?.status, params?.startDate, params?.endDate])
+    }, [session, id, limit, offset, params?.status, params?.startDate, params?.endDate, params?.number])
 
     useEffect(() => {
         fetchData()

@@ -4,12 +4,13 @@ import { flexRender, getCoreRowModel, useReactTable, createColumnHelper, Paginat
 import { useState, useMemo, useEffect, useRef } from "react";
 import { GetPermintaanRBAdmin } from "@/app/lib/admin/users/userAPIRequest";
 import PaginationComponent from "@/app/component/pagination/Pagination";
-import { useRouter } from 'next/navigation'
+import { useFilterState } from "./useFilterState";
 import toast, { Toaster } from "react-hot-toast";
 import RowActions from "./RowActions";
 import ModalLihat from "./ModalLihat";
 import { faRefresh } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import FilterComponentPermintaan from "./FilterComponent";
 
 export interface IPermintaan {
     id: number;
@@ -39,8 +40,15 @@ export default function PermintaanTable({ session }: { session: string }) {
     const [showModalLihat, setShowModalLihat] = useState<boolean>(false)
     const [dataLihat, setDataLihat] = useState<IPermintaan | null>(null)
 
+    const StatusKonfirmasi = useFilterState(state => state.StatusKonfirmasi)
+    const StatusDipakai = useFilterState(state => state.StatusDipakai)
+    const NIKNama = useFilterState(state => state.NIKNama)
+    const idProduk = useFilterState(state => state.idProduk)
+    const idBagian = useFilterState(state => state.idBagian)
+    const filterYear = useFilterState(state => state.filterYear)
 
-    const { listPermintaan, isLoadingListPermintaan, error: errorPermintaan, mutateListPermintaan } = GetPermintaanRBAdmin(session, pageSize, pageIndex * pageSize)
+
+    const { listPermintaan, isLoadingListPermintaan, error: errorPermintaan, mutateListPermintaan } = GetPermintaanRBAdmin(session, pageSize, pageIndex * pageSize, { status: StatusKonfirmasi, used: StatusDipakai, keyword: NIKNama, idProduk: idProduk, idBagian: idBagian, year: filterYear })
 
     const columns = useMemo(() => [
         columnHelper.display({
@@ -141,14 +149,7 @@ export default function PermintaanTable({ session }: { session: string }) {
             </div>
             <div className="card-body">
                 <div className="row">
-                    {/* <FilterComponentUser
-                        valueBagian={(value: string) => {
-                            setSearchUser(value)
-                        }}
-                        statusUser={(value: string) => {
-                            setStatusUser(value)
-                        }}>
-                    </FilterComponentUser> */}
+                    <FilterComponentPermintaan session={session}/>
 
                 </div>
 
