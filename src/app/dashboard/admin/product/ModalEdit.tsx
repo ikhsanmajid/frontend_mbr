@@ -9,7 +9,7 @@ import axios from "axios"
 import toast, { Toaster } from "react-hot-toast"
 
 export default function ModalEdit({ show, session, onClose, editData, mutate }: { show: boolean, session: string, onClose: () => void, editData: IProduct | null, mutate: () => void }) {
-    const { detailBagian, isLoadingBagian, error: errorBagian, mutateBagian } = useGetAllBagian(session)
+    const { detailBagian, isLoadingBagian, error: errorBagian, mutateBagian } = useGetAllBagian(session, true)
     const { detailKategori, isLoadingKategori, error: errorKategori, mutateListKategori } = FetchAllKategori(session)
     const [issues, setIssues] = useState<ZodIssue[] | null>(null)
     const [isLoadingAdd, setIsLoadingAdd] = useState(false)

@@ -3,7 +3,7 @@ import { useRef, useState } from "react";
 import { useGetAllBagian } from "@/app/lib/admin/users/userAPIRequest";
 
 export default function FilterComponentProduct({ valueNamaProduk, valueBagian, statusProduct, session }: { valueNamaProduk: (value: string) => void, valueBagian: (value: string) => void, statusProduct: (value: string) => void, session: string }) {
-    const { detailBagian, isLoadingBagian, error, mutateBagian } = useGetAllBagian(session)
+    const { detailBagian, isLoadingBagian, error, mutateBagian } = useGetAllBagian(session, true)
 
     const inputSearchRef = useRef<HTMLInputElement>(null)
     const inputSelectRef = useRef<HTMLSelectElement>(null)
@@ -27,23 +27,23 @@ export default function FilterComponentProduct({ valueNamaProduk, valueBagian, s
                 <Accordion.Body>
                     <div className="row w-100">
 
-                        <div className="row mb-1">
+                        <div className="row mb-2">
                             <div className="col col-2 d-flex align-items-center">
                                 <span>Nama Produk: </span>
                             </div>
                             <div className="col col-auto">
-                                <div className="input-group input-group-sm">
+                                <div className="input-group">
                                     <input ref={inputSearchRef} type="text" autoComplete="off" className="form-control" id="inputSearchBagian" />
                                 </div>
                             </div>
                         </div>
 
-                        <div className="row mb-1">
+                        <div className="row mb-2">
                             <div className="col col-2 d-flex align-items-center">
                                 <span>Nama Bagian: </span>
                             </div>
                             <div className="col col-auto">
-                                <select ref={inputSelectRef} className="form-select form-select-sm" aria-label="Default select example" >
+                                <select ref={inputSelectRef} className="form-select" aria-label="Default select example" >
                                     <option value="">-- Pilih bagian --</option>
                                     {!isLoadingBagian && detailBagian != null && detailBagian.data.map((data: any, index: number) => (
                                         <option key={index} value={data.id}>{data.namaBagian}</option>
@@ -52,7 +52,7 @@ export default function FilterComponentProduct({ valueNamaProduk, valueBagian, s
                             </div>
                         </div>
 
-                        <div className="row mb-1">
+                        <div className="row mb-2">
                             <div className="col col-2">
                                 <span>Status Aktif: </span>
                             </div>

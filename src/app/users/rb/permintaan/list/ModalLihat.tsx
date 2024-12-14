@@ -136,6 +136,12 @@ export default function ModalLihat({ session, data, show, onClose, onSave }: { s
                                     ))
                                 ))}
 
+                                {(isLoadingPermintaan || isLoadingPermintaanNomor) && error &&
+                                    <tr>
+                                        <td colSpan={data?.status == "DITERIMA" ? 7 : 5} className="text-center">Loading....</td>
+                                    </tr>
+                                }
+
                                 {(!isLoadingPermintaan || !isLoadingPermintaanNomor) && error &&
                                     <tr>
                                         <td colSpan={data?.status == "DITERIMA" ? 7 : 5} className="text-center">{error.message}</td>

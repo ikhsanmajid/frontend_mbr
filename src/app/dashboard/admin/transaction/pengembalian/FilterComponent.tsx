@@ -36,7 +36,7 @@ export default function FilterComponentPengembalian({ session }: { session: stri
     const shouldFetch = idBagianChoosen !== null
 
     const { listProduk, isLoadingListProduk } = FetchAllProduk(session, undefined, undefined, { id_bagian: idBagianChoosen?.toString() }, shouldFetch);
-    const { detailBagian, isLoadingBagian } = useGetAllBagian(session);
+    const { detailBagian, isLoadingBagian } = useGetAllBagian(session, true);
 
     useEffect(() => {
         setIdProdukChoosen(null);

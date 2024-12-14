@@ -30,7 +30,7 @@ export default function FilterComponentPermintaan({ session }: { session: string
     const shouldFetch = idBagianChoosen !== null
 
     const { listProduk, isLoadingListProduk } = FetchAllProduk(session, undefined, undefined, { id_bagian: idBagianChoosen?.toString() }, shouldFetch);
-    const { detailBagian: listBagian, isLoadingBagian } = useGetAllBagian(session)
+    const { detailBagian: listBagian, isLoadingBagian } = useGetAllBagian(session, true)
 
     useEffect(() => {
         setIsMounted(true);

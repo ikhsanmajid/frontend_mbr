@@ -117,7 +117,7 @@ export default function JabatanTable({ session, onAdd, mutate }: { session: stri
                 <>Daftar Jabatan</>
                 <><button className="btn btn-sm btn-success" onClick={
                     () => { onAdd(true) }
-                }>Tambah Bagian</button></>
+                }>Tambah Jabatan</button></>
             </div>
             <div className="card-body">
                 <div className="table-responsive">

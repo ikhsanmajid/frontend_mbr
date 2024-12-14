@@ -52,7 +52,7 @@ export function EditUser({ id, session }: { id: number, session: string }) {
     const router = useRouter()
 
     const { detailUser: user, detailUserLoading, mutateUser }: { detailUser: DetailUserType, detailUserLoading: boolean, mutateUser: VoidFunction } = GetDetailUserInfo(id, session)
-    const { detailBagian: listBagian, isLoadingBagian, mutateBagian }: { detailBagian: { count: number, data: IBagian[] }, isLoadingBagian: boolean, mutateBagian: VoidFunction } = useGetAllBagian(session)
+    const { detailBagian: listBagian, isLoadingBagian, mutateBagian }: { detailBagian: { count: number, data: IBagian[] }, isLoadingBagian: boolean, mutateBagian: VoidFunction } = useGetAllBagian(session, true)
 
     const [disabledBagianJabatanEditMode, setDisabledBagianJabatanEditMode] = useState<boolean>(true)
     const [addMode, setAddMode] = useState<boolean>(false)

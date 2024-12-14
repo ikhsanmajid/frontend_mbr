@@ -198,6 +198,12 @@ export default function AddPermintaanRB({ session }: { session: string }) {
         //console.log("Change MBR", listPermintaan);
     }
 
+    useEffect(() => {
+        if (listPermintaan?.length == 0 ) {
+            setListPermintaan(null);
+        }
+    }, [listPermintaan])
+
     async function submitPermintaan() {
         if (!validateInputs()) {
             return;

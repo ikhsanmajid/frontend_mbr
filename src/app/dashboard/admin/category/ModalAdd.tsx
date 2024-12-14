@@ -1,4 +1,4 @@
-import { add_bagian, apiURL, checkBagian } from "@/app/lib/admin/users/userAPIRequest"
+import { add_kategori, apiURL, checkCategory } from "@/app/lib/admin/users/userAPIRequest"
 import { Modal, Button } from "react-bootstrap"
 import { useState, FormEvent } from "react"
 import { z, ZodIssue } from "zod"
@@ -10,34 +10,26 @@ export default function ModalAdd({ show, session, onClose, mutate }: { show: boo
     const [issues, setIssues] = useState<ZodIssue[]>([])
     const [isLoadingAdd, setIsLoadingAdd] = useState(false)
 
-    const Bagian = z.object({
-        bagian: z.string().min(1, { message: "Nama Bagian minimal 1 karakter" }),
-        kategori: z.string()
-    }).superRefine(async ({ bagian, kategori }, ctx) => {
-        const bagianExist = await checkBagian(bagian, session)
-
-        if (bagianExist.data.message == "exist") {
+    const Category = z.object({
+        namaKategori: z.string().min(1, { message: "Nama Kategori minimal 1 karakter" }),
+        startingNumber: z.string().min(6, { message: "Nomor Urut minimal 6 karakter" }).max(6, { message: "Nomor Urut maksimal 6 karakter" }),
+    }).superRefine(async ({ namaKategori, startingNumber }, ctx) => {
+        if (!startingNumber.match(/^[0-9]+$/)) {
             ctx.addIssue({
                 code: "custom",
-                message: "Bagian Sudah Terdaftar",
-                path: ['bagian']
-
+                message: "Starting Number Harus Angka",
+                path: ['startingNumber']
             })
         }
 
-        if (kategori == "") {
+        const categoryExist = await checkCategory(namaKategori, session)
+
+        if (categoryExist.data.message == "exist") {
             ctx.addIssue({
                 code: "custom",
-                message: "Wajib Memilih Kategori",
-                path: ['kategori']
-            })
-        } 
-        
-        if (kategori !== "1" && kategori !== "2" && kategori !== "3") {
-            ctx.addIssue({
-                code: "custom",
-                message: "Kategori Tidak Valid",
-                path: ['kategori']
+                message: "Kategori Sudah Terdaftar",
+                path: ['namaKategori']
+
             })
         }
     })
@@ -46,17 +38,17 @@ export default function ModalAdd({ show, session, onClose, mutate }: { show: boo
         formData.preventDefault()
         setIsLoadingAdd(true)
         const data = new FormData(formData.currentTarget)
-        const dataBagian = data.get("bagian")
-        const dataKategori = data.get("kategori")
+        const dataKategori = data.get("namaKategori")
+        const dataStartingNumber = data.get("startingNumber")
 
-        await Bagian.parseAsync({
-            bagian: dataBagian,
-            kategori: dataKategori
+        await Category.parseAsync({
+            namaKategori: dataKategori,
+            startingNumber: dataStartingNumber
         }).then(async (data) => {
             setIssues([])
-            const postAddUser = await add_bagian(data, session)
-            if (postAddUser.type !== "error") {
-                toast.success("Bagian Berhasil Ditambahkan")
+            const postAddCategory = await add_kategori(data, session)
+            if (postAddCategory.type !== "error") {
+                toast.success("Kategori Berhasil Ditambahkan")
                 mutate!()
             }
         }).catch(e => {
@@ -65,7 +57,7 @@ export default function ModalAdd({ show, session, onClose, mutate }: { show: boo
             }
 
             if (e instanceof AxiosError) {
-                toast.error("Bagian Gagal Ditambahkan")
+                toast.error("Kategori Gagal Ditambahkan")
             }
         }).finally(() => {
             setIsLoadingAdd(false)
@@ -77,19 +69,19 @@ export default function ModalAdd({ show, session, onClose, mutate }: { show: boo
         <>
             <Modal show={show} onHide={onClose} style={{ zIndex: 1050 }} backdrop="static" animation={true} keyboard={false}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Form Tambah Bagian</Modal.Title>
+                    <Modal.Title>Form Tambah Kategori</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <form id="addForm" onSubmit={(e) => handleSubmit(e)}>
 
                         {/* Bagian */}
                         <div className="mb-3 row">
-                            <label htmlFor="staticEmail" className="col-sm-4 col-form-label">Nama Bagian</label>
+                            <label className="col-sm-4 col-form-label">Nama Kategori</label>
                             <div className="col-sm-8">
-                                <input type="text" autoComplete="off" className="form-control" name="bagian" placeholder="Nama Bagian" />
+                                <input type="text" className="form-control" name="namaKategori" placeholder="Nama Kategori" />
                                 <ul>
                                     {issues && issues.map((item: any, index: number) => (
-                                        item.path == "bagian" &&
+                                        item.path == "namaKategori" &&
                                         <li key={index}>
                                             <span className="form-text text-danger">{item.message}</span><br />
                                         </li>
@@ -99,22 +91,19 @@ export default function ModalAdd({ show, session, onClose, mutate }: { show: boo
                         </div>
 
                         <div className="mb-3 row">
-                            <label htmlFor="staticEmail" className="col-sm-4 col-form-label">Kategori Bagian: </label>
+                            <label className="col-sm-4 col-form-label">Nomor Urut Awal: </label>
                             <div className="col-sm-8">
-                                <select className="form-select" name="kategori">
-                                    <option value="">-- Pilih Kategori Bagian --</option>
-                                    <option value="1">Farmasi</option>
-                                    <option value="2">Food</option>
-                                    <option value="3">Non Manufaktur</option>
-                                </select>
-                                <ul>
-                                    {issues && issues.map((item: any, index: number) => (
-                                        item.path == "kategori" &&
-                                        <li key={index}>
-                                            <span className="form-text text-danger">{item.message}</span><br />
-                                        </li>
-                                    ))}
-                                </ul>
+                                <div className="col-sm-8">
+                                    <input type="text" className="form-control" name="startingNumber" maxLength={6} minLength={6} placeholder="Nama Kategori" />
+                                    <ul>
+                                        {issues && issues.map((item: any, index: number) => (
+                                            item.path == "startingNumber" &&
+                                            <li key={index}>
+                                                <span className="form-text text-danger">{item.message}</span><br />
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
                             </div>
                         </div>
 

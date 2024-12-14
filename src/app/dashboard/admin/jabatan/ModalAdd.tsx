@@ -83,7 +83,7 @@ export default function ModalAdd({ show, session, onClose, mutate }: { show: boo
         <>
             <Modal show={show} onHide={() => {onClose(); setIssues(null)}} style={{ zIndex: 1050 }} backdrop="static" animation={true} keyboard={false}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Form Add User</Modal.Title>
+                    <Modal.Title>Form Tambah Jabatan</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <form id="addForm" onSubmit={(e) => handleSubmit(e)}>

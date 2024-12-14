@@ -186,7 +186,7 @@ export async function checkEmail(email: string, session: string) {
 
 //SECTION - Bagian API Endpoint
 //ANCHOR - Get Semua Bagian Axios
-export function useGetAllBagian(session: string | undefined, limit?: number, offset?: number, params?: { [key: string]: string }) {
+export function useGetAllBagian(session: string | undefined, onlyManufactur: boolean, limit?: number, offset?: number, params?: { [key: string]: string }) {
     const [detailBagian, setDetailBagian] = useState<any>(null);
     const [isLoadingBagian, setIsLoading] = useState<boolean>(true);
     const [error, setError] = useState<any>(null);
@@ -196,10 +196,10 @@ export function useGetAllBagian(session: string | undefined, limit?: number, off
         setError(null);
 
         try {
-            const query = `?limit=${limit}&offset=${offset}&search=${params?.search}`;
+            const query = `limit=${limit}&offset=${offset}&search=${params?.search}`;
 
             if (limit != undefined) {
-                const response = await axios.get(`${apiURL}/admin/department/findAll${query}`, {
+                const response = await axios.get(`${apiURL}/admin/department/findAll?manufaktur=${onlyManufactur ? "yes" : "no"}&${query}`, {
                     headers: {
                         'Content-Type': 'application/json',
                         'Authorization': `Bearer ${session}`
@@ -208,7 +208,7 @@ export function useGetAllBagian(session: string | undefined, limit?: number, off
 
                 setDetailBagian(response.data);
             } else {
-                const response = await axios.get(`${apiURL}/admin/department/findAll`, {
+                const response = await axios.get(`${apiURL}/admin/department/findAll?manufaktur=${onlyManufactur ? "yes " : "no"}`, {
                     headers: {
                         'Content-Type': 'application/json',
                         'Authorization': `Bearer ${session}`
@@ -222,7 +222,7 @@ export function useGetAllBagian(session: string | undefined, limit?: number, off
         } finally {
             setIsLoading(false);
         }
-    }, [session, limit, offset, params?.search]);
+    }, [session, limit, offset, params?.search, onlyManufactur]);
 
     useEffect(() => {
         fetchData();
@@ -239,7 +239,8 @@ export function useGetAllBagian(session: string | undefined, limit?: number, off
 //ANCHOR - Tambah Bagian
 export async function add_bagian(data: any, session: string) {
     const addProcess = axios.post(apiURL + "/admin/department/addDepartment", {
-        nama_bagian: data.bagian
+        nama_bagian: data.bagian,
+        kategori: data.kategori
     }, {
         headers: {
             "Content-Type": "application/json",
@@ -267,7 +268,8 @@ export async function edit_bagian(id: number | undefined, data: any, session: st
 
     const editProcess = await axios.patch(apiURL + "/admin/department/updateDepartment/" + id, {
         nama_bagian: data.bagian,
-        is_active: data.active == "1" ? "true" : "false"
+        is_active: data.active == "1" ? "true" : "false",
+        kategori: data.kategori
     }, {
         headers: {
             "Content-Type": "application/json",
@@ -622,7 +624,7 @@ export async function usedPermintaanNomor(id: number, session: string) {
 }
 
 //ANCHOR - Get Permintaan RB User
-export function GetPermintaanRB(session: string | undefined, limit?: number, offset?: number, params?: { status?: string, used?: string | boolean, keyword?: string | null, idProduk?: number | null }) {
+export function GetPermintaanRB(session: string | undefined, limit?: number, offset?: number, params?: { status?: string, used?: string | boolean, keyword?: string | null, idProduk?: number | null, year: number | null }) {
     const [listPermintaan, setListPermintaan] = useState<any>(null);
     const [isLoadingListPermintaan, setIsLoadingListPermintaan] = useState<boolean>(true);
     const [error, setError] = useState<any>(null);
@@ -661,7 +663,7 @@ export function GetPermintaanRB(session: string | undefined, limit?: number, off
             setIsLoadingListPermintaan(false)
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [session, limit, offset, params?.status, params?.used, params?.keyword, params?.idProduk])
+    }, [session, limit, offset, params?.status, params?.used, params?.keyword, params?.idProduk, params?.year])
 
     useEffect(() => {
         fetchData()
@@ -901,6 +903,61 @@ export function FetchAllKategori(session: string | undefined, limit?: number, of
     }
 }
 
+//ANCHOR - Check Bagian by Name
+export async function checkCategory(kategori: string, session: string) {
+    const bagianCheck = await axios(apiURL + "/admin/product/checkKategori/?nama_kategori=" + kategori, {
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + session
+        }
+    })
+
+    return bagianCheck
+}
+
+//ANCHOR - Update Kategori by Id
+export async function edit_kategori(id: string | number | undefined, data: any, session: string) {
+
+    const editProcess = await axios.patch(apiURL + "/admin/product/updateCategory/" + id, {
+        nama_kategori: data.namaKategori,
+        starting_number: data.startingNumber,
+    }, {
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + session
+        }
+    })
+
+    return editProcess.data
+}
+
+//ANCHOR - Delete Kategori by Id
+export async function deleteCategory(deleteData: any, session: string) {
+    const processDelete = await fetch(apiURL + "/admin/product/deleteCategory/" + deleteData.id, {
+        method: "DELETE",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + session
+        }
+    })
+
+    return processDelete
+}
+
+//ANCHOR - Tambah Bagian
+export async function add_kategori(data: any, session: string) {
+    const addProcess = axios.post(apiURL + "/admin/product/addCategory", {
+        nama_kategori: data.namaKategori,
+        starting_number: data.startingNumber
+    }, {
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + session
+        }
+    })
+
+    return (await addProcess).data
+}
 
 //ANCHOR - Pengembalian RB
 export function GetAllReturnRBByProduct(session: string, id: any, limit?: number, offset?: number, params?: { number?: string | null, status?: string, startDate?: string | null, endDate?: string | null }) {
@@ -1264,5 +1321,48 @@ export function GetAllNomorReturnRBAdminByIDDetailPermintaan(session: string, id
 
     return {
         listNomorPengembalian, isLoadingListNomorPengembalian, error, mutateListNomorPengembalian
+    }
+}
+
+//!SECTION
+
+//SECTION - Dashboard API Endpoint
+//ANCHOR - Get Dashboard Data Admin
+export function GetDashboardDataAdmin(session: string) {
+    const [listDashboardData, setListDashboardData] = useState<any>(null);
+    const [isLoadingListDashboardData, setIsLoadingListDashboardData] = useState<boolean>(true);
+    const [error, setError] = useState<any>(null);
+
+    const fetchData = useCallback(async () => {
+        try {
+            setIsLoadingListDashboardData(true)
+            setError(null)
+
+            const dashboardData = await axios.get(apiURL + "/admin/product_rb/generateReportDashboadAdmin", {
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": "Bearer " + session
+                }
+            })
+
+            setListDashboardData(dashboardData.data)
+
+        } catch (e) {
+            setError(e)
+        } finally {
+            setIsLoadingListDashboardData(false)
+        }
+    }, [session])
+
+    useEffect(() => {
+        fetchData()
+    }, [fetchData])
+
+    const mutateListDashboardData = useCallback(() => {
+        fetchData()
+    }, [fetchData])
+
+    return {
+        listDashboardData, isLoadingListDashboardData, error, mutateListDashboardData
     }
 }
