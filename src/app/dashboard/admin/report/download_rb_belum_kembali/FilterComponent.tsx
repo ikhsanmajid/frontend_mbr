@@ -26,7 +26,7 @@ export default function FilterComponentLaporanRB({ session }: { session: string 
     const date2 = useFilterState((state) => state.date2);
     const setDate2 = useFilterState((state) => state.setDate2);
 
-    const { detailBagian, isLoadingBagian } = useGetAllBagian(session);
+    const { detailBagian, isLoadingBagian } = useGetAllBagian(session, true);
 
     useEffect(() => {
         setIsMounted(true);
@@ -90,7 +90,7 @@ export default function FilterComponentLaporanRB({ session }: { session: string 
                                             onChange={(date) => {
                                                 setDate1(date)
                                                 setDate2(null)
-                                                if (date !== null) setStartDate(`${date.getMonth() + 1}-${date.getFullYear()}`)
+                                                setStartDate(date == null ? null : `${date.getMonth() + 1}-${date.getFullYear()}`)
                                             }}
                                             isClearable
                                             dateFormat="MM/yyyy"
@@ -106,7 +106,7 @@ export default function FilterComponentLaporanRB({ session }: { session: string 
                                             minDate={date1!}
                                             onChange={(date) => {
                                                 setDate2(date)
-                                                if (date !== null) setEndDate(`${date.getMonth() + 1}-${date.getFullYear()}`)
+                                                setEndDate(date == null ? null : `${date.getMonth() + 1}-${date.getFullYear()}`)
                                             }}
                                             isClearable
                                             dateFormat="MM/yyyy"

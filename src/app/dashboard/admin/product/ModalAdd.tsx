@@ -11,7 +11,7 @@ export default function ModalAdd({ show, session, onClose, mutate }: { show: boo
     const [listBagian, setListBagian] = useState<any>([])
     const [listKategori, setListKategori] = useState<any>([])
 
-    const { detailBagian, isLoadingBagian, error: errorBagian, mutateBagian } = useGetAllBagian(session)
+    const { detailBagian, isLoadingBagian, error: errorBagian, mutateBagian } = useGetAllBagian(session, true, undefined, undefined, undefined)
     const { detailKategori, isLoadingKategori, error: errorKategori, mutateListKategori } = FetchAllKategori(session)
 
     useEffect(() => {
@@ -115,7 +115,7 @@ export default function ModalAdd({ show, session, onClose, mutate }: { show: boo
 
                         <div className="mb-2 row">
                             <label htmlFor="produk" className="col-sm-4 col-form-label">Nama Produk</label>
-                            <div className="col-sm-8 input-group-sm">
+                            <div className="col-sm-8">
                                 <input type="text" autoComplete="off" className="form-control" name="nama_produk" placeholder="Nama Produk" />
                                 <ul>
                                     {issues && issues.map((item: any, index: number) => (
@@ -131,7 +131,7 @@ export default function ModalAdd({ show, session, onClose, mutate }: { show: boo
                         <div className="mb-2 row">
                             <label htmlFor="produk" className="col-sm-4 col-form-label">Bagian</label>
                             <div className="col-sm-8">
-                                <select className="form-select form-select-sm" name="id_bagian">
+                                <select className="form-select" name="id_bagian">
                                     <option value="">-- Pilih Bagian --</option>
                                     {!isLoadingBagian && listBagian && listBagian.map((item: any, index: number) => (
                                         <option key={index} value={item.id}>{item.namaBagian}</option>
@@ -152,7 +152,7 @@ export default function ModalAdd({ show, session, onClose, mutate }: { show: boo
                         <div className="mb-2 row">
                             <label htmlFor="produk" className="col-sm-4 col-form-label">Kategori</label>
                             <div className="col-sm-8">
-                                <select className="form-select form-select-sm" name="id_kategori">
+                                <select className="form-select" name="id_kategori">
                                     <option value="">-- Pilih Kategori --</option>
                                     {!isLoadingKategori && listKategori && listKategori.map((item: any, index: number) => (
                                         <option key={index} value={item.id}>{item.namaKategori}</option>

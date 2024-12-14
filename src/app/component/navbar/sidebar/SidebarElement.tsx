@@ -41,9 +41,13 @@ export function SidebarElement() {
                     id: "5",
                     name: "Users",
                     link: "/dashboard/admin/users",
+                }, {
+                    id: "6",
+                    name: "Kategori Produk",
+                    link: "/dashboard/admin/category",
                 },
                 {
-                    id: "6",
+                    id: "7",
                     name: "Daftar Produk",
                     link: "/dashboard/admin/product",
                 }
@@ -54,33 +58,33 @@ export function SidebarElement() {
             link: "",
             children: [
                 {
-                    id: "7",
+                    id: "8",
                     name: "Daftar Permintaan",
                     link: "/dashboard/admin/transaction/permintaan",
                 },
                 {
-                    id: "8",
+                    id: "9",
                     name: "Konfirmasi Pengembalian",
                     link: "/dashboard/admin/transaction/pengembalian",
                 },
             ]
-        },{
+        }, {
             name: "Laporan",
             link: "",
             children: [
                 {
-                    id: "9",
+                    id: "10",
                     name: "Download Laporan RB Belum Kembali",
                     link: "/dashboard/admin/report/download_rb_belum_kembali",
                 },
                 {
-                    id: "10",
+                    id: "11",
                     name: "Laporan Pembuatan RB",
                     link: "/dashboard/admin/report/laporan_pembuatan_rb",
                 },
             ]
         },
-        
+
     ], []);
 
     const sideBarMenuUser = useMemo(() => [
@@ -113,7 +117,7 @@ export function SidebarElement() {
 
     useEffect(() => {
         setActiveLink(pathname);
-        console.log("pathname ", pathname)  
+        console.log("pathname ", pathname)
     }, [pathname]);
 
     useEffect(() => {
@@ -130,9 +134,13 @@ export function SidebarElement() {
         );
     };
 
+    const isActive = (link: string) => {
+        return pathname === link || (pathname.startsWith(link) && pathname[link.length] === "/");
+    };
+
     return (
         <div style={{ position: "fixed", height: "inherit", width: "inherit", overflowX: "scroll" }}>
-            
+
             {(session.data?.user?.is_admin == true ? sideBarMenuAdmin : sideBarMenuUser).map((item, index) => (
                 <div key={index} className="row">
                     <div className="row border-bottom">
@@ -159,8 +167,8 @@ export function SidebarElement() {
                             <Collapse in={open.find(val => val.name === item.name)?.open || false}>
                                 <ul className="list-group list-group-flush" style={{ listStyle: "none", margin: 0, padding: 0 }}>
                                     {item.children.map((child, childIndex) => (
-                                        <li key={childIndex} className={`${activeLink.includes(child.link) ? "active" : ""} ps-3 py-2 fw-medium list-group-item border-skyblue`}>
-                                            <Link href={child.link} className={activeLink.includes(child.link) ? "text-white" : "text-primary"} style={{ textDecoration: "none" }} passHref>
+                                        <li key={childIndex} className={`${isActive(child.link) ? "active" : ""} ps-3 py-2 fw-medium list-group-item border-skyblue`}>
+                                            <Link href={child.link} className={isActive(child.link) ? "text-white" : "text-primary"} style={{ textDecoration: "none" }} passHref>
                                                 {child.name}
                                             </Link>
                                         </li>
@@ -172,7 +180,7 @@ export function SidebarElement() {
 
                 </div>
             ))}
-            
+
         </div>
     );
 }

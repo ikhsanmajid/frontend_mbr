@@ -34,6 +34,9 @@ export default function DownloadRB({ session }: { session: string }) {
             }
 
             const response = await axios.get(query, {
+                headers: {
+                    'Authorization': `Bearer ${session}`
+                },
                 responseType: "blob"
             });
 

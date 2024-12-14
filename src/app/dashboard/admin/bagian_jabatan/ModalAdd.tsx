@@ -10,7 +10,7 @@ import { IBagian } from "../bagian/ListBagian"
 export default function ModalAdd({ show, session, onClose, mutate }: { show: boolean, session: string, onClose: () => void, mutate: null | VoidFunction }) {
     const [issues, setIssues] = useState<ZodIssue[]>([])
     const [isLoadingAdd, setIsLoadingAdd] = useState(false)
-    const { detailBagian, isLoadingBagian, error: errorBagian, mutateBagian } = useGetAllBagian(session)
+    const { detailBagian, isLoadingBagian, error: errorBagian, mutateBagian } = useGetAllBagian(session, false)
     const { detailJabatan, isLoadingJabatan, error: errorJabatan, mutateJabatan } = useGetAllJabatan(session)
 
     const BagianJabatan = z.object({

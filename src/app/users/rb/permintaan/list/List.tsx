@@ -52,8 +52,9 @@ export default function ListMBR({ session }: { session: string }) {
     const NIKNama = useFilterState((state) => state.NIKNama)
     const StatusKonfirmasi = useFilterState((state) => state.StatusKonfirmasi)
     const StatusDipakai = useFilterState((state) => state.StatusDipakai)
+    const filterYear = useFilterState(state => state.filterYear)
 
-    const { listPermintaan, isLoadingListPermintaan, error: errorPermintaan, mutateListPermintaan } = GetPermintaanRB(session, pageSize, pageIndex * pageSize, { status: StatusKonfirmasi, used: StatusDipakai, keyword: NIKNama, idProduk: idProduk })
+    const { listPermintaan, isLoadingListPermintaan, error: errorPermintaan, mutateListPermintaan } = GetPermintaanRB(session, pageSize, pageIndex * pageSize, { status: StatusKonfirmasi, used: StatusDipakai, keyword: NIKNama, idProduk: idProduk, year: filterYear  })
 
     const columns = useMemo(() => [
         columnHelper.display({

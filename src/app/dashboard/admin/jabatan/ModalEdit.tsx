@@ -71,7 +71,7 @@ export default function ModalEdit({ show, session, onClose, editData, mutate }: 
         <>
             <Modal show={show} onHide={onClose} style={{ zIndex: 1050 }} backdrop="static" animation={true} keyboard={false}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Form Edit User</Modal.Title>
+                    <Modal.Title>Form Edit Jabatan</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <form id="addForm" onSubmit={(e) => handleSubmit(e)}>

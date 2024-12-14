@@ -1,17 +1,17 @@
 "use client"
-import { IBagian } from "../bagian/ListBagian"
+import { ICategory } from './ListCategory'
 import { flexRender, getCoreRowModel, useReactTable, createColumnHelper, PaginationState, getPaginationRowModel } from '@tanstack/react-table'
 import { useEffect, useMemo, useRef, useState } from "react"
-import { useGetAllBagian } from "@/app/lib/admin/users/userAPIRequest"
-import ModalEdit from "./ModalEdit"
+import { FetchAllKategori } from "@/app/lib/admin/users/userAPIRequest"
+import ModalEdit from './ModalEdit'
 import RowActions from "./RowActions"
 import ModalDelete from "./ModalDelete"
 import PaginationComponent from "@/app/component/pagination/Pagination"
 
-const columnHelper = createColumnHelper<IBagian>()
+const columnHelper = createColumnHelper<ICategory>()
 
 
-export default function BagianTable({ session, onAdd, mutate }: { session: string, onAdd: (state: boolean) => void, mutate: (mutate: any) => void }) {
+export default function CategoryTable({ session, onAdd, mutate }: { session: string, onAdd: (state: boolean) => void, mutate: (mutate: any) => void }) {
     const [count, setCount] = useState<number>(0)
     const [pagination, setPagination] = useState<PaginationState>({
         pageIndex: 0,
@@ -23,15 +23,15 @@ export default function BagianTable({ session, onAdd, mutate }: { session: strin
     const [searchData, setSearchData] = useState<string>("")
     const inputSearch = useRef<HTMLInputElement>(null)
 
-    const [bagianData, setBagianData] = useState<IBagian[] | null>(null)
+    const [categoryData, setCategoryData] = useState<ICategory[] | null>(null)
 
     const [showModalEdit, setShowModalEdit] = useState<boolean>(false)
-    const [dataEdit, setDataEdit] = useState<IBagian | null>(null)
+    const [dataEdit, setDataEdit] = useState<ICategory | null>(null)
 
     const [showModalDelete, setShowModalDelete] = useState<boolean>(false)
-    const [dataDelete, setDataDelete] = useState<IBagian | null>(null)
+    const [dataDelete, setDataDelete] = useState<ICategory | null>(null)
 
-    const { detailBagian, isLoadingBagian, error, mutateBagian } = useGetAllBagian(session, false, pageSize, pageIndex * pageSize, { search: searchData })
+    const { detailKategori, isLoadingKategori, mutateListKategori } = FetchAllKategori(session, pageSize, pageIndex * pageSize, { search_kategori: searchData })
 
     const columns = useMemo(() => [
         columnHelper.display({
@@ -41,29 +41,24 @@ export default function BagianTable({ session, onAdd, mutate }: { session: strin
             size: 20
 
         }),
-        columnHelper.accessor("namaBagian", {
-            header: "Nama Bagian",
+        columnHelper.accessor("namaKategori", {
+            header: "Nama Kategori",
             cell: info => info.getValue(),
         }),
-        columnHelper.accessor("namaJenisBagian", {
-            header: "Kategori Bagian",
+        columnHelper.accessor("startingNumber", {
+            header: "Awal Nomor Urut",
             cell: info => info.getValue(),
-        }),
-        columnHelper.accessor("isActive", {
-            header: "Aktif",
-            cell: info => <input className="form-check-input" type="checkbox" checked={info.cell.getValue() == true ? true : false} id="flexCheckDefault" disabled></input>,
-            size: 20
         }),
         columnHelper.display({
             header: "Actions",
             id: "actions",
-            cell: props => <RowActions props={props} handleEdit={(data: IBagian) => handleEdit(data)} handleDelete={(data: IBagian) => handleDelete(data)}></RowActions>,
+            cell: props => <RowActions props={props} handleEdit={(data: ICategory) => handleEdit(data)} handleDelete={(data: ICategory) => handleDelete(data)}></RowActions>,
             size: 40
         }),
     ], [])
 
 
-    const data = useMemo(() => bagianData ?? [], [bagianData])
+    const data = useMemo(() => categoryData ?? [], [categoryData])
 
     const table = useReactTable({
         columns,
@@ -83,14 +78,14 @@ export default function BagianTable({ session, onAdd, mutate }: { session: strin
     const currentPage = table.getState().pagination.pageIndex
 
     useEffect(() => {
-        if (!isLoadingBagian) {
-            setBagianData(detailBagian.data)
-            setCount(detailBagian.count)
-            mutate(mutateBagian)
+        if (!isLoadingKategori) {
+            setCategoryData(detailKategori.data)
+            setCount(detailKategori.count)
+            mutate(mutateListKategori)
         }
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [isLoadingBagian])
+    }, [isLoadingKategori])
 
     useEffect(() => {
         if (currentPage + 1 > pageCount) {
@@ -104,14 +99,14 @@ export default function BagianTable({ session, onAdd, mutate }: { session: strin
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [pageCount])
 
-        
 
-    const handleEdit = (data: IBagian) => {
+
+    const handleEdit = (data: ICategory) => {
         setShowModalEdit(true)
         setDataEdit(data)
     }
 
-    const handleDelete = (data: IBagian) => {
+    const handleDelete = (data: ICategory) => {
         setShowModalDelete(true)
         setDataDelete(data)
     }
@@ -119,17 +114,20 @@ export default function BagianTable({ session, onAdd, mutate }: { session: strin
     return (
         <div className="card mt-3">
             <div className="card-header d-flex justify-content-between">
-                Daftar Bagian
+                Daftar Kategori
                 <button className="btn btn-sm btn-success" onClick={
                     () => { onAdd(true) }
-                }>Tambah Bagian</button>
+                }>Tambah Kategori</button>
             </div>
             <div className="card-body">
 
-                <div className="row mb-2">
-                    <label htmlFor="inputSearchBagian" className="col-sm-1 col-form-label">Search Bagian: </label>
-                    <div className="col-sm-2">
-                        <input ref={inputSearch} type="text" autoComplete="off" className="form-control" id="inputSearchBagian" />
+                <div className="row mb-2 w-50">
+                    <div className="col-sm-3">
+                        <label htmlFor="inputSearchKategori" className="col-form-label">Search Kategori: </label>
+                    </div>
+
+                    <div className="col-sm-4">
+                        <input ref={inputSearch} type="text" autoComplete="off" className="form-control" id="inputSearchKategori" />
                     </div>
                     <div className="col-sm-1">
                         <button onClick={(e) => {
@@ -154,12 +152,12 @@ export default function BagianTable({ session, onAdd, mutate }: { session: strin
                                 ))}
                             </thead>
                             <tbody className="table-group-divider">
-                                {isLoadingBagian &&
+                                {isLoadingKategori &&
                                     <tr>
                                         <td colSpan={4} className="text-center"> Loading ....</td>
                                     </tr>}
 
-                                {(!isLoadingBagian && detailBagian.count == 0) ?
+                                {(!isLoadingKategori && detailKategori.count == 0) ?
                                     <tr>
                                         <td colSpan={4} className="text-center"> Data Kosong </td>
                                     </tr> :
@@ -199,7 +197,7 @@ export default function BagianTable({ session, onAdd, mutate }: { session: strin
                             </select>
                         </div>
                         <div className="col-auto">
-                            <label className="col-form-label">Total Data: {detailBagian && detailBagian.count} </label>
+                            <label className="col-form-label">Total Data: {detailKategori && detailKategori.count} </label>
                         </div>
                     </div>
                 </div>
@@ -208,8 +206,8 @@ export default function BagianTable({ session, onAdd, mutate }: { session: strin
                 </div>
             </div>
 
-            <ModalEdit show={showModalEdit} session={session} onClose={() => { setShowModalEdit(false); setDataEdit(null) }} editData={dataEdit} bagianMutate={mutateBagian}></ModalEdit>
-            <ModalDelete show={showModalDelete} session={session} onClose={() => { setShowModalDelete(false); setDataDelete(null) }} deleteData={dataDelete} bagianMutate={mutateBagian}></ModalDelete>
+            <ModalEdit show={showModalEdit} session={session} onClose={() => { setShowModalEdit(false); setDataEdit(null) }} editData={dataEdit} kategoriMutate={mutateListKategori}></ModalEdit>
+            <ModalDelete show={showModalDelete} session={session} onClose={() => { setShowModalDelete(false); setDataDelete(null) }} deleteData={dataDelete} kategoriMutate={mutateListKategori}></ModalDelete>
         </div >
     )
 }

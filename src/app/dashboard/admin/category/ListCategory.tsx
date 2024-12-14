@@ -1,22 +1,20 @@
 "use client";
 import { toast } from "react-hot-toast";
 import { useEffect, useState } from "react";
-import BagianTable from "@/app/dashboard/admin/bagian/BagianTable";
+import CategoryTable from "./CategoryTable";
 import ModalAdd from "./ModalAdd";
 import React from "react";
 
-export interface IBagian {
-    id?: number;
-    namaBagian?: string;
-    isActive?: boolean;
-    idJenisBagian?: number;
-    namaJenisBagian?: string;
+export interface ICategory {
+    id?: string | number;
+    namaKategori?: string;
+    startingNumber?: string;
 }
 
-export default function ListBagian({ session }: { session: string }) {
+export default function ListCategory({ session }: { session: string }) {
     // Menampilkan Modal Tambah Data
     const [showModalAdd, setShowModalAdd] = useState(false);
-    const [mutateBagian, setMutateBagian] = useState<{mutate: null | VoidFunction}>({mutate: null});
+    const [mutateBagian, setMutateBagian] = useState<{ mutate: null | VoidFunction }>({ mutate: null });
 
     useEffect(() => {
         toast.dismiss()
@@ -24,10 +22,10 @@ export default function ListBagian({ session }: { session: string }) {
 
     return (
         <>
-            <BagianTable
+            <CategoryTable
                 session={session}
                 onAdd={(state) => setShowModalAdd(state)}
-                mutate={(mutate: VoidFunction) => setMutateBagian({mutate: mutate})}                
+                mutate={(mutate: VoidFunction) => setMutateBagian({ mutate: mutate })}
             />
 
             <ModalAdd

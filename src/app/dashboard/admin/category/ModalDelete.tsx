@@ -1,34 +1,35 @@
-import { deleteJabatan } from "@/app/lib/admin/users/userAPIRequest";
+import { ICategory } from "./ListCategory";
+import { deleteCategory } from "@/app/lib/admin/users/userAPIRequest";
 import { Modal, Button } from "react-bootstrap"
 import { Toaster, toast } from "react-hot-toast"
 import { useState } from "react";
-import { Jabatan } from "./JabatanTable";
+import React from "react";
 
-export default function ModalDelete({ show, session, deleteData, onClose, mutate }: { show: boolean, session: string, deleteData: Jabatan | null, onClose: () => void, mutate: () => void }) {
+export default function ModalDelete({ show, session, deleteData, onClose, kategoriMutate }: { show: boolean, session: string, deleteData: ICategory | null, onClose: () => void, kategoriMutate: () => void }) {
     const [isLoadingDelete, setIsLoadingDelete] = useState<boolean>(false);
 
     // Menangani fungsi delete data
     async function handleDelete() {
         setIsLoadingDelete(true);
-        const bagianDelete = await deleteJabatan(deleteData, session);
+        const kategoriDelete = await deleteCategory(deleteData, session);
         setIsLoadingDelete(false);
 
-        if (bagianDelete.ok) {
+        if (kategoriDelete.ok) {
             onClose()
-            toast.success("Jabatan Berhasil Dihapus");
-            mutate();
+            toast.success("Kategori Berhasil Dihapus");
+            kategoriMutate();
         } else {
-            toast.error("Jabatan Gagal Dihapus");
+            toast.error("Kategori Gagal Dihapus");
         }
     }
-
+    
     return (
         <>
             <Modal show={show} onHide={onClose} style={{ zIndex: 1050 }} backdrop="static" keyboard={false}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Hapus Jabatan</Modal.Title>
+                    <Modal.Title>Hapus Kategori</Modal.Title>
                 </Modal.Header>
-                <Modal.Body>Apakah anda yakin ingin menghapus {deleteData?.namaJabatan} ?</Modal.Body>
+                <Modal.Body>Apakah anda yakin ingin menghapus {deleteData && deleteData.namaKategori} ?</Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={onClose}>
                         Close

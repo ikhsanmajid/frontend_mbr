@@ -1,18 +1,24 @@
+import "react-datepicker/dist/react-datepicker.css";
 import { Accordion } from "react-bootstrap";
-import { useState, useEffect } from "react";
-import { useFilterState } from "./useFilterState";
-import Select from "react-select";
+import { faCalendar } from "@fortawesome/free-solid-svg-icons";
 import { FetchAllProduk } from "@/app/lib/admin/users/userAPIRequest";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useFilterState } from "./useFilterState";
+import { useState, useEffect } from "react";
+import DatePicker from "react-datepicker";
+import Select from "react-select";
 
 export default function FilterComponentPermintaan({ session }: { session: string }) {
     const [isMounted, setIsMounted] = useState<boolean>(false);
     const [keyword, setKeyword] = useState<string>("")
 
+    const [date1, setDate1] = useState<Date | null>(null)
     const [statusUsed, setStatusUsed] = useState<"all" | "onlyUsed" | "onlyAvailable">(useFilterState((state) => state.StatusDipakai))
     const [statusConfirmed, setStatusConfirmed] = useState<"all" | "onlyConfirmed" | "onlyPending" | "onlyRejected">(useFilterState((state) => state.StatusKonfirmasi))
     const [idProdukChoosen, setIdProdukChoosen] = useState<number | null>(useFilterState((state) => state.idProduk));
     const [productList, setProductList] = useState<{ value: number | null; label: string }[]>([]);
 
+    const setFilterYear = useFilterState((state) => state.setFilterYear)
     const setIdProduk = useFilterState((state) => state.setIdProduk)
     const setNIKNama = useFilterState((state) => state.setNIKNama)
     const setStatusKonfirmasi = useFilterState((state) => state.setStatusKonfirmasi)
@@ -56,6 +62,7 @@ export default function FilterComponentPermintaan({ session }: { session: string
         setStatusKonfirmasi(statusConfirmed)
         setStatusDipakai(statusUsed)
         setIdProduk(idProdukChoosen)
+        setFilterYear(date1 == null ? null : date1?.getFullYear());
     }
 
     return (
@@ -87,6 +94,31 @@ export default function FilterComponentPermintaan({ session }: { session: string
                                 }} isSearchable isLoading={isLoadingListProduk} defaultValue={productList.find(item => { return item.value == idProdukChoosen })} />}
                             </div>
                         </div>
+
+                        <div className="row mb-2 align-items-center">
+                                <div className="col col-2">
+                                    <span>Tahun Permintaan: </span>
+                                </div>
+                                <div className="col col-3">
+                                    <div className="row row-cols-auto align-items-center">
+                                        <div className="col">
+                                            <DatePicker
+                                                className="form-control"
+                                                selected={date1}
+                                                onChange={(date) => {
+                                                    setDate1(date)
+                                                }}
+                                                isClearable
+                                                dateFormat="yyyy"
+                                                showIcon={true}
+                                                icon={<FontAwesomeIcon icon={faCalendar}></FontAwesomeIcon>}
+                                                showYearPicker
+                                            ></DatePicker>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
 
                         <div className="row mb-2 row mb-2 align-items-center">
                             <div className="col col-2">
