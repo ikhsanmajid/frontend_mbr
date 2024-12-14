@@ -491,7 +491,10 @@ export function FetchAllProduk(session: string | undefined, limit?: number, offs
     const [error, setError] = useState<any>(null);
 
     const fetchData = useCallback(async () => {
-        if (!shouldFetch) return
+        if (!shouldFetch) {
+            setIsLoadingListProduk(false)
+            return
+        }
         try {
             setIsLoadingListProduk(true)
             setError(null)
