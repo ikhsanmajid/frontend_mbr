@@ -186,7 +186,7 @@ export default function ModalLihat({ session, data, show, onClose, onSave }: { s
                     }
                 </Modal.Body>
                 <Modal.Footer>
-                    {data?.status === "DITERIMA" && data.used !== true && <Button variant="success" onClick={() => {
+                    {data?.status === "DITERIMA" && Boolean(data.used) !== true && <Button variant="success" onClick={() => {
                         handleSudahDipakai()
                     }} disabled={isSubmitting}>
                         Tandai Sudah Dipakai

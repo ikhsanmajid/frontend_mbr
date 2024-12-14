@@ -38,29 +38,15 @@ export default function ListPengembalianUser({ session }: { session: string }) {
 
     const [pengembalianData, setPengembalianData] = useState<IReturnRB[] | null>(null)
 
+    const [tempFilterNomor, setTempFilterNomor] = useState<string | null>(null)
+    const [filterNomor, setFilterNomor] = useState<string | null>(null)
     const idProduk = useFilterState(state => state.idProduk)
-    const setIdProduk = useFilterState(state => state.setIdProduk)
     const statusKembali = useFilterState(state => state.statusKembali)
-    const setStatusKembali = useFilterState(state => state.setStatusKembali)
     const startDate = useFilterState(state => state.startDate)
-    const setStartDate = useFilterState(state => state.setStartDate)
     const endDate = useFilterState(state => state.endDate)
-    const setEndDate = useFilterState(state => state.setEndDate)
 
-    // const [idProduk, setIdProduk] = useState<number | null>(() => {
-    //     if (typeof window !== 'undefined') {
-    //         const savedIdProduk = localStorage.getItem('idProdukChoosen');
-    //         return savedIdProduk ? Number(savedIdProduk) : null; // Default ke 0 jika tidak ada di localStorage
-    //     }
-    //     return null;
-    // })
 
-    //const [statusKembali, setStatusKembali] = useState<"all" | "belum" | "outstanding">("outstanding")
-
-    //const [startDate, setStartDate] = useState<string | null>(null)
-    //const [endDate, setEndDate] = useState<string | null>(null)
-
-    const { listPengembalian, isLoadingListPengembalian, error, mutateListPengembalian } = GetAllReturnRBAdminByProduct(session, idProduk, pageSize, pageIndex * pageSize, { status: statusKembali, startDate: startDate, endDate: endDate })
+    const { listPengembalian, isLoadingListPengembalian, error, mutateListPengembalian } = GetAllReturnRBAdminByProduct(session, idProduk, pageSize, pageIndex * pageSize, { number: filterNomor, status: statusKembali, startDate: startDate, endDate: endDate })
 
     const columns = useMemo(() => [
         columnHelper.display({
@@ -163,6 +149,11 @@ export default function ListPengembalianUser({ session }: { session: string }) {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [pageCount])
 
+    useEffect(() => {
+        setFilterNomor(null)
+        setTempFilterNomor(null)
+    }, [idProduk])
+
     return (
         <>
             <div className="card mt-3">
@@ -175,6 +166,23 @@ export default function ListPengembalianUser({ session }: { session: string }) {
                         <FilterComponentPengembalian
                             session={session}
                         />
+                    </div>
+
+                    <div className="row mb-2 mt-1 align-items-center">
+                        <div className="col col-1">
+                            <span>Cari Nomor: </span>
+                        </div>
+                        <div className="col col-3">
+                            <input type="text" className="form-control" placeholder="Masukkan Nomor" onKeyDown={(e) => {
+                                if (e.key === "Enter") {
+                                    setFilterNomor(e.currentTarget.value)
+                                    //console.log("value ", e.currentTarget.value)
+                                }
+                            }} value={tempFilterNomor ?? ""}
+                                onChange={(e) => {
+                                    setTempFilterNomor(e.currentTarget.value)
+                                }} />
+                        </div>
                     </div>
 
                     <div className="row">

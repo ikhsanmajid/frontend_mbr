@@ -4,6 +4,7 @@ import { flexRender, getCoreRowModel, useReactTable, createColumnHelper, Paginat
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { GetPermintaanRB } from "@/app/lib/admin/users/userAPIRequest";
 import { useState, useMemo, useEffect } from "react";
+import { useFilterState } from "./useFilterState";
 import ModalLihat from "./ModalLihat";
 import PaginationComponent from "@/app/component/pagination/Pagination";
 import React from "react";
@@ -47,33 +48,12 @@ export default function ListMBR({ session }: { session: string }) {
     const [dataLihatEdit, setDataLihatEdit] = useState<IPermintaan | null>(null)
 
     //Filter
-    const [keyword, setKeyword] = useState<string>("")
-    const [used, setStatusUsed] = useState<string | boolean>("onlyAvailable")
-    const [status, setStatusConfirmed] = useState<string>("all")
+    const idProduk = useFilterState((state) => state.idProduk)
+    const NIKNama = useFilterState((state) => state.NIKNama)
+    const StatusKonfirmasi = useFilterState((state) => state.StatusKonfirmasi)
+    const StatusDipakai = useFilterState((state) => state.StatusDipakai)
 
-    function handleKeyword(keyword: string) {
-        setKeyword(keyword)
-    }
-
-    function handleUsed(status: string) {
-        const allowed = ["all", "onlyUsed", "onlyAvailable"]
-        if (!allowed.includes(status)) {
-            return toast.error("Status tidak valid")
-        }
-
-        setStatusUsed(status)
-    }
-
-    function handleConfirmed(status: string) {
-        const allowed = ["all", "onlyConfirmed", "onlyPending", "onlyRejected"]
-
-        if (!allowed.includes(status)) {
-            return toast.error("Status tidak valid")
-        }
-        setStatusConfirmed(status)
-    }
-
-    const { listPermintaan, isLoadingListPermintaan, error: errorPermintaan, mutateListPermintaan } = GetPermintaanRB(session, pageSize, pageIndex * pageSize, { keyword, status, used })
+    const { listPermintaan, isLoadingListPermintaan, error: errorPermintaan, mutateListPermintaan } = GetPermintaanRB(session, pageSize, pageIndex * pageSize, { status: StatusKonfirmasi, used: StatusDipakai, keyword: NIKNama, idProduk: idProduk })
 
     const columns = useMemo(() => [
         columnHelper.display({
@@ -182,19 +162,7 @@ export default function ListMBR({ session }: { session: string }) {
                 </div>
                 <div className="card-body">
                     <div className="row">
-                        <FilterComponentPermintaan
-                            NIKNamaFilter={(keyword) => {
-                                handleKeyword(keyword)
-                            }}
-                            StatusDipakaiFilter={(status) => {
-                                handleUsed(status)
-                            }}
-                            StatusKonfirmasiFilter={(status) => {
-                                handleConfirmed(status)
-                            }}>
-
-                        </FilterComponentPermintaan>
-
+                        <FilterComponentPermintaan session={session} />
                     </div>
 
                     <div className="row">
