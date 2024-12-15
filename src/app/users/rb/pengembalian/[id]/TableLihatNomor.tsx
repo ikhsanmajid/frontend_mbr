@@ -22,6 +22,7 @@ export default function TableLihatNomor({ session, idData }: { session: string, 
     const nomorBatchRef = useRef<HTMLInputElement>(null)
     const [idEdit, setIdEdit] = useState<string | number | null>(null)
     const [editData, setEditData] = useState<IListNomorRB | null>(null)
+    const [isLoadingAdd, setIsLoadingAdd] = useState(false)
 
     const [count, setCount] = useState<number>(0)
     const [pagination, setPagination] = useState<PaginationState>({
@@ -37,12 +38,14 @@ export default function TableLihatNomor({ session, idData }: { session: string, 
     const { listNomorPengembalian, isLoadingListNomorPengembalian, error, mutateListNomorPengembalian } = GetAllNomorReturnRBByIDDetailPermintaan(session, idData, pageSize, pageIndex * pageSize)
 
     async function handleSave() {
+        setIsLoadingAdd(true)
         const dateTime = await axios.get(`${apiURL}/time`)
         const dateUpload = new Date(dateTime.data.time)
         const dateShow = dateUpload.toLocaleString("id-ID", { timeZone: "Asia/Jakarta" })
 
         if (editData?.status === "KEMBALI" && (nomorBatchRef.current?.value === "" || nomorBatchRef.current?.value === null)) {
             toast.error("Nomor Batch harus diisi")
+            setIsLoadingAdd(false)
             return
         }
 
@@ -77,11 +80,9 @@ export default function TableLihatNomor({ session, idData }: { session: string, 
         } catch (err) {
             
             console.log(err)
+        } finally {
+            setIsLoadingAdd(false)
         }
-
-
-
-
     }
 
     const columns = useMemo(() => [
@@ -154,6 +155,15 @@ export default function TableLihatNomor({ session, idData }: { session: string, 
                             className="form-control"
                             ref={nomorBatchRef}
                             defaultValue={editData?.nomorBatch ?? ""}
+                            onKeyDown={(e) => {
+                                if (e.key === "Enter") {
+                                    handleSave()
+                                } else if (e.key === "Escape") {
+                                    setIdEdit(null)
+                                }
+                            }}
+                            autoComplete="off"
+                            disabled={isLoadingAdd}
                         />
                     )
                 } else {
@@ -185,10 +195,10 @@ export default function TableLihatNomor({ session, idData }: { session: string, 
                         <>
                             <button className="btn btn-sm btn-danger m-1" onClick={() => {
                                 setIdEdit(null)
-                            }}>Cancel</button>
+                            }} disabled={isLoadingAdd}>Cancel</button>
                             <button className="btn btn-sm btn-success m-1" onClick={() => {
                                 handleSave()
-                            }}>Save</button>
+                            }} disabled={isLoadingAdd}>Save</button>
                         </>
                     )
                 } else {

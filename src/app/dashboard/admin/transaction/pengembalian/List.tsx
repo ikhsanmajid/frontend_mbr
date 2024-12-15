@@ -94,6 +94,7 @@ export default function ListPengembalianUser({ session }: { session: string }) {
             cell: info => info.getValue(),
             size: 80,
         })] : []),
+        //eslint-disable-next-line react-hooks/exhaustive-deps
     ].filter(Boolean), [idProduk, statusKembali])
 
     const data = useMemo(() => pengembalianData ?? [], [pengembalianData])
@@ -139,6 +140,7 @@ export default function ListPengembalianUser({ session }: { session: string }) {
 
     useEffect(() => {
         console.log("data: ", data)
+        //eslint-disable-next-line react-hooks/exhaustive-deps
     }, [pengembalianData])
 
     useEffect(() => {

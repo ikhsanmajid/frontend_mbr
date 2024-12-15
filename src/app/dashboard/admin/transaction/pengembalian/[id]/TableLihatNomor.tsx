@@ -25,6 +25,7 @@ export default function TableLihatNomor({ session, idData }: { session: string, 
     const nomorBatchRef = useRef<HTMLInputElement>(null)
     const [idEdit, setIdEdit] = useState<string | number | null>(null)
     const [editData, setEditData] = useState<IListNomorRB | null>(null)
+    const [isLoadingAdd, setIsLoadingAdd] = useState(false)
 
     const [count, setCount] = useState<number>(0)
     const [pagination, setPagination] = useState<PaginationState>({
@@ -53,6 +54,7 @@ export default function TableLihatNomor({ session, idData }: { session: string, 
     }
 
     async function handleConfirm() {
+        setIsLoadingAdd(true)
         try {
             const confirmData = await axios.post(`${apiURL}/admin/product_rb/confirmRBReturnAdmin/${idConfirm}`, {}, {
                 headers: {
@@ -70,23 +72,27 @@ export default function TableLihatNomor({ session, idData }: { session: string, 
             }
         } catch (err) {
             toast.error("Data gagal dikonfirmasi, Backend Error")
+        } finally {
+            setIsLoadingAdd(false)
         }
     }
 
     async function handleSave() {
+        setIsLoadingAdd(true)
         const dateTime = await axios.get(`${apiURL}/time`)
         const dateUpload = new Date(dateTime.data.time)
         const dateShow = dateUpload.toLocaleString("id-ID", { timeZone: "Asia/Jakarta" })
 
         if (editData?.status === "KEMBALI" && (nomorBatchRef.current?.value === "" || nomorBatchRef.current?.value === null)) {
             toast.error("Nomor Batch harus diisi")
+            setIsLoadingAdd(false)
             return
         }
 
         try {
             const updateData = await axios.put(`${apiURL}/users/rb/updateNomorRBReturn/${idEdit}`, {
                 status: editData?.status,
-                nomor_batch: nomorBatchRef.current?.value ?? "",
+                nomor_batch: nomorBatchRef.current?.value.toUpperCase() ?? "",
                 tanggal_kembali: editData?.status === "KEMBALI" || editData?.status === "BATAL" ? dateTime.data.time : ""
             }, {
                 headers: {
@@ -113,11 +119,9 @@ export default function TableLihatNomor({ session, idData }: { session: string, 
             }
         } catch (err) {
             console.log(err)
+        }finally {
+            setIsLoadingAdd(false)
         }
-
-
-
-
     }
 
     const columns = useMemo(() => [
@@ -190,6 +194,15 @@ export default function TableLihatNomor({ session, idData }: { session: string, 
                             className="form-control"
                             ref={nomorBatchRef}
                             defaultValue={editData?.nomorBatch ?? ""}
+                            onKeyDown={(e) => {
+                                if (e.key === "Enter") {
+                                    handleSave()
+                                } else if (e.key === "Escape") {
+                                    setIdEdit(null)
+                                }
+                            }}
+                            autoComplete="off"
+                            disabled={isLoadingAdd}
                         />
                     )
                 } else {
@@ -221,10 +234,10 @@ export default function TableLihatNomor({ session, idData }: { session: string, 
                         <>
                             <button className="btn btn-sm btn-danger m-1" onClick={() => {
                                 setIdEdit(null)
-                            }}>Cancel</button>
+                            }} disabled={isLoadingAdd}>Cancel</button>
                             <button className="btn btn-sm btn-success m-1" onClick={() => {
                                 handleSave()
-                            }}>Save</button>
+                            }} disabled={isLoadingAdd}>Save</button>
                         </>
                     )
                 } else {
@@ -389,10 +402,10 @@ export default function TableLihatNomor({ session, idData }: { session: string, 
                     <Button variant="secondary" onClick={() => {
                         setShow(false)
                         setIdConfirm(null)
-                    }}>
+                    }} disabled={isLoadingAdd}>
                         Close
                     </Button>
-                    <Button variant="primary" onClick={handleConfirm}>Confirm</Button>
+                    <Button variant="primary" onClick={handleConfirm} disabled={isLoadingAdd}>Confirm</Button>
                 </Modal.Footer>
             </Modal>
 

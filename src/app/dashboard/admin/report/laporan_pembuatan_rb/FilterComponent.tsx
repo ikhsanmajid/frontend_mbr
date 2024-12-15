@@ -54,9 +54,9 @@ export default function FilterComponentLaporanRB({ handleCari }: { handleCari: (
                             </div>
                         </div>
 
-                        <div className="row mb-2 mt-3">
-                            <div className="col col-2 d-flex align-items-center">
-                                <span>Download Laporan: </span>
+                        <div className="row mb-2">
+                            <div className="col col-3 d-flex align-items-center">
+                                <span>Lihat Laporan: </span>
                             </div>
                             <div className="col col-auto">
                                 <button className="btn btn-primary" onClick={handleCari} disabled={isLoading}>
