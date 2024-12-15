@@ -1,10 +1,10 @@
-import { authOptions } from "@/app/option"
-import { getServerSession } from "next-auth"
-import { redirect } from "next/navigation"
+import { authOptions } from "@/app/option";
+import { getServerSession } from "next-auth";
+import { redirect } from "next/navigation";
 import { Suspense } from "react";
-import Home from "./Home";
+import DownloadRB from "./Download";
 
-export default async function UserProfile({ params }: { params: { id: string } }) {
+export default async function Product() {
     const session = await getServerSession(authOptions)
     if (session?.user?.is_admin === true) redirect("/")
 
@@ -12,7 +12,7 @@ export default async function UserProfile({ params }: { params: { id: string } }
 
     return (
         <Suspense fallback={<>Loading...</>}>
-            <Home session={access_token}></Home>
+            <DownloadRB session={ access_token }></DownloadRB>
         </Suspense>
     )
 }

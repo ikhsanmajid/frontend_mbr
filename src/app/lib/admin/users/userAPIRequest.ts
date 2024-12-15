@@ -1366,3 +1366,43 @@ export function GetDashboardDataAdmin(session: string) {
         listDashboardData, isLoadingListDashboardData, error, mutateListDashboardData
     }
 }
+
+//ANCHOR - Get Dashboard Data Admin
+export function GetDashboardDataUser(session: string) {
+    const [listDashboardData, setListDashboardData] = useState<any>(null);
+    const [isLoadingListDashboardData, setIsLoadingListDashboardData] = useState<boolean>(true);
+    const [error, setError] = useState<any>(null);
+
+    const fetchData = useCallback(async () => {
+        try {
+            setIsLoadingListDashboardData(true)
+            setError(null)
+
+            const dashboardData = await axios.get(apiURL + "/users/rb/generateReportDashboadUser/", {
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": "Bearer " + session
+                }
+            })
+
+            setListDashboardData(dashboardData.data)
+
+        } catch (e) {
+            setError(e)
+        } finally {
+            setIsLoadingListDashboardData(false)
+        }
+    }, [session])
+
+    useEffect(() => {
+        fetchData()
+    }, [fetchData])
+
+    const mutateListDashboardData = useCallback(() => {
+        fetchData()
+    }, [fetchData])
+
+    return {
+        listDashboardData, isLoadingListDashboardData, error, mutateListDashboardData
+    }
+}

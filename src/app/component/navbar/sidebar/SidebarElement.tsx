@@ -91,7 +91,7 @@ export function SidebarElement() {
         {
             id: "50",
             name: "Home",
-            link: "/users/home",
+            link: "/dashboard/user",
             children: []
         },
         {
@@ -112,6 +112,16 @@ export function SidebarElement() {
                 link: "/users/rb/pengembalian",
 
             }]
+        },{
+            name: "Laporan",
+            link: "",
+            children: [
+                {
+                    id: "54",
+                    name: "Laporan Serah Terima RB",
+                    link: "/users/report/serah_terima_rb",
+                },
+            ]
         },
     ], []);
 
