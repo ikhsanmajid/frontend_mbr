@@ -39,27 +39,18 @@ export default function LoginPage() {
         }
     }
 
+    useEffect(() => {
+        if (expired) {
+            toast.error("Session Telah Berakhir. Login Kembali")
+        }
+    }, [expired])
+
     return (
         <>
             <div style={{ height: "90vh" }} className="w-100 d-flex justify-content-center align-items-center">
                 <LoginForm handleSubmit={(e: any) => handleSubmit(e)} isLoading={isLoading}></LoginForm>
                 <Toaster />
             </div>
-            { expired &&
-                <ToastContainer
-                    className="p-3 mt-5"
-                    position="top-end"
-                    style={{ zIndex: 1 }}
-                >
-                    <Toast show={show} onClose={() => setShow(false)} bg="danger">
-                        <Toast.Header>
-                            <strong className="me-auto">Session Expired</strong>
-                            
-                        </Toast.Header>
-                        <Toast.Body><span className="text-white"> Sesi Sudah Berakhir, Silakan Login Kembali</span></Toast.Body>
-                    </Toast>
-                </ToastContainer>
-            }
         </>
 
     )

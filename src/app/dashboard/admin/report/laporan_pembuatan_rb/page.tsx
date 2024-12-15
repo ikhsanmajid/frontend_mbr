@@ -2,6 +2,7 @@ import { authOptions } from "@/app/option";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
+import DownloadRB from "./ViewReport";
 
 export default async function Product() {
     const session = await getServerSession(authOptions)
@@ -11,6 +12,7 @@ export default async function Product() {
 
     return (
         <Suspense fallback={<>Loading...</>}>
+            <DownloadRB session={ access_token }></DownloadRB>
         </Suspense>
     )
 }
