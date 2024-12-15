@@ -9,11 +9,12 @@ import ModalLihat from "./ModalLihat";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faRefresh } from "@fortawesome/free-solid-svg-icons";
 import { toast } from "react-hot-toast";
+import { useFilterState } from "../useFilterState";
 
 export default function ListPengembalianUser({ session, idProduk }: { session: string, idProduk: string }) {
     const searchParams = useSearchParams()
     const idPermintaan = searchParams.get("idPermintaan")
-    const [statusKembali, setStatusKembali] = useState<"all" | "belum">("belum")
+    const statusKembali = useFilterState(state => state.statusKembali)
     const [showModalLihat, setShowModalLihat] = useState(false)
     const [dataLihat, setDataLihat] = useState<any | null>(null)
 

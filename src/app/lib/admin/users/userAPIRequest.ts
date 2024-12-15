@@ -1019,7 +1019,7 @@ export function GetAllReturnRBByProduct(session: string, id: any, limit?: number
 }
 
 //ANCHOR - Pengembalian RB
-export function GetAllReturnRBByProductAndIdPermintaan(session: string, idProduk: any, idPermintaan: any, limit?: number, offset?: number, params?: { status?: string }) {
+export function GetAllReturnRBByProductAndIdPermintaan(session: string, idProduk: any, idPermintaan: any, limit?: number, offset?: number, params?: { status?: string | null }) {
     const [listPengembalian, setListPengembalian] = useState<any>(null);
     const [isLoadingListPengembalian, setIsLoadingListPengembalian] = useState<boolean>(true);
     const [error, setError] = useState<any>(null);
@@ -1143,7 +1143,7 @@ export function GetAllNomorReturnRBByIDDetailPermintaan(session: string, idDetai
 
 
 //ANCHOR - Pengembalian RB - Admin
-export function GetAllReturnRBAdminByProduct(session: string, id: any, limit?: number, offset?: number, params?: { number?: string | null, status?: string, startDate?: string | null, endDate?: string | null }) {
+export function GetAllReturnRBAdminByProduct(session: string, id: any, limit?: number, offset?: number, params?: { number?: string | null, status?: string, startDate?: string | null, endDate?: string | null, idBagian?: number | null }) {
     const [listPengembalian, setListPengembalian] = useState<any>(null);
     const [isLoadingListPengembalian, setIsLoadingListPengembalian] = useState<boolean>(true);
     const [error, setError] = useState<any>(null);
@@ -1153,11 +1153,17 @@ export function GetAllReturnRBAdminByProduct(session: string, id: any, limit?: n
             setIsLoadingListPengembalian(true)
             setError(null)
 
-            if (id === null) {
+            if (id === null && params?.status !== "outstanding" && params?.idBagian === null) {
                 throw new Error("Pilih Produk Terlebih Dahulu")
             }
 
-            let query: string = `${apiURL}/admin/product_rb/getRBReturnAdminByProduct/${id}?`
+            let query: string = `${apiURL}/admin/product_rb/getRBReturnAdminByProduct/`
+
+            if (params?.status === "outstanding" && params?.idBagian !== null) {
+                query = `${apiURL}/admin/product_rb/getRBReturnAdminByBagian?`
+            } else {
+                query += `${id}?`
+            }
 
             if (limit !== undefined && offset !== undefined) {
                 query += `limit=${limit}&offset=${offset}&`
@@ -1186,7 +1192,7 @@ export function GetAllReturnRBAdminByProduct(session: string, id: any, limit?: n
             setIsLoadingListPengembalian(false)
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [session, id, limit, offset, params?.status, params?.startDate, params?.endDate, params?.number])
+    }, [session, id, limit, offset, params?.status, params?.startDate, params?.endDate, params?.number, params?.idBagian])
 
     useEffect(() => {
         fetchData()

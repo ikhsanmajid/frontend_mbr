@@ -87,7 +87,7 @@ export default function FilterComponentPengembalian({ session }: { session: stri
             return
         }
 
-        if (idProdukChoosen == null) {
+        if (idProdukChoosen == null && statusKembaliChoosen !== "outstanding") {
             toast.error("Pilih produk terlebih dahulu");
             return
         }
@@ -105,7 +105,7 @@ export default function FilterComponentPengembalian({ session }: { session: stri
     }
 
     function handleChangeStatus(e: React.ChangeEvent<HTMLInputElement>) {
-        setStatusKembaliChoosen(e.target.value as "all" | "belum");
+        setStatusKembaliChoosen(e.target.value as "all" | "belum" | "outstanding");
     }
 
     return (
@@ -142,8 +142,9 @@ export default function FilterComponentPengembalian({ session }: { session: stri
                                 {isMounted && !isLoadingBagian && (
                                     <Select
                                         options={productList}
-                                        onChange={(e) => setIdProdukChoosen(e!.value)}
+                                        onChange={(e) => e?.value == null ? setIdProdukChoosen(null) : setIdProdukChoosen(e.value)}
                                         isSearchable
+                                        isClearable
                                         isLoading={isLoadingListProduk}
                                         value={productList.find((item) => item.value === idProdukChoosen) || null}
                                         placeholder="Pilih Produk"

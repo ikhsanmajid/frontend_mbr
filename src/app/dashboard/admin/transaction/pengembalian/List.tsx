@@ -40,13 +40,13 @@ export default function ListPengembalianUser({ session }: { session: string }) {
 
     const [tempFilterNomor, setTempFilterNomor] = useState<string | null>(null)
     const [filterNomor, setFilterNomor] = useState<string | null>(null)
+    const idBagian = useFilterState(state => state.idBagian)
     const idProduk = useFilterState(state => state.idProduk)
     const statusKembali = useFilterState(state => state.statusKembali)
     const startDate = useFilterState(state => state.startDate)
     const endDate = useFilterState(state => state.endDate)
 
-
-    const { listPengembalian, isLoadingListPengembalian, error, mutateListPengembalian } = GetAllReturnRBAdminByProduct(session, idProduk, pageSize, pageIndex * pageSize, { number: filterNomor, status: statusKembali, startDate: startDate, endDate: endDate })
+    const { listPengembalian, isLoadingListPengembalian, error, mutateListPengembalian } = GetAllReturnRBAdminByProduct(session, idProduk, pageSize, pageIndex * pageSize, { number: filterNomor, status: statusKembali, startDate: startDate, endDate: endDate, idBagian: idBagian })
 
     const columns = useMemo(() => [
         columnHelper.display({
@@ -58,7 +58,7 @@ export default function ListPengembalianUser({ session }: { session: string }) {
         }),
         columnHelper.accessor("namaProduk", {
             header: "Nama Produk",
-            cell: ({ cell, row }) => <Link href={`pengembalian/${idProduk}?idPermintaan=${row.original.id}`}>{cell.getValue()}</Link>,
+            cell: ({ cell, row }) => <Link href={`pengembalian/${row.original.idProduk}?idPermintaan=${row.original.id}`}>{cell.getValue()}</Link>,
             size: 180,
             meta: {
                 className: "text-start" as any
@@ -136,6 +136,10 @@ export default function ListPengembalianUser({ session }: { session: string }) {
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isLoadingListPengembalian, listPengembalian, error])
+
+    useEffect(() => {
+        console.log("data: ", data)
+    }, [pengembalianData])
 
     useEffect(() => {
         if (currentPage + 1 > pageCount) {
