@@ -1,4 +1,4 @@
-import type { AuthOptions, NextAuthOptions } from "next-auth"
+import type { NextAuthOptions } from "next-auth"
 import Credentials from "next-auth/providers/credentials"
 
 export const apiURL = process.env.NEXT_PUBLIC_APIENDPOINT_URL as string
