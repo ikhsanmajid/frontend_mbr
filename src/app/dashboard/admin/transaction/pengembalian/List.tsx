@@ -58,7 +58,7 @@ export default function ListPengembalianUser({ session }: { session: string }) {
         }),
         columnHelper.accessor("namaProduk", {
             header: "Nama Produk",
-            cell: ({ cell, row }) => <Link href={`pengembalian/${row.original.idProduk}?idPermintaan=${row.original.id}`}>{cell.getValue()}</Link>,
+            cell: ({ cell, row }) => <Link href={`pengembalian/${row.original.idProduk == undefined ? idProduk : row.original.idProduk}?idPermintaan=${row.original.id}`}>{cell.getValue()}</Link>,
             size: 180,
             meta: {
                 className: "text-start" as any
@@ -132,14 +132,14 @@ export default function ListPengembalianUser({ session }: { session: string }) {
         if (listPengembalian !== null) {
             setCount(listPengembalian.count)
             setPengembalianData(listPengembalian.data)
-            console.log(listPengembalian.data)
+            //console.log(listPengembalian.data)
         }
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isLoadingListPengembalian, listPengembalian, error])
 
     useEffect(() => {
-        console.log("data: ", data)
+        //console.log("data: ", data)
         //eslint-disable-next-line react-hooks/exhaustive-deps
     }, [pengembalianData])
 

@@ -3,6 +3,8 @@
 import { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import useSWRImmutable from "swr/immutable";
+import { AxiosInstance } from "axios"
+import axiosInstance from "./axios";
 
 export const apiURL = process.env.NEXT_PUBLIC_APIENDPOINT_URL as string
 
@@ -45,7 +47,7 @@ export function FetchAllUser(session: string | undefined, limit?: number, offset
                 }
             }
 
-            const response = await axios.get(query, {
+            const response = await axiosInstance.get(query, {
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${session}`
@@ -92,7 +94,7 @@ export async function deleteUser(deleteData: any, session: string) {
 
 //ANCHOR - Tambah Bagian Jabatan ke User
 export async function addBagianJabatan(data: any, session: string) {
-    const addProcess = await axios.post(apiURL + "/admin/users/addUserJabatan", {
+    const addProcess = await axiosInstance.post(apiURL + "/admin/users/addUserJabatan", {
         "idBagianJabatan": data.idBagianJabatan,
         "idUser": data.idUser
     }, {
@@ -108,7 +110,7 @@ export async function addBagianJabatan(data: any, session: string) {
 
 //ANCHOR - Update User
 export async function updateDataUser({ data, session }: { data: { [key: string]: string | number }, session: string }) {
-    const updateProcess = await axios.patch(`${apiURL}/admin/users/updateUser/${data.id}`, {
+    const updateProcess = await axiosInstance.patch(`${apiURL}/admin/users/updateUser/${data.id}`, {
         email: data.email,
         nik: data.nik,
         nama: data.nama,
@@ -128,7 +130,7 @@ export async function updateDataUser({ data, session }: { data: { [key: string]:
 
 //ANCHOR - Update User
 export async function updateDataUserBagianJabatan(data: { id: string, idBagianJabatan: string }, session: string) {
-    const updateProcess = await axios.patch(`${apiURL}/admin/users/updateUserJabatan`, {
+    const updateProcess = await axiosInstance.patch(`${apiURL}/admin/users/updateUserJabatan`, {
         id: data.id,
         idBagianJabatan: data.idBagianJabatan
     }, {
@@ -161,7 +163,7 @@ export function GetDetailUserInfo(id: number, session: string) {
 
 //ANCHOR - Delete Jabatan User By Id
 export async function deleteBagianJabatanUser(id: string, session: string) {
-    const processDelete = await axios.delete(apiURL + "/admin/users/deleteJabatan/" + id, {
+    const processDelete = await axiosInstance.delete(apiURL + "/admin/users/deleteJabatan/" + id, {
         headers: {
             "Content-Type": "application/json",
             "Authorization": "Bearer " + session
@@ -199,7 +201,7 @@ export function useGetAllBagian(session: string | undefined, onlyManufactur: boo
             const query = `limit=${limit}&offset=${offset}&search=${params?.search}`;
 
             if (limit != undefined) {
-                const response = await axios.get(`${apiURL}/admin/department/findAll?manufaktur=${onlyManufactur ? "yes" : "no"}&${query}`, {
+                const response = await axiosInstance.get(`${apiURL}/admin/department/findAll?manufaktur=${onlyManufactur ? "yes" : "no"}&${query}`, {
                     headers: {
                         'Content-Type': 'application/json',
                         'Authorization': `Bearer ${session}`
@@ -208,7 +210,7 @@ export function useGetAllBagian(session: string | undefined, onlyManufactur: boo
 
                 setDetailBagian(response.data);
             } else {
-                const response = await axios.get(`${apiURL}/admin/department/findAll?manufaktur=${onlyManufactur ? "yes " : "no"}`, {
+                const response = await axiosInstance.get(`${apiURL}/admin/department/findAll?manufaktur=${onlyManufactur ? "yes " : "no"}`, {
                     headers: {
                         'Content-Type': 'application/json',
                         'Authorization': `Bearer ${session}`
@@ -238,7 +240,7 @@ export function useGetAllBagian(session: string | undefined, onlyManufactur: boo
 
 //ANCHOR - Tambah Bagian
 export async function add_bagian(data: any, session: string) {
-    const addProcess = axios.post(apiURL + "/admin/department/addDepartment", {
+    const addProcess = axiosInstance.post(apiURL + "/admin/department/addDepartment", {
         nama_bagian: data.bagian,
         kategori: data.kategori
     }, {
@@ -266,7 +268,7 @@ export async function checkBagian(bagian: string, session: string) {
 //ANCHOR - Update Bagian by Id
 export async function edit_bagian(id: number | undefined, data: any, session: string) {
 
-    const editProcess = await axios.patch(apiURL + "/admin/department/updateDepartment/" + id, {
+    const editProcess = await axiosInstance.patch(apiURL + "/admin/department/updateDepartment/" + id, {
         nama_bagian: data.bagian,
         is_active: data.active == "1" ? "true" : "false",
         kategori: data.kategori
@@ -310,7 +312,7 @@ export function useGetAllJabatan(session: string | undefined, limit?: number, of
         try {
             const query = `?limit=${limit}&offset=${offset}`;
             if (limit != undefined) {
-                const response = await axios.get(`${apiURL}/admin/employment/findAll${query}`, {
+                const response = await axiosInstance.get(`${apiURL}/admin/employment/findAll${query}`, {
                     headers: {
                         'Content-Type': 'application/json',
                         'Authorization': `Bearer ${session}`
@@ -318,7 +320,7 @@ export function useGetAllJabatan(session: string | undefined, limit?: number, of
                 });
                 setDetailJabatan(response.data);
             } else {
-                const response = await axios.get(`${apiURL}/admin/employment/findAll`, {
+                const response = await axiosInstance.get(`${apiURL}/admin/employment/findAll`, {
                     headers: {
                         'Content-Type': 'application/json',
                         'Authorization': `Bearer ${session}`
@@ -347,7 +349,7 @@ export function useGetAllJabatan(session: string | undefined, limit?: number, of
 
 //ANCHOR - Get List Jabatan by Id Bagian
 export async function GetJabatanByIDBagian(id: string, session: string) {
-    const listJabatan = await axios.get(apiURL + "/admin/department_employment/findJabatan/" + id, {
+    const listJabatan = await axiosInstance.get(apiURL + "/admin/department_employment/findJabatan/" + id, {
         headers: {
             "Content-Type": "application/json",
             "Authorization": "Bearer " + session
@@ -360,7 +362,7 @@ export async function GetJabatanByIDBagian(id: string, session: string) {
 //ANCHOR - Update Jabatan by Id
 export async function edit_jabatan(id: number | undefined, data: any, session: string) {
 
-    const editProcess = await axios.patch(apiURL + "/admin/employment/updateEmployment/" + id, {
+    const editProcess = await axiosInstance.patch(apiURL + "/admin/employment/updateEmployment/" + id, {
         nama_jabatan: data.jabatan,
         is_active: data.active == "1" ? "true" : "false"
     }, {
@@ -413,7 +415,7 @@ export function useGetAllBagianJabatan(session: string | undefined, limit?: numb
 
         try {
             const query = `?limit=${limit ?? 10}&offset=${offset ?? 0}${sort ?? "&sort=" + sort}`;
-            const response = await axios.get(`${apiURL}/admin/department_employment/findAll${query}`, {
+            const response = await axiosInstance.get(`${apiURL}/admin/department_employment/findAll${query}`, {
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${session}`
@@ -441,7 +443,7 @@ export function useGetAllBagianJabatan(session: string | undefined, limit?: numb
 
 //ANCHOR - Tambah Bagian Jabatan
 export async function add_bagian_jabatan(data: any, session: string) {
-    const addProcess = axios.post(apiURL + "/admin/department_employment/addDepartmentEmployment", {
+    const addProcess = axiosInstance.post(apiURL + "/admin/department_employment/addDepartmentEmployment", {
         id_bagian: data.bagian,
         id_jabatan: data.jabatan
     }, {
@@ -454,7 +456,23 @@ export async function add_bagian_jabatan(data: any, session: string) {
     return (await addProcess).data
 }
 
-//ANCHOR - Check Bagian by Name
+//ANCHOR - Update Bagian by Id
+export async function edit_bagian_jabatan(id: number | undefined, data: any, session: string) {
+
+    const editProcess = await axiosInstance.patch(apiURL + "/admin/department_employment/updateDepartmentEmployment/" + id, {
+        id_bagian: data.bagian,
+        id_jabatan: data.jabatan
+    }, {
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + session
+        }
+    })
+
+    return editProcess.data
+}
+
+//ANCHOR - Check Bagian by ID
 export async function checkBagianJabatan(bagian: string, jabatan: string, session: string) {
 
     const bagianJabatanCheck = await axios(apiURL + "/admin/department_employment/findFixedDepartmentEmployment/?id_bagian=" + bagian + "&id_jabatan=" + jabatan, {
@@ -517,7 +535,7 @@ export function FetchAllProduk(session: string | undefined, limit?: number, offs
 
             //console.log("query ", {params})    
 
-            const response = await axios.get(query, {
+            const response = await axiosInstance.get(query, {
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${session}`
@@ -564,7 +582,7 @@ export async function deleteProduk(deleteData: any, session: string) {
 
 //ANCHOR - Edit Produk
 export async function edit_produk(id: number | undefined, data: any, session: string) {
-    const editProcess = await axios.put(apiURL + "/admin/product/editProduct/" + id, {
+    const editProcess = await axiosInstance.put(apiURL + "/admin/product/editProduct/" + id, {
         nama_produk: data.nama_produk,
         id_bagian: data.id_bagian,
         id_kategori: data.id_kategori,
@@ -584,7 +602,7 @@ export async function edit_produk(id: number | undefined, data: any, session: st
 //SECTION - Flow Permintaan RB
 //ANCHOR - Tambah Permintaan RB
 export async function addPermintaanNomor(data: any, session: string) {
-    const addProcess = await axios.post(apiURL + "/users/rb/addRequestRB", {
+    const addProcess = await axiosInstance.post(apiURL + "/users/rb/addRequestRB", {
         data: data
     }, {
         headers: {
@@ -598,7 +616,7 @@ export async function addPermintaanNomor(data: any, session: string) {
 
 //ANCHOR - Edit Permintaan RB
 export async function editPermintaanNomor(oldid: number, data: any, session: string) {
-    const addProcess = await axios.post(apiURL + "/users/rb/editRequestRB", {
+    const addProcess = await axiosInstance.post(apiURL + "/users/rb/editRequestRB", {
         data: data,
         oldid: oldid
     }, {
@@ -613,7 +631,7 @@ export async function editPermintaanNomor(oldid: number, data: any, session: str
 
 //ANCHOR - Mark Sudah Dipakai Permintaan RB
 export async function usedPermintaanNomor(id: number, session: string) {
-    const addProcess = await axios.put(apiURL + `/users/rb/usedRequestRB/${id}`, {}, {
+    const addProcess = await axiosInstance.put(apiURL + `/users/rb/usedRequestRB/${id}`, {}, {
         headers: {
             "Content-Type": "application/json",
             "Authorization": "Bearer " + session
@@ -648,7 +666,7 @@ export function GetPermintaanRB(session: string | undefined, limit?: number, off
                 }
             }
 
-            const response = await axios.get(query, {
+            const response = await axiosInstance.get(query, {
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${session}`
@@ -703,7 +721,7 @@ export function GetPermintaanRBAdmin(session: string | undefined, limit?: number
                 }
             }
 
-            const response = await axios.get(query, {
+            const response = await axiosInstance.get(query, {
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${session}`
@@ -752,7 +770,7 @@ export function GetDetailPermintaan(session: string | undefined, id: number | nu
 
             let query: string = `${apiURL}/admin/product_rb/listDetailPermintaan?id=${id}`
 
-            const response = await axios.get(query, {
+            const response = await axiosInstance.get(query, {
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${session}`
@@ -801,7 +819,7 @@ export function GetDetailPermintaanNomor(session: string | undefined, id: number
 
             let query: string = `${apiURL}/admin/product_rb/listNomorUrutByIdPermintaan?id=${id}`
 
-            const response = await axios.get(query, {
+            const response = await axiosInstance.get(query, {
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${session}`
@@ -833,7 +851,7 @@ export function GetDetailPermintaanNomor(session: string | undefined, id: number
 
 //ANCHOR - Konfirmasi / Tolak Permintaan
 export async function confirmPermintaan(data: any, session: string, action: "confirm" | "reject", reason?: string) {
-    const confirmProcess = await axios.post(apiURL + "/admin/product_rb/confirmPermintaan/" + data.id, {
+    const confirmProcess = await axiosInstance.post(apiURL + "/admin/product_rb/confirmPermintaan/" + data.id, {
         action: action,
         reason: reason
     }, {
@@ -873,7 +891,7 @@ export function FetchAllKategori(session: string | undefined, limit?: number, of
                 }
             }
 
-            const response = await axios.get(query, {
+            const response = await axiosInstance.get(query, {
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${session}`
@@ -918,7 +936,7 @@ export async function checkCategory(kategori: string, session: string) {
 //ANCHOR - Update Kategori by Id
 export async function edit_kategori(id: string | number | undefined, data: any, session: string) {
 
-    const editProcess = await axios.patch(apiURL + "/admin/product/updateCategory/" + id, {
+    const editProcess = await axiosInstance.patch(apiURL + "/admin/product/updateCategory/" + id, {
         nama_kategori: data.namaKategori,
         starting_number: data.startingNumber,
     }, {
@@ -946,7 +964,7 @@ export async function deleteCategory(deleteData: any, session: string) {
 
 //ANCHOR - Tambah Bagian
 export async function add_kategori(data: any, session: string) {
-    const addProcess = axios.post(apiURL + "/admin/product/addCategory", {
+    const addProcess = axiosInstance.post(apiURL + "/admin/product/addCategory", {
         nama_kategori: data.namaKategori,
         starting_number: data.startingNumber
     }, {
@@ -988,7 +1006,7 @@ export function GetAllReturnRBByProduct(session: string, id: any, limit?: number
                 }
             }
 
-            const response = await axios.get(query, {
+            const response = await axiosInstance.get(query, {
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${session}`
@@ -1051,7 +1069,7 @@ export function GetAllReturnRBByProductAndIdPermintaan(session: string, idProduk
                 }
             }
 
-            const response = await axios.get(query, {
+            const response = await axiosInstance.get(query, {
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${session}`
@@ -1111,7 +1129,7 @@ export function GetAllNomorReturnRBByIDDetailPermintaan(session: string, idDetai
                 }
             }
 
-            const response = await axios.get(query, {
+            const response = await axiosInstance.get(query, {
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${session}`
@@ -1159,8 +1177,10 @@ export function GetAllReturnRBAdminByProduct(session: string, id: any, limit?: n
 
             let query: string = `${apiURL}/admin/product_rb/getRBReturnAdminByProduct/`
 
-            if (params?.status === "outstanding" && params?.idBagian !== null) {
+            if (params?.status === "outstanding" && params?.idBagian !== null && id === null) {
                 query = `${apiURL}/admin/product_rb/getRBReturnAdminByBagian?`
+            } else if (params?.status === "outstanding" && params?.idBagian === null) {
+                query = `${apiURL}/admin/product_rb/getRBReturnAdminByStatusOutstanding?`
             } else {
                 query += `${id}?`
             }
@@ -1177,7 +1197,7 @@ export function GetAllReturnRBAdminByProduct(session: string, id: any, limit?: n
                 }
             }
 
-            const response = await axios.get(query, {
+            const response = await axiosInstance.get(query, {
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${session}`
@@ -1240,7 +1260,7 @@ export function GetAllReturnRBAdminByProductAndIdPermintaan(session: string, idP
                 }
             }
 
-            const response = await axios.get(query, {
+            const response = await axiosInstance.get(query, {
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${session}`
@@ -1300,7 +1320,7 @@ export function GetAllNomorReturnRBAdminByIDDetailPermintaan(session: string, id
                 }
             }
 
-            const response = await axios.get(query, {
+            const response = await axiosInstance.get(query, {
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${session}`
@@ -1344,7 +1364,7 @@ export function GetDashboardDataAdmin(session: string) {
             setIsLoadingListDashboardData(true)
             setError(null)
 
-            const dashboardData = await axios.get(apiURL + "/admin/product_rb/generateReportDashboadAdmin", {
+            const dashboardData = await axiosInstance.get(apiURL + "/admin/product_rb/generateReportDashboadAdmin", {
                 headers: {
                     "Content-Type": "application/json",
                     "Authorization": "Bearer " + session
@@ -1384,7 +1404,7 @@ export function GetDashboardDataUser(session: string) {
             setIsLoadingListDashboardData(true)
             setError(null)
 
-            const dashboardData = await axios.get(apiURL + "/users/rb/generateReportDashboadUser/", {
+            const dashboardData = await axiosInstance.get(apiURL + "/users/rb/generateReportDashboadUser/", {
                 headers: {
                     "Content-Type": "application/json",
                     "Authorization": "Bearer " + session

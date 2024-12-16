@@ -1,7 +1,7 @@
 import { IPermintaan } from "./PermintaanTable";
 import { Modal, Button } from "react-bootstrap";
 import { GetDetailPermintaan, GetDetailPermintaanNomor, confirmPermintaan } from "@/app/lib/admin/users/userAPIRequest";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSave } from "@fortawesome/free-regular-svg-icons";
@@ -11,6 +11,14 @@ export default function ModalLihat({ session, data, show, onClose, onSave }: { s
     const [keputusan, setKeputusan] = useState<string | null>(null)
     const keputusanRef = useRef<HTMLSelectElement | null>(null)
     const reasonRef = useRef<HTMLInputElement | null>(null)
+    const [idData, setIdData] = useState<number | null>(null)
+
+    useEffect(() => {
+        if (data) {
+            setIdData(data.id)
+        }
+
+    }, [data?.status, data?.id, data])
 
     const { detailPermintaan, isLoadingPermintaan, error, mutateListPermintaan } = data?.status !== "DITERIMA" ? GetDetailPermintaan(session, data ? data.id : null) : { detailPermintaan: null, isLoadingPermintaan: false, error: null, mutateListPermintaan: null }
     const { detailPermintaanNomor, isLoadingPermintaanNomor, errorNomor, mutateListPermintaanNomor } = data?.status == "DITERIMA" ? GetDetailPermintaanNomor(session, data ? data.id : null) : { detailPermintaanNomor: null, isLoadingPermintaanNomor: false, errorNomor: null, mutateListPermintaanNomor: null }
@@ -110,7 +118,7 @@ export default function ModalLihat({ session, data, show, onClose, onSave }: { s
                             <tbody>
                                 {data?.status !== "DITERIMA" && !isLoadingPermintaan && detailPermintaan && detailPermintaan.data.map((item: any, produkIndex: number) => (
                                     item.items.map((produk: any, index: number) => (
-                                        <tr key={produk.id}>
+                                        <tr key={`${produkIndex}${index}`}>
 
                                             {index == 0 ?
                                                 <>
@@ -128,7 +136,7 @@ export default function ModalLihat({ session, data, show, onClose, onSave }: { s
 
                                 {data?.status === "DITERIMA" && !isLoadingPermintaanNomor && detailPermintaanNomor && detailPermintaanNomor.data.map((item: any, produkIndex: number) => (
                                     item.items.map((produk: any, index: number) => (
-                                        <tr key={produk.id}>
+                                        <tr key={`${produkIndex}${index}`}>
 
                                             {index == 0 ?
                                                 <>
@@ -180,7 +188,7 @@ export default function ModalLihat({ session, data, show, onClose, onSave }: { s
                             }
                             <div className="col col-auto">
                                 <button className="btn btn-success" onClick={() => {
-                                    
+
                                     handleSave()
                                 }}><FontAwesomeIcon icon={faSave} style={{ color: "#ffffff" }} />&nbsp; Simpan</button>
                             </div>
@@ -193,14 +201,24 @@ export default function ModalLihat({ session, data, show, onClose, onSave }: { s
                                 Keputusan:
                             </div>
                             <div className="col col-auto">
-                                <input type="text" className="form-control" value={data?.status} disabled={true} />
+                                <input
+                                    type="text"
+                                    className="form-control"
+                                    value={data?.status || ''} // Add fallback empty string
+                                    disabled={true}
+                                />
                             </div>
 
                             <div className="col col-auto">
                                 Dikonfirmasi Oleh:
                             </div>
                             <div className="col col-auto">
-                                <input type="text" className="form-control" value={data?.confirmedBy} disabled={true} />
+                                <input
+                                    type="text"
+                                    className="form-control"
+                                    value={data?.confirmedBy || ''} // Add fallback empty string
+                                    disabled={true}
+                                />
                             </div>
                             {data?.status == "DITOLAK" &&
                                 <>
@@ -208,7 +226,11 @@ export default function ModalLihat({ session, data, show, onClose, onSave }: { s
                                         Alasan Penolakan:
                                     </div>
                                     <div className="col col-auto">
-                                        <textarea className="form-control" value={data?.reason} disabled={true} />
+                                        <textarea
+                                            className="form-control"
+                                            value={data?.reason || ''} // Add fallback empty string
+                                            disabled={true}
+                                        />
                                     </div>
                                 </>
                             }

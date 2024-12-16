@@ -1,8 +1,9 @@
 "use client"
 import PaginationComponent from "@/app/component/pagination/Pagination";
+import axiosInstance from "@/app/lib/admin/users/axios";
 import { apiURL, GetAllNomorReturnRBByIDDetailPermintaan } from "@/app/lib/admin/users/userAPIRequest";
 import { flexRender, getCoreRowModel, useReactTable, createColumnHelper, PaginationState, getPaginationRowModel } from "@tanstack/react-table";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { useEffect, useRef } from "react";
 import { useMemo, useState } from "react";
 import { Button, Modal } from "react-bootstrap";
@@ -56,7 +57,7 @@ export default function TableLihatNomor({ session, idData }: { session: string, 
     async function handleConfirm() {
         setIsLoadingAdd(true)
         try {
-            const confirmData = await axios.post(`${apiURL}/admin/product_rb/confirmRBReturnAdmin/${idConfirm}`, {}, {
+            const confirmData = await axiosInstance.post(`${apiURL}/admin/product_rb/confirmRBReturnAdmin/${idConfirm}`, {}, {
                 headers: {
                     Authorization: `Bearer ${session}`
                 }
@@ -71,6 +72,11 @@ export default function TableLihatNomor({ session, idData }: { session: string, 
                 toast.error("Data gagal dikonfirmasi")
             }
         } catch (err) {
+            if (err instanceof AxiosError){
+                if (error.response?.status === 401) {
+                    window.location.href = '/login?expired=true'; 
+                }
+            }
             toast.error("Data gagal dikonfirmasi, Backend Error")
         } finally {
             setIsLoadingAdd(false)
@@ -79,7 +85,7 @@ export default function TableLihatNomor({ session, idData }: { session: string, 
 
     async function handleSave() {
         setIsLoadingAdd(true)
-        const dateTime = await axios.get(`${apiURL}/time`)
+        const dateTime = await axiosInstance.get(`${apiURL}/time`)
         const dateUpload = new Date(dateTime.data.time)
         const dateShow = dateUpload.toLocaleString("id-ID", { timeZone: "Asia/Jakarta" })
 
@@ -90,7 +96,7 @@ export default function TableLihatNomor({ session, idData }: { session: string, 
         }
 
         try {
-            const updateData = await axios.put(`${apiURL}/users/rb/updateNomorRBReturn/${idEdit}`, {
+            const updateData = await axiosInstance.put(`${apiURL}/users/rb/updateNomorRBReturn/${idEdit}`, {
                 status: editData?.status,
                 nomor_batch: nomorBatchRef.current?.value.toUpperCase() ?? "",
                 tanggal_kembali: editData?.status === "KEMBALI" || editData?.status === "BATAL" ? dateTime.data.time : ""
@@ -118,6 +124,11 @@ export default function TableLihatNomor({ session, idData }: { session: string, 
                 toast.error("Data gagal diupdate")
             }
         } catch (err) {
+            if (err instanceof AxiosError){
+                if (error.response?.status === 401) {
+                    window.location.href = '/login?expired=true'; 
+                }
+            }
             console.log(err)
         }finally {
             setIsLoadingAdd(false)

@@ -224,10 +224,8 @@ export default function PermintaanTable({ session }: { session: string }) {
 
             <ModalLihat session={session} data={dataLihat} show={showModalLihat} onClose={() => {
                 setShowModalLihat(false)
-                setDataLihat(null)
             }} onSave={(status: string) => {                
                 setShowModalLihat(false)
-                setDataLihat(null)
                 mutateListPermintaan()
                 toast.success("Berhasil Mengonfirmasi Permintaan")
             }}></ModalLihat>

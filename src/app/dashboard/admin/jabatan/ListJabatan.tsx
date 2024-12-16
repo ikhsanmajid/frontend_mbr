@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import ModalAdd from "@/app/dashboard/admin/jabatan/ModalAdd";
 import JabatanTable from "@/app/dashboard/admin/jabatan/JabatanTable";
-import toast from "react-hot-toast";
+import toast, { Toaster } from "react-hot-toast";
 
 
 export type JabatanType = {
@@ -33,10 +33,10 @@ export function ListJabatan({ session }: { session: string }) {
                 session={session}
                 onClose={() => {
                     setShowModalAdd(false)
-                    toast.dismiss()
                 }}
                 mutate={mutateJabatan.mutate}
             />
+            <Toaster/>
         </>
     );
 }

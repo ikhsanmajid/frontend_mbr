@@ -449,7 +449,7 @@ export function EditUser({ id, session }: { id: number, session: string }) {
 
                                             {/* is Admin User */}
                                             <div className="mb-3 row">
-                                                <div className="col-sm-4 col-form-label">Status Admin</div>
+                                                <div className="col-sm-4 col-form-label">Status Admininstator</div>
                                                 <div className="col-sm-8">
                                                     <select defaultValue={user.data.isAdmin === true ? "1" : "0"} name="isAdmin" className="form-select">
                                                         <option value="0">No</option>

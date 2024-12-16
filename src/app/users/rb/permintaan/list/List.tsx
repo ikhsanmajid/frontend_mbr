@@ -54,7 +54,7 @@ export default function ListMBR({ session }: { session: string }) {
     const StatusDipakai = useFilterState((state) => state.StatusDipakai)
     const filterYear = useFilterState(state => state.filterYear)
 
-    const { listPermintaan, isLoadingListPermintaan, error: errorPermintaan, mutateListPermintaan } = GetPermintaanRB(session, pageSize, pageIndex * pageSize, { status: StatusKonfirmasi, used: StatusDipakai, keyword: NIKNama, idProduk: idProduk, year: filterYear  })
+    const { listPermintaan, isLoadingListPermintaan, error: errorPermintaan, mutateListPermintaan } = GetPermintaanRB(session, pageSize, pageIndex * pageSize, { status: StatusKonfirmasi, used: StatusDipakai, keyword: NIKNama, idProduk: idProduk, year: filterYear })
 
     const columns = useMemo(() => [
         columnHelper.display({
@@ -153,9 +153,14 @@ export default function ListMBR({ session }: { session: string }) {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [pageCount])
 
+    useEffect(() => {
+        toast.dismiss()
+    }, [])
+
 
     return (
         <>
+            <div><Toaster /></div>
             <div className="card mt-3">
                 <div className="card-header d-flex justify-content-between">
                     <span className="fw-bold">Daftar Permintaan</span>
@@ -249,7 +254,6 @@ export default function ListMBR({ session }: { session: string }) {
                     setDataLihatEdit(null)
                 }}></ModalEdit>}
             </div>
-            <Toaster />
         </>
     )
 }

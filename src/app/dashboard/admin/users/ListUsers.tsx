@@ -1,11 +1,11 @@
 "use client"
-import { toast } from "react-hot-toast";
+import { toast, Toaster } from "react-hot-toast";
 import { useState, useEffect } from "react";
 import ModalAdd from "@/app/dashboard/admin/users/ModalAdd";
 import UserTable from "@/app/dashboard/admin/users/UserTable";
 import React from "react";
 
-export interface IUser  {
+export interface IUser {
     id?: number;
     nik?: number;
     nama?: string;
@@ -17,7 +17,7 @@ export interface IUser  {
 export default function ListUsers({ session }: { session: string }) {
     // Menampilkan Modal Tambah Data
     const [showModalAdd, setShowModalAdd] = useState(false);
-    const [mutateUsers, setMutateUsers] = useState<{mutate: null | VoidFunction}>({mutate: null});
+    const [mutateUsers, setMutateUsers] = useState<{ mutate: null | VoidFunction }>({ mutate: null });
 
     useEffect(() => {
         toast.dismiss()
@@ -27,7 +27,7 @@ export default function ListUsers({ session }: { session: string }) {
         <>
             <UserTable
                 session={session}
-                mutateUsers={(mutate: VoidFunction) => setMutateUsers({mutate: mutate})}
+                mutateUsers={(mutate: VoidFunction) => setMutateUsers({ mutate: mutate })}
                 onAdd={(state) => setShowModalAdd(state)}
             >
             </UserTable>
@@ -38,10 +38,11 @@ export default function ListUsers({ session }: { session: string }) {
                 session={session}
                 onClose={() => {
                     setShowModalAdd(false)
-                    toast.dismiss()
                 }}
                 mutate={mutateUsers.mutate}
             />
+
+            <Toaster />
         </>
     )
 

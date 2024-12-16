@@ -5,8 +5,9 @@ import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { Toaster, toast } from "react-hot-toast"
 import { faCaretLeft } from "@fortawesome/free-solid-svg-icons"
-import axios from "axios"
+import axios, { AxiosError } from "axios"
 import { apiURL } from "@/app/lib/admin/users/userAPIRequest"
+import axiosInstance from "@/app/lib/admin/users/axios"
 
 export default function Profile({ userInfo, session }: { userInfo: any, session: string }) {
     const router = useRouter()
@@ -47,7 +48,7 @@ export default function Profile({ userInfo, session }: { userInfo: any, session:
 
         if (password == confirmPassword) {
             try {
-                const request = await axios.patch(`${apiURL}/admin/users/updatePassword/${userInfo.id}`, {
+                const request = await axiosInstance.patch(`${apiURL}/admin/users/updatePassword/${userInfo.id}`, {
                     password: password,
                     confirm_password: confirmPassword
                 }, {
@@ -66,6 +67,11 @@ export default function Profile({ userInfo, session }: { userInfo: any, session:
 
 
             } catch (e) {
+                if (e instanceof AxiosError) {
+                    if (e.response?.status === 401) {
+                        window.location.href = '/login?expired=true';
+                    }
+                }
                 toast.error('Gagal Mengubah Password')
             }
         }

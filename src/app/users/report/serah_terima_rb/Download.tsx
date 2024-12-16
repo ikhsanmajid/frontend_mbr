@@ -5,6 +5,7 @@ import { useFilterState } from "./useFilterState";
 import { apiURL } from "@/app/lib/admin/users/userAPIRequest";
 import axios from "axios";
 import { useState } from "react";
+import axiosInstance from "@/app/lib/admin/users/axios";
 
 export default function DownloadRB({ session }: { session: string }) {
     const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -28,7 +29,7 @@ export default function DownloadRB({ session }: { session: string }) {
             setIsLoading(true);
             let query = `${apiURL}/users/rb/generateReportSerahTerima/?startDate=${startDate}&endDate=${endDate}`;
 
-            const response = await axios.get(query, {
+            const response = await axiosInstance.get(query, {
                 headers: {
                     'Authorization': `Bearer ${session}`
                 },
@@ -50,7 +51,7 @@ export default function DownloadRB({ session }: { session: string }) {
             link.href = url;
 
             const contentDisposition = response.headers["content-disposition"];
-            console.log("Content ", response)
+            //("Content ", response)
             const fileName = contentDisposition
                 ? contentDisposition.split("filename=")[1].replace(/"/g, "")
                 : "downloaded_file";

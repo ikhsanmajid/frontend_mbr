@@ -3,8 +3,9 @@ import { Toaster, toast } from "react-hot-toast";
 import FilterComponentLaporanRB from "./FilterComponent";
 import { useFilterState } from "./useFilterState";
 import { apiURL } from "@/app/lib/admin/users/userAPIRequest";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { useState } from "react";
+import axiosInstance from "@/app/lib/admin/users/axios";
 
 export default function DownloadRB({ session }: { session: string }) {
     const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -33,7 +34,7 @@ export default function DownloadRB({ session }: { session: string }) {
                 query += `&startDate=${startDate}&endDate=${endDate}`;
             }
 
-            const response = await axios.get(query, {
+            const response = await axiosInstance.get(query, {
                 headers: {
                     'Authorization': `Bearer ${session}`
                 },
@@ -67,6 +68,11 @@ export default function DownloadRB({ session }: { session: string }) {
             window.URL.revokeObjectURL(url);
             setIsLoading(false);
         } catch (error) {
+            if (error instanceof AxiosError){
+                if (error.response?.status === 401) {
+                    window.location.href = '/login?expired=true'; 
+                }
+            }
             toast.error("Gagal Me-request Data");
             setIsLoading(false);
         }

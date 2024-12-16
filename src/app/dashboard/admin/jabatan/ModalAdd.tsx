@@ -5,8 +5,9 @@ import { useState, FormEvent } from "react"
 import { z, ZodIssue } from "zod"
 import axios, { AxiosError } from "axios"
 import toast, { Toaster } from "react-hot-toast"
+import axiosInstance from "@/app/lib/admin/users/axios"
 
-export default function ModalAdd({ show, session, onClose, mutate }: { show: boolean, session: string, onClose: () => void, mutate: null | VoidFunction}) {
+export default function ModalAdd({ show, session, onClose, mutate }: { show: boolean, session: string, onClose: () => void, mutate: null | VoidFunction }) {
     const [issues, setIssues] = useState<ZodIssue[] | null>(null)
     const [isLoadingAdd, setIsLoadingAdd] = useState(false)
 
@@ -37,7 +38,7 @@ export default function ModalAdd({ show, session, onClose, mutate }: { show: boo
     })
 
     async function add_jabatan(data: any) {
-        const addProcess = axios.post(apiURL + "/admin/employment/addEmployment", {
+        const addProcess = axiosInstance.post(apiURL + "/admin/employment/addEmployment", {
             nama_jabatan: data.jabatan
         }, {
             headers: {
@@ -69,8 +70,11 @@ export default function ModalAdd({ show, session, onClose, mutate }: { show: boo
             if (e instanceof z.ZodError) {
                 setIssues(e.issues)
             }
-            
-            if (e instanceof AxiosError){
+
+            if (e instanceof AxiosError) {
+                if (e.response?.status === 401) {
+                    window.location.href = '/login?expired=true'; // Redirect menggunakan App Router
+                }
                 toast.error("Jabatan Gagal Ditambahkan")
             }
         }).finally(() => {
@@ -81,7 +85,7 @@ export default function ModalAdd({ show, session, onClose, mutate }: { show: boo
 
     return (
         <>
-            <Modal show={show} onHide={() => {onClose(); setIssues(null)}} style={{ zIndex: 1050 }} backdrop="static" animation={true} keyboard={false}>
+            <Modal show={show} onHide={() => { onClose(); setIssues(null) }} style={{ zIndex: 1050 }} backdrop="static" animation={true} keyboard={false}>
                 <Modal.Header closeButton>
                     <Modal.Title>Form Tambah Jabatan</Modal.Title>
                 </Modal.Header>
@@ -107,7 +111,7 @@ export default function ModalAdd({ show, session, onClose, mutate }: { show: boo
                     </form>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="danger" className="btn-sm" onClick={() => {onClose(); setIssues(null)}}>
+                    <Button variant="danger" className="btn-sm" onClick={() => { onClose(); setIssues(null) }}>
                         Batal
                     </Button>
 
@@ -116,7 +120,7 @@ export default function ModalAdd({ show, session, onClose, mutate }: { show: boo
                 </Modal.Footer>
 
             </Modal>
-            <Toaster/>
+            <Toaster />
         </>
     )
 }

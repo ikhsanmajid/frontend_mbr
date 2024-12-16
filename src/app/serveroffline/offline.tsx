@@ -9,7 +9,7 @@ export default function ServerOffline() {
     const searchParams = useSearchParams()
     const dest = searchParams.get("dest") as string
     const handleRedirect = async () => {
-        axios.get(apiURL).then(data => {
+        axiosInstance.get(apiURL).then(data => {
             if (data.statusText == "OK") {
                 router.push(dest)
             }

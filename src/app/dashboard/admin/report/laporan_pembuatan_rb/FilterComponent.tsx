@@ -60,7 +60,7 @@ export default function FilterComponentLaporanRB({ handleCari }: { handleCari: (
                             </div>
                             <div className="col col-auto">
                                 <button className="btn btn-primary" onClick={handleCari} disabled={isLoading}>
-                                    Download
+                                    Lihat
                                 </button>
                             </div>
                         </div>

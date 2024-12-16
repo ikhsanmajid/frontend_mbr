@@ -5,6 +5,7 @@ import { useState, FormEvent } from "react"
 import { z, ZodIssue } from "zod"
 import axios from "axios"
 import React from "react"
+import axiosInstance from "@/app/lib/admin/users/axios"
 
 export default function ModalAdd({ show, session, onClose, mutate }: { show: boolean, session: string, onClose: () => void, mutate: null | VoidFunction }) {
     const [issues, setIssues] = useState<ZodIssue[]>([])
@@ -78,7 +79,7 @@ export default function ModalAdd({ show, session, onClose, mutate }: { show: boo
     })
 
     async function add_user(data: any) {
-        const addProcess = axios.post(apiURL + "/admin/users/addUser", {
+        const addProcess = axiosInstance.post(apiURL + "/admin/users/addUser", {
             email: data.email,
             nik: data.nik,
             nama: data.fullName,
@@ -116,7 +117,7 @@ export default function ModalAdd({ show, session, onClose, mutate }: { show: boo
             if (postAddUser.type !== "error") {
                 toast.success("User Berhasil Ditambahkan")
                 mutate!()
-                setTimeout(() => onClose(), 3000)
+                onClose()
             }
         }).catch(e => {
             console.log("add user catch ", e)
@@ -126,9 +127,15 @@ export default function ModalAdd({ show, session, onClose, mutate }: { show: boo
             if (!(e instanceof z.ZodError)) {
                 toast.error("User Gagal Ditambahkan")
             }
+            if (e instanceof axios.AxiosError) {
+                if (e.response?.status === 401) {
+                    window.location.href = '/login?expired=true';
+                }
+            }
             //console.log("add user catch ", e)
         }).finally(() => {
             setTimeout(() => setIsLoadingAdd(false), 3000)
+            setIsLoadingAdd(false)
         })
 
     }
@@ -233,7 +240,7 @@ export default function ModalAdd({ show, session, onClose, mutate }: { show: boo
                 </Modal.Footer>
 
             </Modal>
-            <Toaster />
+
         </>
     )
 }

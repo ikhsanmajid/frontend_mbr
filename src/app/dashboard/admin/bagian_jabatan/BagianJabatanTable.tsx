@@ -40,7 +40,7 @@ export default function BagianJabatanTable({ session, onAdd, mutate }: { session
     const [showModalDelete, _setShowModalDelete] = useState<boolean>(false)
     const [dataDelete, _setDataDelete] = useState<IBagianJabatan | null>(null)
 
-    const { detailBagianJabatan, isLoadingBagianJabatan, error, mutateBagianJabatan } = useGetAllBagianJabatan(session, pageSize, pageIndex * pageSize);
+    const { detailBagianJabatan, isLoadingBagianJabatan, error, mutateBagianJabatan } = useGetAllBagianJabatan(session, pageSize, pageIndex * pageSize, "asc");
 
     const columns = useMemo(() => [
         columnHelper.display({
@@ -122,7 +122,7 @@ export default function BagianJabatanTable({ session, onAdd, mutate }: { session
                 <>Daftar Bagian vs Jabatan</>
                 <><button className="btn btn-sm btn-success" onClick={
                     () => { onAdd(true) }
-                }>Tambah Bagian</button></>
+                }>Tambah Bagian vs Jabatan</button></>
             </div>
             <div className="card-body">
                 <div className="table-responsive">

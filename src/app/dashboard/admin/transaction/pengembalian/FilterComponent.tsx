@@ -82,7 +82,7 @@ export default function FilterComponentPengembalian({ session }: { session: stri
 
 
     function handleCari() {
-        if (idBagianChoosen == null) {
+        if (idBagianChoosen == null && statusKembaliChoosen !== "outstanding") {
             toast.error("Pilih bagian terlebih dahulu");
             return
         }
@@ -124,8 +124,9 @@ export default function FilterComponentPengembalian({ session }: { session: stri
                                 {isMounted && (
                                     <Select
                                         options={bagianList}
-                                        onChange={(e) => setIdBagianChoosen(e!.value)}
+                                        onChange={(e) => e?.value == null ? setIdBagianChoosen(null) : setIdBagianChoosen(e.value)}
                                         isSearchable
+                                        isClearable
                                         isLoading={isLoadingBagian}
                                         value={bagianList.find((item) => item.value === idBagianChoosen) || null}
                                         placeholder="Pilih Bagian"

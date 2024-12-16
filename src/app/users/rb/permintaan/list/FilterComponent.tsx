@@ -75,7 +75,7 @@ export default function FilterComponentPermintaan({ session }: { session: string
                             <div className="col col-2">
                                 <span>NIK/Nama: </span>
                             </div>
-                            <div className="col col-auto">
+                            <div className="col col-3">
                                 <div className="input-group">
                                     <input onChange={(e) => {
                                         setKeyword(e.target.value)
@@ -96,29 +96,30 @@ export default function FilterComponentPermintaan({ session }: { session: string
                         </div>
 
                         <div className="row mb-2 align-items-center">
-                                <div className="col col-2">
-                                    <span>Tahun Permintaan: </span>
-                                </div>
-                                <div className="col col-3">
-                                    <div className="row row-cols-auto align-items-center">
-                                        <div className="col">
-                                            <DatePicker
-                                                className="form-control"
-                                                selected={date1}
-                                                onChange={(date) => {
-                                                    setDate1(date)
-                                                }}
-                                                isClearable
-                                                dateFormat="yyyy"
-                                                showIcon={true}
-                                                icon={<FontAwesomeIcon icon={faCalendar}></FontAwesomeIcon>}
-                                                showYearPicker
-                                            ></DatePicker>
-                                        </div>
-                                    </div>
-
-                                </div>
+                            <div className="col col-2">
+                                <span>Tahun Permintaan: </span>
                             </div>
+                            <div className="col col-3">
+                                <div className="row row-cols-auto align-items-center">
+                                    <div className="col">
+                                        <DatePicker
+                                            className="form-control"
+                                            selected={date1}
+                                            onChange={(date) => {
+                                                setDate1(date)
+                                            }}
+                                            isClearable
+                                            dateFormat="yyyy"
+                                            showIcon={true}
+                                            icon={<FontAwesomeIcon icon={faCalendar}></FontAwesomeIcon>}
+                                            showYearPicker
+                                        ></DatePicker>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
 
                         <div className="row mb-2 row mb-2 align-items-center">
                             <div className="col col-2">

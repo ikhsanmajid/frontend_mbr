@@ -71,7 +71,7 @@ export default function UserTable({ session, mutateUsers, onAdd }: { session: st
             cell: info => <input className="form-check-input" type="checkbox" checked={info.cell.getValue() == true ? true : false} id="flexCheckDefault" disabled></input>,
         }),
         columnHelper.accessor("isAdmin", {
-            header: "Status Admin",
+            header: "Status Administrator",
             cell: info => <input className="form-check-input" type="checkbox" checked={info.cell.getValue() == true ? true : false} id="flexCheckDefault" disabled></input>,
         }),
         columnHelper.display({
@@ -133,6 +133,10 @@ export default function UserTable({ session, mutateUsers, onAdd }: { session: st
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [pageCount])
+
+    useEffect(() => {
+        mutateUser()
+    }, [])
 
 
     return (

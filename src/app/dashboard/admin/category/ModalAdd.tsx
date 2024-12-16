@@ -50,6 +50,7 @@ export default function ModalAdd({ show, session, onClose, mutate }: { show: boo
             if (postAddCategory.type !== "error") {
                 toast.success("Kategori Berhasil Ditambahkan")
                 mutate!()
+                onClose()
             }
         }).catch(e => {
             if (e instanceof z.ZodError) {
@@ -93,17 +94,15 @@ export default function ModalAdd({ show, session, onClose, mutate }: { show: boo
                         <div className="mb-3 row">
                             <label className="col-sm-4 col-form-label">Nomor Urut Awal: </label>
                             <div className="col-sm-8">
-                                <div className="col-sm-8">
-                                    <input type="text" className="form-control" name="startingNumber" maxLength={6} minLength={6} placeholder="Nama Kategori" />
-                                    <ul>
-                                        {issues && issues.map((item: any, index: number) => (
-                                            item.path == "startingNumber" &&
-                                            <li key={index}>
-                                                <span className="form-text text-danger">{item.message}</span><br />
-                                            </li>
-                                        ))}
-                                    </ul>
-                                </div>
+                                <input type="text" className="form-control" name="startingNumber" maxLength={6} minLength={6} placeholder="Nomor Urut Awal" />
+                                <ul>
+                                    {issues && issues.map((item: any, index: number) => (
+                                        item.path == "startingNumber" &&
+                                        <li key={index}>
+                                            <span className="form-text text-danger">{item.message}</span><br />
+                                        </li>
+                                    ))}
+                                </ul>
                             </div>
                         </div>
 
@@ -119,7 +118,6 @@ export default function ModalAdd({ show, session, onClose, mutate }: { show: boo
                 </Modal.Footer>
 
             </Modal>
-            <Toaster />
         </>
     )
 }
