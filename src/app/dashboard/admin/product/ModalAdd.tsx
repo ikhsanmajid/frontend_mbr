@@ -4,6 +4,7 @@ import { useState, FormEvent, useEffect } from "react"
 import { z, ZodIssue } from "zod"
 import axios, { AxiosError } from "axios"
 import toast, { Toaster } from "react-hot-toast"
+import axiosInstance from "@/app/lib/admin/users/axios"
 
 export default function ModalAdd({ show, session, onClose, mutate }: { show: boolean, session: string, onClose: () => void, mutate: null | VoidFunction }) {
     const [issues, setIssues] = useState<ZodIssue[] | null>(null)
@@ -29,7 +30,7 @@ export default function ModalAdd({ show, session, onClose, mutate }: { show: boo
     async function checkProduct(value: { namaProduk: string, id_bagian: string }) {
         const { namaProduk, id_bagian } = value
         const encodedNamaProduk = encodeURIComponent(namaProduk)
-        const productCheck = await axios.get(`${apiURL}/admin/product/checkProduct?nama_produk=${encodedNamaProduk}&id_bagian=${id_bagian}`, {
+        const productCheck = await axiosInstance.get(`${apiURL}/admin/product/checkProduct?nama_produk=${encodedNamaProduk}&id_bagian=${id_bagian}`, {
             headers: {
                 "Content-Type": "application/json",
                 "Authorization": "Bearer " + session
@@ -57,7 +58,7 @@ export default function ModalAdd({ show, session, onClose, mutate }: { show: boo
     })
 
     async function add_product(data: any) {
-        const addProcess = axios.post(apiURL + "/admin/product/addProduct", {
+        const addProcess = axiosInstance.post(apiURL + "/admin/product/addProduct", {
             nama_produk: data.nama_produk,
             id_bagian: data.id_bagian,
             id_kategori: data.id_kategori
@@ -96,6 +97,9 @@ export default function ModalAdd({ show, session, onClose, mutate }: { show: boo
             }
 
             if (e instanceof AxiosError) {
+                if (e.response?.status === 401) {
+                    window.location.href = '/login?expired=true'; 
+                }
                 toast.error("Produk Gagal Ditambahkan")
             }
         }).finally(() => {

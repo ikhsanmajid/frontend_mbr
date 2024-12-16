@@ -3,8 +3,9 @@ import { Toaster, toast } from "react-hot-toast";
 import FilterComponentLaporanRB from "./FilterComponent";
 import { useFilterState } from "./useFilterState";
 import { apiURL } from "@/app/lib/admin/users/userAPIRequest";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { useEffect, useMemo, useState } from "react";
+import axiosInstance from "@/app/lib/admin/users/axios";
 
 export default function DownloadRB({ session }: { session: string }) {
     const [data, setData] = useState<any[any] | null>(null);
@@ -24,7 +25,7 @@ export default function DownloadRB({ session }: { session: string }) {
             setIsLoading(true);
             let query = `${apiURL}/admin/product_rb/generateReportPembuatanRB?tahun=${startDate}`;
 
-            const response = await axios.get(query, {
+            const response = await axiosInstance.get(query, {
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${session}`
@@ -37,6 +38,11 @@ export default function DownloadRB({ session }: { session: string }) {
 
             setIsLoading(false);
         } catch (error) {
+            if (error instanceof AxiosError){
+                if (error.response?.status === 401) {
+                    window.location.href = '/login?expired=true'; 
+                }
+            }
             toast.error("Gagal Me-request Data");
             setIsLoading(false);
         }

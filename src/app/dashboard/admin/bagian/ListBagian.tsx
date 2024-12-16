@@ -1,5 +1,5 @@
 "use client";
-import { toast } from "react-hot-toast";
+import { toast, Toaster } from "react-hot-toast";
 import { useEffect, useState } from "react";
 import BagianTable from "@/app/dashboard/admin/bagian/BagianTable";
 import ModalAdd from "./ModalAdd";
@@ -35,10 +35,10 @@ export default function ListBagian({ session }: { session: string }) {
                 session={session}
                 onClose={() => {
                     setShowModalAdd(false)
-                    toast.dismiss()
                 }}
                 mutate={mutateBagian.mutate}
             />
+            <Toaster />          
         </>
     );
 }

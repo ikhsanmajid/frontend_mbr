@@ -69,6 +69,7 @@ export default function ModalAdd({ show, session, onClose, mutate }: { show: boo
             }
         }).finally(() => {
             setIsLoadingAdd(false)
+            onClose()
         })
 
     }
@@ -130,7 +131,6 @@ export default function ModalAdd({ show, session, onClose, mutate }: { show: boo
                 </Modal.Footer>
 
             </Modal>
-            <Toaster />
         </>
     )
 }

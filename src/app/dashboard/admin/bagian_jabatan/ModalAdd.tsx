@@ -52,6 +52,7 @@ export default function ModalAdd({ show, session, onClose, mutate }: { show: boo
             if (postAddBagianJabatan.type !== "error") {
                 toast.success("Bagian vs Jabatan Berhasil Ditambahkan")
                 mutate!()
+                onClose()
             }
         }).catch(e => {
             if (e instanceof z.ZodError) {

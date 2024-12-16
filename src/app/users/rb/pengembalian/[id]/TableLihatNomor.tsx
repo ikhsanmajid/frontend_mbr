@@ -39,7 +39,7 @@ export default function TableLihatNomor({ session, idData }: { session: string, 
 
     async function handleSave() {
         setIsLoadingAdd(true)
-        const dateTime = await axios.get(`${apiURL}/time`)
+        const dateTime = await axiosInstance.get(`${apiURL}/time`)
         const dateUpload = new Date(dateTime.data.time)
         const dateShow = dateUpload.toLocaleString("id-ID", { timeZone: "Asia/Jakarta" })
 
@@ -50,7 +50,7 @@ export default function TableLihatNomor({ session, idData }: { session: string, 
         }
 
         try {
-            const updateData = await axios.put(`${apiURL}/users/rb/updateNomorRBReturn/${idEdit}`, {
+            const updateData = await axiosInstance.put(`${apiURL}/users/rb/updateNomorRBReturn/${idEdit}`, {
                 status: editData?.status,
                 nomor_batch: nomorBatchRef.current?.value ?? "",
                 tanggal_kembali: editData?.status === "KEMBALI" || editData?.status === "BATAL" ? dateTime.data.time : ""
@@ -105,7 +105,7 @@ export default function TableLihatNomor({ session, idData }: { session: string, 
                 if (idEdit === info.row.original.id) {
                     return (
                         <select className="form-select" onChange={(e) => {
-                            console.log(e.target.value)
+                            //console.log(e.target.value)
 
                             if (e.target.value === "ACTIVE") {
                                 setEditData((prev) => { return { ...prev, nomorBatch: "", status: e.target.value, tanggalKembali: null } as IListNomorRB })
@@ -116,7 +116,7 @@ export default function TableLihatNomor({ session, idData }: { session: string, 
                             }
 
                             //setEditData({ ...editData, status: e.target.value } as IListNomorRB);
-                            console.log(editData)
+                            //console.log(editData)
                         }} value={editData?.status}>
                             <option value="KEMBALI">Sudah Kembali</option>
                             <option value="ACTIVE">Belum Kembali</option>

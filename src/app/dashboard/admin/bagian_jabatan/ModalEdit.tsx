@@ -1,33 +1,59 @@
-import { checkJabatan, edit_jabatan } from "@/app/lib/admin/users/userAPIRequest"
+import { checkBagianJabatan, edit_bagian_jabatan, edit_jabatan, useGetAllBagian, useGetAllJabatan } from "@/app/lib/admin/users/userAPIRequest"
 import { IBagianJabatan } from "./BagianJabatanTable"
 import { Modal, Button } from "react-bootstrap"
-import { useState, FormEvent } from "react"
+import { useState, FormEvent, useEffect } from "react"
 import { z, ZodIssue } from "zod"
-import { AxiosError } from "axios"
+import axios, { AxiosError } from "axios"
 import toast, { Toaster } from "react-hot-toast"
+import { IBagian } from "../bagian/ListBagian"
+import { Jabatan } from "../jabatan/JabatanTable"
+import { apiURL } from "@/app/option"
 
 export default function ModalEdit({ show, session, onClose, editData, mutate }: { show: boolean, session: string, onClose: () => void, editData: IBagianJabatan | null, mutate: () => void }) {
     const [issues, setIssues] = useState<ZodIssue[] | null>(null)
     const [isLoadingAdd, setIsLoadingAdd] = useState(false)
+    const [jabatan, setJabatan] = useState<Jabatan[] | null>(null)
+    const [bagian, setBagian] = useState<IBagian[] | null>(null)
+    const [selectedBagian, setSelectedBagian] = useState<number | undefined>(undefined)
+    const [selectedJabatan, setSelectedJabatan] = useState<number | undefined>(undefined)
+
+    const { detailBagian, isLoadingBagian } = useGetAllBagian(session, false, undefined, undefined)
+    const { detailJabatan, isLoadingJabatan } = useGetAllJabatan(session)
+
+    useEffect(() => {
+        if (isLoadingBagian) return
+        if (!isLoadingBagian && detailBagian) {
+            setBagian(detailBagian.data)
+        }
+    }, [isLoadingBagian, detailBagian])
+
+    useEffect(() => {
+        if (isLoadingJabatan) return
+        if (!isLoadingJabatan && detailJabatan) {
+            setJabatan(detailJabatan.data)
+        }
+    }, [isLoadingJabatan, detailJabatan])
+
+    useEffect(() => {
+        setSelectedBagian(editData?.idBagianFK.id)
+    }, [editData?.idBagianFK.id])
+
+    useEffect(() => {
+        setSelectedJabatan(editData?.idJabatanFK.id)
+    }, [editData?.idJabatanFK.id])
 
     // Zod Inisiasi
-    const activeEnum = ["0", "1"] as const;
-    const Jabatan = z.object({
-        jabatan: z.string().min(1, { message: "Nama Jabatan minimal 1 karakter" }),
-        active: z.enum(activeEnum, { message: "Not Allowed" })
-    }).superRefine(async ({ jabatan }, ctx) => {
-        if (jabatan == editData?.idJabatanFK.namaJabatan) {
-            return
-        }
+    const BagianJabatan = z.object({
+        bagian: z.string(),
+        jabatan: z.string()
+    }).superRefine(async ({ jabatan, bagian }, ctx) => {
+        const checkExist = await checkBagianJabatan(bagian, jabatan, session)
 
-        const jabatanExist = await checkJabatan(jabatan, session)
-
-        if (jabatanExist.data.message == "exist") {
+        if (checkExist.data.message == "exist") {
             ctx.addIssue({
                 code: "custom",
-                message: "Jabatan Sudah Terdaftar",
-                path: ['jabatan']
-
+                message: "Bagian vs Jabatan Sudah Ada",
+                path: ['bagianjabatan']
             })
         }
     })
@@ -39,19 +65,20 @@ export default function ModalEdit({ show, session, onClose, editData, mutate }: 
 
         const data = new FormData(formData.currentTarget)
         const dataJabatan = data.get("jabatan")
-        const dataActive = data.get("is_active")
+        const dataBagian = data.get("bagian")
 
-        await Jabatan.parseAsync({
+        await BagianJabatan.parseAsync({
             jabatan: dataJabatan,
-            active: dataActive
+            bagian: dataBagian
         }).then(async (e) => {
             setIssues(null)
-            const postEditJabatan = await edit_jabatan(editData?.id, e, session)
+            const postEditJabatan = await edit_bagian_jabatan(editData?.id, e, session)
             if (postEditJabatan.type !== "error") {
-                toast.success("Jabatan Berhasil Diupdate", {
+                toast.success("Bagian vs Jabatan Berhasil Diupdate", {
                     duration: 2000
                 })
                 mutate()
+                onClose()
             }
         }).catch(e => {
             if (e instanceof z.ZodError) {
@@ -59,7 +86,7 @@ export default function ModalEdit({ show, session, onClose, editData, mutate }: 
             }
 
             if (e instanceof AxiosError) {
-                toast.error("Jabatan Gagal Diupdate")
+                toast.error("Bagian vs Jabatan Gagal Diupdate")
             }
         }).finally(() => {
             setIsLoadingAdd(false)
@@ -71,15 +98,44 @@ export default function ModalEdit({ show, session, onClose, editData, mutate }: 
         <>
             <Modal show={show} onHide={onClose} style={{ zIndex: 1050 }} backdrop="static" animation={true} keyboard={false}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Form Edit User</Modal.Title>
+                    <Modal.Title>Form Edit Bagian vs Jabatan</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <form id="addForm" onSubmit={(e) => handleSubmit(e)}>
                         {/* Jabatan */}
                         <div className="mb-3 row">
-                            <label className="col-sm-4 col-form-label">Nama Jabatan</label>
+                            <label className="col-sm-4 col-form-label">Bagian</label>
                             <div className="col-sm-8">
-                                <input type="text" className="form-control" name="jabatan" defaultValue={editData ? editData.idJabatanFK.namaJabatan : ""} placeholder="Nama Jabatan" />
+
+                                <select className="form-select" name="bagian" value={selectedBagian} onChange={(e) => setSelectedBagian(Number(e!.currentTarget.value))}>
+                                    {!isLoadingBagian && bagian &&
+                                        bagian.map((item: IBagian, index: number) => (
+                                            <option key={index} value={item.id}>{item.namaBagian}</option>
+                                        ))
+                                    }
+                                </select>
+                                <ul>
+                                    {issues && issues.map((item: any, index: number) => (
+                                        item.path == "bagian" &&
+                                        <li key={index}>
+                                            <span className="form-text text-danger">{item.message}</span><br />
+                                        </li>
+                                    ))}
+                                </ul>
+
+
+                            </div>
+                        </div>
+
+                        <div className="row mb-1">
+                            <label className="col-sm-4 col-form-label">Jabatan</label>
+                            <div className="col-sm-8">
+                                <select className="form-select" name="jabatan" value={selectedJabatan} onChange={(e) => setSelectedJabatan(Number(e!.currentTarget.value))}>
+                                    {!isLoadingJabatan && jabatan &&
+                                        jabatan.map((item: Jabatan, index: number) => (
+                                            <option key={index} value={item.id}>{item.namaJabatan}</option>
+                                        ))}
+                                </select>
                                 <ul>
                                     {issues && issues.map((item: any, index: number) => (
                                         item.path == "jabatan" &&
@@ -90,17 +146,12 @@ export default function ModalEdit({ show, session, onClose, editData, mutate }: 
                                 </ul>
                             </div>
                         </div>
-
                         <div className="mb-3 row">
-                            <label className="col-sm-4 col-form-label">Aktif</label>
+                            <label className="col-sm-4 col-form-label"></label>
                             <div className="col-sm-8">
-                                {/* <select className="form-select" name="is_active" defaultValue={editData && editData == true ? "1" : "0"}>
-                                    <option value="0">Non-aktif</option>
-                                    <option value="1">Aktif</option>
-                                </select> */}
-                                <ul>
+                                <ul className="deco">
                                     {issues && issues.map((item: any, index: number) => (
-                                        item.path == "active" &&
+                                        item.path == "bagianjabatan" &&
                                         <li key={index}>
                                             <span className="form-text text-danger">{item.message}</span><br />
                                         </li>

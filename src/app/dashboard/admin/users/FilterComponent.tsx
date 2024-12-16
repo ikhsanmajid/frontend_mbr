@@ -24,18 +24,18 @@ export default function FilterComponentUser({ valueBagian, statusUser }: { value
                 <Accordion.Header><span className="fw-bold">Filter</span></Accordion.Header>
                 <Accordion.Body>
                     <div className="row w-100">
-                        <div className="row mb-1">
+                        <div className="row mb-2">
                             <div className="col col-2 d-flex align-items-center">
-                                <span>Search User: </span>
+                                <span>Cari User: </span>
                             </div>
-                            <div className="col col-auto">
-                                <div className="input-group input-group-sm">
-                                    <input ref={inputSearchRef} type="text" autoComplete="off" className="form-control" id="inputSearchBagian" />
+                            <div className="col col-4">
+                                <div className="input-group">
+                                    <input ref={inputSearchRef} type="text" autoComplete="off" placeholder="Ketik Nama / NIK / Email" className="form-control" id="inputSearchBagian" />
                                 </div>
                             </div>
                         </div>
 
-                        <div className="row mb-1">
+                        <div className="row mb-2">
                             <div className="col col-2">
                                 <span>Status Aktif User: </span>
                             </div>

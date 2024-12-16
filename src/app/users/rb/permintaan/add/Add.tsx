@@ -41,6 +41,7 @@ export default function AddPermintaanRB({ session }: { session: string }) {
 
     useEffect(() => {
         setIsMounted(true);
+        toast.dismiss();
     }, []);
 
     useEffect(() => {
@@ -217,7 +218,6 @@ export default function AddPermintaanRB({ session }: { session: string }) {
                 toast.success(response.message);
                 //console.log("Response Data:", response.data);
                 setTimeout(() => {
-                    toast.dismiss();
                     router.push("/users/rb/permintaan/list");
                 }, 2000);
             } else {
@@ -233,6 +233,7 @@ export default function AddPermintaanRB({ session }: { session: string }) {
 
     return (
         <div className="card mt-3">
+            <div><Toaster/></div>
             <div className="card-header">
                 <span className="fw-bold">Form Permintaan RB</span>
             </div>
@@ -342,7 +343,6 @@ export default function AddPermintaanRB({ session }: { session: string }) {
                     </>
                 }
             </div>
-            <Toaster />
         </div>
     );
 }

@@ -7,6 +7,7 @@ import { useState, FormEvent } from "react"
 import { z, ZodIssue } from "zod"
 import axios from "axios"
 import toast, { Toaster } from "react-hot-toast"
+import axiosInstance from "@/app/lib/admin/users/axios"
 
 export default function ModalEdit({ show, session, onClose, editData, mutate }: { show: boolean, session: string, onClose: () => void, editData: IProduct | null, mutate: () => void }) {
     const { detailBagian, isLoadingBagian, error: errorBagian, mutateBagian } = useGetAllBagian(session, true)
@@ -19,7 +20,7 @@ export default function ModalEdit({ show, session, onClose, editData, mutate }: 
 
         const encodedNamaProduk = encodeURIComponent(namaProduk)
 
-        const productCheck = await axios.get(`${apiURL}/admin/product/checkProduct?nama_produk=${encodedNamaProduk}&id_bagian=${id_bagian}`, {
+        const productCheck = await axiosInstance.get(`${apiURL}/admin/product/checkProduct?nama_produk=${encodedNamaProduk}&id_bagian=${id_bagian}`, {
             headers: {
                 "Content-Type": "application/json",
                 "Authorization": "Bearer " + session
@@ -84,6 +85,9 @@ export default function ModalEdit({ show, session, onClose, editData, mutate }: 
             }
 
             if (e instanceof AxiosError) {
+                if (e.response?.status === 401) {
+                    window.location.href = '/login?expired=true'; 
+                }
                 toast.error("Produk Gagal Diupdate")
             }
         }).finally(() => {

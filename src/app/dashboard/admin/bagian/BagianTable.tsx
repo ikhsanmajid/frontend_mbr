@@ -7,6 +7,7 @@ import ModalEdit from "./ModalEdit"
 import RowActions from "./RowActions"
 import ModalDelete from "./ModalDelete"
 import PaginationComponent from "@/app/component/pagination/Pagination"
+import { Toaster } from "react-hot-toast"
 
 const columnHelper = createColumnHelper<IBagian>()
 
@@ -127,11 +128,11 @@ export default function BagianTable({ session, onAdd, mutate }: { session: strin
             <div className="card-body">
 
                 <div className="row mb-2">
-                    <label htmlFor="inputSearchBagian" className="col-sm-1 col-form-label">Search Bagian: </label>
-                    <div className="col-sm-2">
+                    <label htmlFor="inputSearchBagian" className="col-sm-1 col-form-label">Cari Bagian: </label>
+                    <div className="col-sm-3">
                         <input ref={inputSearch} type="text" autoComplete="off" className="form-control" id="inputSearchBagian" />
                     </div>
-                    <div className="col-sm-1">
+                    <div className="col-sm-2">
                         <button onClick={(e) => {
                             e.preventDefault()
                             setSearchData(inputSearch.current!.value)
@@ -156,12 +157,12 @@ export default function BagianTable({ session, onAdd, mutate }: { session: strin
                             <tbody className="table-group-divider">
                                 {isLoadingBagian &&
                                     <tr>
-                                        <td colSpan={4} className="text-center"> Loading ....</td>
+                                        <td colSpan={5} className="text-center"> Loading ....</td>
                                     </tr>}
 
                                 {(!isLoadingBagian && detailBagian.count == 0) ?
                                     <tr>
-                                        <td colSpan={4} className="text-center"> Data Kosong </td>
+                                        <td colSpan={5} className="text-center"> Data Kosong </td>
                                     </tr> :
                                     table.getRowModel().rows.map(row => (
                                         <tr key={row.id}>
@@ -210,6 +211,7 @@ export default function BagianTable({ session, onAdd, mutate }: { session: strin
 
             <ModalEdit show={showModalEdit} session={session} onClose={() => { setShowModalEdit(false); setDataEdit(null) }} editData={dataEdit} bagianMutate={mutateBagian}></ModalEdit>
             <ModalDelete show={showModalDelete} session={session} onClose={() => { setShowModalDelete(false); setDataDelete(null) }} deleteData={dataDelete} bagianMutate={mutateBagian}></ModalDelete>
+            <Toaster/>
         </div >
     )
 }

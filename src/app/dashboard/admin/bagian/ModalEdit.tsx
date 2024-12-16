@@ -72,6 +72,7 @@ export default function ModalEdit({ show, session, onClose, editData, bagianMuta
                     duration: 2000
                 })
                 bagianMutate()
+                onClose()
             }
         }).catch(e => {
             if (e instanceof z.ZodError) {
@@ -164,7 +165,7 @@ export default function ModalEdit({ show, session, onClose, editData, bagianMuta
                 </Modal.Footer>
 
             </Modal>
-            <Toaster />
+ 
         </>
     )
 }
