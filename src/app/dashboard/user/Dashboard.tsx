@@ -1,5 +1,5 @@
 "use client"
-import { GetDashboardDataUser } from "@/app/lib/admin/users/userAPIRequest";
+import { apiURL, GetDashboardDataUser } from "@/app/lib/admin/users/userAPIRequest";
 import { useState, useEffect } from "react";
 
 interface IGetDashboardDataUser {
@@ -11,6 +11,7 @@ interface IGetDashboardDataUser {
 export default function Dashboard({ session }: { session: string }) {
     const [dashboardData, setDashboardData] = useState<IGetDashboardDataUser[] | null>(null);
     const [dataRBDibuat, setDataRBDibuat] = useState<IGetDashboardDataUser[] | null>(null);
+    const [time, setTime] = useState<string | null>(null);
 
     const { listDashboardData, isLoadingListDashboardData, error, mutateListDashboardData } = GetDashboardDataUser(session);
 
@@ -27,8 +28,26 @@ export default function Dashboard({ session }: { session: string }) {
         }
     }, [isLoadingListDashboardData, listDashboardData, error]);
 
+    // async function getServerTime(){
+    //     try{
+    //         const response = await axios.get(`${apiURL}/time`);
+    //         if(response.status == 200){
+    //             setTime(response.data.time)
+    //             return
+    //         }
+            
+    //     }catch(err){
+    //         console.log(err);
+    //     }
+    // }
+
+    // useEffect(() => {
+        
+    //     console.log(time)
+    // },[])
+
     return (
-        <>
+        <div className="row overflow-y-auto">
 
             <div className="row justify-content-center">
                 {isLoadingListDashboardData && <div className="text-center">Loading...</div>}
@@ -58,7 +77,7 @@ export default function Dashboard({ session }: { session: string }) {
                 {!isLoadingListDashboardData && (
                     <>
                         <h2 className="text-center mb-4">
-                            Jumlah RB Dibuat Tahun {new Date().getFullYear()}
+                            Jumlah Permintaan RB Tahun {new Date().getFullYear()}
                         </h2>
                         {dataRBDibuat && dataRBDibuat.map((data, index) => (
                             <div key={index} className="col-12 col-sm-6 col-md-3 g-4">
@@ -76,6 +95,6 @@ export default function Dashboard({ session }: { session: string }) {
                 )}
             </div>
 
-        </>
+        </div>
     )
 }
