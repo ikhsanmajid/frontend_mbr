@@ -42,9 +42,6 @@ export default function DownloadRB({ session }: { session: string }) {
         }
     }
 
-    useEffect(() => {
-        console.log("data: ", data)
-    }, [isLoading, data])
     return (
         <div className="card mt-3">
             <div className="card-header d-flex justify-content-between">
@@ -77,7 +74,7 @@ export default function DownloadRB({ session }: { session: string }) {
                             <tbody>
                                 {data == null && (<tr><td colSpan={6}>Data Kosong</td></tr>)}
                                 {isLoading && (<tr><td colSpan={6}>Loading...</td></tr>)}
-                                {data && data.data.map((item: any, index: any) => {
+                                {!isLoading && data && data.data.map((item: any, index: any) => {
                                     const farmasi = item.data.find((d: any) => d.namaJenisBagian === 'Farmasi') || { total: 0, late: 0 };
                                     const food = item.data.find((d: any) => d.namaJenisBagian === 'Food') || { total: 0, late: 0 };
 
