@@ -1,8 +1,9 @@
 "use client"
 import PaginationComponent from "@/app/component/pagination/Pagination";
+import axiosInstance from "@/app/lib/admin/users/axios";
 import { apiURL, GetAllNomorReturnRBByIDDetailPermintaan } from "@/app/lib/admin/users/userAPIRequest";
 import { flexRender, getCoreRowModel, useReactTable, createColumnHelper, PaginationState, getPaginationRowModel } from "@tanstack/react-table";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { useEffect, useRef } from "react";
 import { useMemo, useState } from "react";
 import { toast } from "react-hot-toast";
@@ -78,6 +79,11 @@ export default function TableLihatNomor({ session, idData }: { session: string, 
                 toast.error("Data Gagal Diupdate, "+updateData.data.message)
             }
         } catch (err) {
+            if (err instanceof AxiosError){
+                if (err.response?.status === 401) {
+                    window.location.href = "/login?expired=true"
+                } 
+            }
             
             console.log(err)
         } finally {

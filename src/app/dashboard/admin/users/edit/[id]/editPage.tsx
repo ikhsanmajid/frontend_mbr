@@ -316,7 +316,9 @@ export function EditUser({ id, session }: { id: number, session: string }) {
 
     // Handle untuk menyimpan Bagian Jabatan
     const handleSaveBagianJabatan = async (idBagianJabatan: string, newIdBagianJabatan: string, userId: string) => {
+        setIsLoadingAdd(true)
         if (newIdBagianJabatan == "") {
+            setIsLoadingAdd(false)
             return toast.error("Jabatan Kosong")
         }
 
@@ -325,7 +327,7 @@ export function EditUser({ id, session }: { id: number, session: string }) {
         if (idBagianJabatan !== "") {
             try {
                 const addProcess = await updateDataUserBagianJabatan({ id: idBagianJabatan, idBagianJabatan: newIdBagianJabatan }, session)
-                console.log("status text", addProcess)
+                //console.log("status text", addProcess)
                 if (addProcess.data.status == "success") {
                     toast.success("Update Bagian Jabatan Berhasil")
                     setAddMode(false)
@@ -334,11 +336,14 @@ export function EditUser({ id, session }: { id: number, session: string }) {
                 }
             } catch (e) {
                 e instanceof AxiosError && toast.error("Tambah Bagian Jabatan Gagal")
+            }finally{
+                setIsLoadingAdd(false)
             }
         } else {
             try {
                 const addProcess = await addBagianJabatan({ idBagianJabatan: newIdBagianJabatan, idUser: userId }, session)
-                if (addProcess.statusText == "OK") {
+                console.log("status text: ", addProcess)
+                if (addProcess.status == 200) {
                     toast.success("Tambah Bagian Jabatan Berhasil")
                     setAddMode(false)
                     setDisabledBagianJabatanEditMode(true)
@@ -346,8 +351,12 @@ export function EditUser({ id, session }: { id: number, session: string }) {
                 }
             } catch (e) {
                 e instanceof AxiosError && toast.error("Tambah Bagian Jabatan Gagal")
+            }finally{
+                setIsLoadingAdd(false)
             }
         }
+
+        setIsLoadingAdd(false)
 
 
     }
@@ -535,7 +544,7 @@ export function EditUser({ id, session }: { id: number, session: string }) {
                                                                     <button onClick={(e) => {
                                                                         e.preventDefault()
                                                                         setDisabledBagianJabatanEditMode(false)
-                                                                    }} className='btn btn-sm btn-warning text-white me-2'><FontAwesomeIcon icon={faPenToSquare} /> Edit Bagian Jabatan</button>
+                                                                    }} className='btn btn-sm btn-warning text-white me-2' disabled={isLoadingAdd}><FontAwesomeIcon icon={faPenToSquare} /> Edit Bagian Jabatan</button>
 
                                                                     {/* Hapus Button */}
                                                                     <button onClick={(e) => {
@@ -567,7 +576,7 @@ export function EditUser({ id, session }: { id: number, session: string }) {
                                                                     <button onClick={(e) => {
                                                                         e.preventDefault()
                                                                         handleBatal()
-                                                                    }} className='btn btn-sm btn-danger text-white me-2'><FontAwesomeIcon icon={faBan} /> Batal</button>
+                                                                    }} className='btn btn-sm btn-danger text-white me-2' disabled={isLoadingAdd}><FontAwesomeIcon icon={faBan} /> Batal</button>
 
                                                                     {/* // Tombol Save Bagian Jabatan */}
                                                                     <button onClick={(e) => {
@@ -578,7 +587,7 @@ export function EditUser({ id, session }: { id: number, session: string }) {
                                                                         const newIdBagianJabatan = jabatanRef.current!.value
                                                                         setDefaultValueJabatan(newIdBagianJabatan)
                                                                         handleSaveBagianJabatan(currentIdBagianJabatanKey, newIdBagianJabatan, userId)
-                                                                    }} className='btn btn-sm btn-success text-white'><FontAwesomeIcon icon={faFloppyDisk} /> Simpan Bagian Jabatan</button>
+                                                                    }} className='btn btn-sm btn-success text-white' disabled={isLoadingAdd}><FontAwesomeIcon icon={faFloppyDisk} /> Simpan Bagian Jabatan</button>
                                                                 </>
                                                             }
                                                         </div>

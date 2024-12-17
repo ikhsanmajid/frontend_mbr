@@ -3,6 +3,7 @@ import axios from "axios"
 import { apiURL } from "../lib/admin/users/userAPIRequest"
 import { useEffect } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
+import axiosInstance from "../lib/admin/users/axios"
 
 export default function ServerOffline() {
     const router = useRouter()

@@ -136,6 +136,7 @@ export default function UserTable({ session, mutateUsers, onAdd }: { session: st
 
     useEffect(() => {
         mutateUser()
+        //eslint-disable-next-line
     }, [])
 
 
