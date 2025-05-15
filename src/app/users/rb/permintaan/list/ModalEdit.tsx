@@ -5,6 +5,7 @@ import { FetchAllProduk, addPermintaanNomor, GetDetailPermintaan, editPermintaan
 import { useEffect, useState } from "react";
 import { useRouter } from 'next/navigation';
 import { nanoid } from "nanoid";
+import Select from 'react-select';
 
 
 import React from "react";
@@ -22,6 +23,7 @@ interface IProduk {
 interface IPermintaanEdit {
     uuid: string;
     idProduk: number;
+    namaProduk: string,
     mbr: {
         no_mbr: string;
         jumlah: number;
@@ -32,10 +34,16 @@ interface IPermintaanEdit {
 export default function ModalEdit({ session, data, show, onClose }: { session: string, data: IPermintaan | null, show: boolean, onClose: (message?: string) => void }) {
     const { listProduk, isLoadingListProduk, error: isErrorListProduk } = FetchAllProduk(session);
     const { detailPermintaan, isLoadingPermintaan, error, mutateListPermintaan } = data?.status !== "DITERIMA" ? GetDetailPermintaan(session, data ? Number(data.id) : null) : { detailPermintaan: null, isLoadingPermintaan: false, error: null, mutateListPermintaan: null }
-    const [produkList, setProdukList] = useState<IProduk[] | null>(null);
+    const [produkList2, setProdukList2] = useState<{ value: number, label: string }[]>([]);
+    const [isMounted, setIsMounted] = useState<boolean>(false);
     const [listPermintaan, setListPermintaan] = useState<IPermintaanEdit[] | null>(null);
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
     const router = useRouter();
+
+    useEffect(() => {
+        setIsMounted(true);
+        toast.dismiss();
+    }, []);
 
     useEffect(() => {
         if (isLoadingListProduk) return;
@@ -43,8 +51,14 @@ export default function ModalEdit({ session, data, show, onClose }: { session: s
             toast.error("Gagal Memuat Data Produk");
             return;
         }
-
-        setProdukList(listProduk.data);
+        setProdukList2([]);
+        listProduk.data.map((items: any) => {
+            if (items.isActive) {
+                setProdukList2((prev) => (
+                    (prev ? [...prev, { value: items.id, label: items.namaProduk }] : [{ value: items.id, label: items.namaProduk }])
+                ))
+            }
+        })
     }, [isLoadingListProduk, isErrorListProduk, listProduk]);
 
     useEffect(() => {
@@ -60,6 +74,7 @@ export default function ModalEdit({ session, data, show, onClose }: { session: s
                 return {
                     uuid: nanoid(),
                     idProduk: data.idProduk,
+                    namaProduk: data.namaProduk,
                     mbr: data.items.map((mbr: any) => {
                         return {
                             no_mbr: mbr.nomorMBR,
@@ -116,6 +131,7 @@ export default function ModalEdit({ session, data, show, onClose }: { session: s
             setListPermintaan([{
                 uuid: nanoid(),
                 idProduk: 0,
+                namaProduk: "",
                 mbr: [{
                     no_mbr: "",
                     jumlah: 0,
@@ -128,6 +144,7 @@ export default function ModalEdit({ session, data, show, onClose }: { session: s
         setListPermintaan([...listPermintaan!, {
             uuid: nanoid(),
             idProduk: 0,
+            namaProduk: "",
             mbr: [{
                 no_mbr: "",
                 jumlah: 0,
@@ -144,12 +161,13 @@ export default function ModalEdit({ session, data, show, onClose }: { session: s
         });
     }
 
-    function handleChangeProduk(uuid: string, value: string) {
+    function handleChangeProduk(uuid: string, value: string | number, namaProduk: string) {
         const newList = listPermintaan?.map((permintaan) => {
             if (permintaan.uuid === uuid) {
                 return {
                     ...permintaan,
-                    idProduk: Number(value)
+                    idProduk: Number(value),
+                    namaProduk: namaProduk,
                 };
             }
             return permintaan;
@@ -294,8 +312,21 @@ export default function ModalEdit({ session, data, show, onClose }: { session: s
                                         {index + 1}
                                     </div>
                                     <div className="col-3">
-                                        <select
-                                            onChange={(e) => handleChangeProduk(data.uuid, e.target.value)}
+                                        {isMounted ? <Select className="mb-2" onChange={(e) => handleChangeProduk(data.uuid, e!.value, e!.label)} options={produkList2} isLoading={isLoadingListProduk} defaultValue={produkList2[produkList2.findIndex(p => p.value == data.idProduk)]} /> : null}
+                                        {/* <select
+                                        onChange={(e) => handleChangeProduk(data.uuid, e.target.value)}
+                                        className="form-select mb-2"
+                                        aria-label="Default select example"
+                                        value={data.idProduk}
+                                        disabled={isSubmitting}
+                                    >
+                                        <option value="0">--- Pilih Produk ---</option>
+                                        { produkList?.filter(data => data.isActive).map((data, index) => (
+                                            <option key={index} value={data.id}>{data.namaProduk}</option>
+                                        ))}
+                                    </select> */}
+                                        {/* <select
+                                            onChange={(e) => handleChangeProduk(data.uuid, e.target.value, e.target.selectedOptions[0].getAttribute('data-product-name')!)}
                                             className="form-select mb-2"
                                             aria-label="Default select example"
                                             value={data.idProduk}
@@ -303,9 +334,9 @@ export default function ModalEdit({ session, data, show, onClose }: { session: s
                                         >
                                             <option value="0">--- Pilih Produk ---</option>
                                             {produkList?.filter(data => data.isActive).map((data, index) => (
-                                                <option key={index} value={data.id}>{data.namaProduk}</option>
+                                                <option key={index} value={data.id} data-product-name={data.namaProduk}>{data.namaProduk}</option>
                                             ))}
-                                        </select>
+                                        </select> */}
                                         <button onClick={() => deleteProduk(data.uuid)} className="btn btn-sm btn-danger mb-3" disabled={isSubmitting}>Delete Produk</button>
                                     </div>
 
@@ -368,7 +399,7 @@ export default function ModalEdit({ session, data, show, onClose }: { session: s
                                 </div>
                             </div>
 
-                            
+
                         </>
                     }
                 </Modal.Body>

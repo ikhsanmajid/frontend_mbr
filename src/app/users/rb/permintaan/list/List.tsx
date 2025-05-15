@@ -56,6 +56,7 @@ export default function ListMBR({ session }: { session: string }) {
 
     const { listPermintaan, isLoadingListPermintaan, error: errorPermintaan, mutateListPermintaan } = GetPermintaanRB(session, pageSize, pageIndex * pageSize, { status: StatusKonfirmasi, used: StatusDipakai, keyword: NIKNama, idProduk: idProduk, year: filterYear })
 
+
     const columns = useMemo(() => [
         columnHelper.display({
             header: "No",
@@ -63,6 +64,12 @@ export default function ListMBR({ session }: { session: string }) {
             size: 20,
             enableSorting: false,
 
+        }),
+        columnHelper.accessor("id", {
+            header: "ID Transaksi",
+            cell: info => info.getValue(),
+            size: 20,
+            enableSorting: false,
         }),
         columnHelper.accessor("nikCreated", {
             header: "NIK Pembuat",

@@ -59,6 +59,7 @@ export default function ModalAdd({ show, session, onClose, mutate }: { show: boo
                 toast.success("Bagian Berhasil Ditambahkan")
                 mutate!()
             }
+            onClose()
         }).catch(e => {
             if (e instanceof z.ZodError) {
                 setIssues(e.issues)
@@ -69,7 +70,6 @@ export default function ModalAdd({ show, session, onClose, mutate }: { show: boo
             }
         }).finally(() => {
             setIsLoadingAdd(false)
-            onClose()
         })
 
     }
@@ -106,7 +106,7 @@ export default function ModalAdd({ show, session, onClose, mutate }: { show: boo
                                     <option value="">-- Pilih Kategori Bagian --</option>
                                     <option value="1">Farmasi</option>
                                     <option value="2">Food</option>
-                                    <option value="3">Non Manufaktur</option>
+                                    <option value="3">Lain-Lain</option>
                                 </select>
                                 <ul>
                                     {issues && issues.map((item: any, index: number) => (

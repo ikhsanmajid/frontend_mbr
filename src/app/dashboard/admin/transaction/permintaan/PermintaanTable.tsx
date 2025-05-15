@@ -58,6 +58,12 @@ export default function PermintaanTable({ session }: { session: string }) {
             enableSorting: false,
 
         }),
+        columnHelper.accessor("id", {
+            header: "ID Transaksi",
+            cell: info => info.getValue(),
+            size: 20,
+            enableSorting: false,
+        }),
         columnHelper.accessor("createdNIK", {
             header: "NIK Pembuat",
             size: 40,
@@ -224,7 +230,7 @@ export default function PermintaanTable({ session }: { session: string }) {
 
             <ModalLihat session={session} data={dataLihat} show={showModalLihat} onClose={() => {
                 setShowModalLihat(false)
-            }} onSave={(status: string) => {                
+            }} onSave={() => {                
                 setShowModalLihat(false)
                 mutateListPermintaan()
                 toast.success("Berhasil Mengonfirmasi Permintaan")
