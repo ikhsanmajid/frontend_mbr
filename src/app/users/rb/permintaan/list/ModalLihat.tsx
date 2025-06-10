@@ -43,6 +43,9 @@ export default function ModalLihat({ session, data, show, onClose, onSave }: { s
                     <div className="row">
                         <div className="col-2">
                             <div className="row">
+                            <div className="col-12">
+                                    <label htmlFor="exampleFormControlInput1" className="form-label">ID Transaksi</label>
+                                </div>
                                 <div className="col-12">
                                     <label htmlFor="exampleFormControlInput1" className="form-label">NIK Pembuat</label>
                                 </div>
@@ -62,6 +65,9 @@ export default function ModalLihat({ session, data, show, onClose, onSave }: { s
                         </div>
                         <div className="col-4">
                             <div className="row">
+                            <div className="col-12">
+                                    <label htmlFor="exampleFormControlInput1" className="form-label">: {data?.id}</label>
+                                </div>
                                 <div className="col-12">
                                     <label htmlFor="exampleFormControlInput1" className="form-label">: {data?.nikCreated}</label>
                                 </div>

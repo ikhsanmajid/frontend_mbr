@@ -150,7 +150,7 @@ export default function JabatanTable({ session, onAdd, mutate }: { session: stri
                             </thead>
                             <tbody className="table-group-divider">
                                 {
-                                    !isLoadingListProduk && (listProduk.count == 0 || listProduk == null) &&
+                                    !isLoadingListProduk && (listProduk?.count == 0 || listProduk == null) &&
                                     <tr>
                                         <td colSpan={6} className="text-center">Data Kosong</td>
                                     </tr>

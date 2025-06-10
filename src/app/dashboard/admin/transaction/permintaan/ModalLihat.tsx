@@ -7,7 +7,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSave } from "@fortawesome/free-regular-svg-icons";
 import { Toaster, toast } from "react-hot-toast";
 
-export default function ModalLihat({ session, data, show, onClose, onSave }: { session: string, data: IPermintaan | null, show: boolean, onClose: () => void, onSave: (status: string) => void }) {
+export default function ModalLihat({ session, data, show, onClose, onSave }: { session: string, data: IPermintaan | null, show: boolean, onClose: () => void, onSave: () => void }) {
     const [keputusan, setKeputusan] = useState<string | null>(null)
     const keputusanRef = useRef<HTMLSelectElement | null>(null)
     const reasonRef = useRef<HTMLInputElement | null>(null)
@@ -40,7 +40,7 @@ export default function ModalLihat({ session, data, show, onClose, onSave }: { s
         let keputusanValue: "confirm" | "reject" = keputusanRef.current?.value == "1" ? "confirm" : "reject"
         const confirm = await confirmPermintaan(data, session, keputusanValue, reasonRef.current?.value)
         if ('data' in confirm!) {
-            onSave(confirm.data.status)
+            onSave()
             setKeputusan(null)
             onClose()
         } else {

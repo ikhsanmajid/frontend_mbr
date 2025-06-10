@@ -20,6 +20,7 @@ interface IProduk {
 interface IPermintaan {
     uuid: string;
     idProduk: number;
+    namaProduk: string;
     mbr: {
         no_mbr: string;
         jumlah: number;
@@ -111,6 +112,7 @@ export default function AddPermintaanRB({ session }: { session: string }) {
             setListPermintaan([{
                 uuid: nanoid(),
                 idProduk: 0,
+                namaProduk: "",
                 mbr: [{
                     no_mbr: "",
                     jumlah: 0,
@@ -123,6 +125,7 @@ export default function AddPermintaanRB({ session }: { session: string }) {
         setListPermintaan([...listPermintaan!, {
             uuid: nanoid(),
             idProduk: 0,
+            namaProduk: "",
             mbr: [{
                 no_mbr: "",
                 jumlah: 0,
@@ -139,12 +142,13 @@ export default function AddPermintaanRB({ session }: { session: string }) {
         });
     }
 
-    function handleChangeProduk(uuid: string, value: string | number) {
+    function handleChangeProduk(uuid: string, value: string | number, namaProduk: string) {
         const newList = listPermintaan?.map((permintaan) => {
             if (permintaan.uuid === uuid) {
                 return {
                     ...permintaan,
-                    idProduk: Number(value)
+                    idProduk: Number(value),
+                    namaProduk: namaProduk
                 };
             }
             return permintaan;
@@ -217,6 +221,7 @@ export default function AddPermintaanRB({ session }: { session: string }) {
             if (response.status === "success") {
                 toast.success(response.message);
                 //console.log("Response Data:", response.data);
+                
                 setTimeout(() => {
                     router.push("/users/rb/permintaan/list");
                 }, 2000);
@@ -266,7 +271,7 @@ export default function AddPermintaanRB({ session }: { session: string }) {
                                     {index + 1}
                                 </div>
                                 <div className="col-3">
-                                    {isMounted ? <Select className="mb-2" onChange={(e) => handleChangeProduk(data.uuid, e!.value)} options={produkList} isSearchable isLoading={isLoadingListProduk} /> : null}
+                                    {isMounted ? <Select className="mb-2" onChange={(e) => handleChangeProduk(data.uuid, e!.value, e!.label)} options={produkList} isSearchable isLoading={isLoadingListProduk} /> : null}
                                     {/* <select
                                         onChange={(e) => handleChangeProduk(data.uuid, e.target.value)}
                                         className="form-select mb-2"
