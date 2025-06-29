@@ -46,9 +46,7 @@ export default function AddPermintaanRB({ session }: { session: string }) {
     }, []);
 
     useEffect(() => {
-        if (isLoadingListProduk) {
-            return;
-        };
+npm au
 
         if (isErrorListProduk) {
             toast.error("Gagal Memuat Data Produk");
