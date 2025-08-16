@@ -1,5 +1,5 @@
 "use client";
-import { toast, Toaster } from "react-hot-toast";
+import { ToastContainer, toast } from 'react-toastify'
 import { useState, useEffect } from "react";
 import ModalAdd from "./ModalAdd";
 import BagianJabatanTable from "./BagianJabatanTable";
@@ -29,7 +29,7 @@ export function ListBagianJabatan({ session }: { session: string }) {
                 }}
                 mutate={mutateBagianJabatan.mutate}
             />
-            <Toaster/>
+            <ToastContainer/>
         </>
     );
 }

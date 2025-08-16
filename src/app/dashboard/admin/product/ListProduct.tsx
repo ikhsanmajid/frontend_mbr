@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import ModalAdd from "./ModalAdd";
-import toast from "react-hot-toast";
+import { toast } from 'react-toastify'
 import ProductTable from "./ProductTable";
 
 

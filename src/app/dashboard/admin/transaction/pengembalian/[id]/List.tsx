@@ -1,5 +1,4 @@
 "use client"
-import { Toaster } from "react-hot-toast";
 import FilterComponentPengembalian from "./FilterComponent";
 import { GetAllReturnRBAdminByProductAndIdPermintaan } from "@/app/lib/admin/users/userAPIRequest";
 import { useState, useEffect } from "react";
@@ -8,7 +7,7 @@ import { Button } from "react-bootstrap";
 import ModalLihat from "./ModalLihat";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faRefresh } from "@fortawesome/free-solid-svg-icons";
-import { toast } from "react-hot-toast";
+import { ToastContainer, toast } from 'react-toastify'
 import { useFilterState } from "../useFilterState";
 
 export default function ListPengembalianUser({ session, idProduk }: { session: string, idProduk: string }) {
@@ -128,7 +127,7 @@ export default function ListPengembalianUser({ session, idProduk }: { session: s
                 setDataLihatEdit(null)
             }}></ModalEdit>} */}
             </div>
-            <Toaster />
+            <ToastContainer/>
         </>
     )
 }

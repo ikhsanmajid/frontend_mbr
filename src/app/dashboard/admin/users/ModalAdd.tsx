@@ -1,5 +1,5 @@
 import { apiURL, checkEmail } from "@/app/lib/admin/users/userAPIRequest"
-import { Toaster, toast } from "react-hot-toast"
+import { ToastContainer, toast } from 'react-toastify'
 import { Modal, Button } from "react-bootstrap"
 import { useState, FormEvent } from "react"
 import { z, ZodIssue } from "zod"

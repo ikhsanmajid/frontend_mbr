@@ -1,6 +1,6 @@
 import { deleteJabatan } from "@/app/lib/admin/users/userAPIRequest";
 import { Modal, Button } from "react-bootstrap"
-import { Toaster, toast } from "react-hot-toast"
+import { ToastContainer, toast } from 'react-toastify'
 import { useState } from "react";
 import { Jabatan } from "./JabatanTable";
 
@@ -44,7 +44,7 @@ export default function ModalDelete({ show, session, deleteData, onClose, mutate
                     }
                 </Modal.Footer>
             </Modal>
-            <Toaster />
+            <ToastContainer/>
         </>
     )
 }

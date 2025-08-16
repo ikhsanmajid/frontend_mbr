@@ -6,7 +6,7 @@ import { Modal, Button } from "react-bootstrap"
 import { useState, FormEvent } from "react"
 import { z, ZodIssue } from "zod"
 import axios from "axios"
-import toast, { Toaster } from "react-hot-toast"
+import { ToastContainer, toast } from 'react-toastify'
 import axiosInstance from "@/app/lib/admin/users/axios"
 
 export default function ModalEdit({ show, session, onClose, editData, mutate }: { show: boolean, session: string, onClose: () => void, editData: IProduct | null, mutate: () => void }) {
@@ -75,7 +75,7 @@ export default function ModalEdit({ show, session, onClose, editData, mutate }: 
             const postEditProduct = await edit_produk(editData?.id, data, session)
             if (postEditProduct.type !== "error") {
                 toast.success("Produk Berhasil Diupdate", {
-                    duration: 2000
+                    autoClose: 2000
                 })
                 mutate()
             }
@@ -193,7 +193,7 @@ export default function ModalEdit({ show, session, onClose, editData, mutate }: 
                 </Modal.Footer>
 
             </Modal>
-            <Toaster />
+            <ToastContainer/>
         </>
     )
 }

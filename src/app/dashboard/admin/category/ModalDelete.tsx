@@ -1,7 +1,7 @@
 import { ICategory } from "./ListCategory";
 import { deleteCategory } from "@/app/lib/admin/users/userAPIRequest";
 import { Modal, Button } from "react-bootstrap"
-import { Toaster, toast } from "react-hot-toast"
+import { ToastContainer, toast } from 'react-toastify'
 import { useState } from "react";
 import React from "react";
 
@@ -45,7 +45,7 @@ export default function ModalDelete({ show, session, deleteData, onClose, katego
                     }
                 </Modal.Footer>
             </Modal>
-            <Toaster />
+            <ToastContainer/>
         </>
     )
 }

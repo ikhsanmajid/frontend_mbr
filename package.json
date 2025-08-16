@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev -p 8080",
+    "dev": "next dev -p 3000",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
@@ -27,8 +27,8 @@
     "react-bootstrap": "^2.10.4",
     "react-datepicker": "^7.5.0",
     "react-dom": "^18",
-    "react-hot-toast": "^2.4.1",
     "react-select": "^5.8.3",
+    "react-toastify": "^11.0.5",
     "swr": "^2.2.5",
     "use-debounce": "^10.0.4",
     "zod": "^3.23.8",

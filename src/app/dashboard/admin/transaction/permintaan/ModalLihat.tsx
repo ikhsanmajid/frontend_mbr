@@ -5,7 +5,7 @@ import { useState, useRef, useEffect } from "react";
 import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSave } from "@fortawesome/free-regular-svg-icons";
-import { Toaster, toast } from "react-hot-toast";
+import { ToastContainer, toast } from 'react-toastify';
 
 export default function ModalLihat({ session, data, show, onClose, onSave }: { session: string, data: IPermintaan | null, show: boolean, onClose: () => void, onSave: () => void }) {
     const [keputusan, setKeputusan] = useState<string | null>(null)
@@ -246,7 +246,7 @@ export default function ModalLihat({ session, data, show, onClose, onSave }: { s
                     </Button>
                 </Modal.Footer>
             </Modal>
-            <Toaster />
+            <ToastContainer/>
         </>
     )
 }

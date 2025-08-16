@@ -1,9 +1,8 @@
 "use client";
-import { toast, Toaster } from "react-hot-toast";
-import { useEffect, useState } from "react";
+import { useState, useEffect } from 'react';
+import { ToastContainer, toast } from 'react-toastify'
 import BagianTable from "@/app/dashboard/admin/bagian/BagianTable";
 import ModalAdd from "./ModalAdd";
-import React from "react";
 
 export interface IBagian {
     id?: number;
@@ -38,7 +37,7 @@ export default function ListBagian({ session }: { session: string }) {
                 }}
                 mutate={mutateBagian.mutate}
             />
-            <Toaster />          
+            <ToastContainer/>       
         </>
     );
 }

@@ -2,9 +2,8 @@
 import { FormEvent, useState, useEffect } from "react"
 import { signIn } from "next-auth/react"
 import LoginForm from "./LoginForm"
-import { toast, Toaster } from "react-hot-toast"
+import { ToastContainer, toast } from 'react-toastify'
 import { useRouter, useSearchParams } from "next/navigation"
-import { Toast, ToastContainer } from "react-bootstrap"
 
 export default function LoginPage() {
     const searchParams = useSearchParams()
@@ -19,8 +18,8 @@ export default function LoginPage() {
         setIsLoading(true)
 
         const formData = new FormData(event.currentTarget);
-        const email = await formData.get("email") as string;
-        const password = await formData.get("password") as string;
+        const email = formData.get("email") as string;
+        const password = formData.get("password") as string;
 
         const logIn = await signIn("credentials", {
             email: email,
@@ -49,7 +48,7 @@ export default function LoginPage() {
         <>
             <div style={{ height: "90vh" }} className="w-100 d-flex justify-content-center align-items-center">
                 <LoginForm handleSubmit={(e: any) => handleSubmit(e)} isLoading={isLoading}></LoginForm>
-                <Toaster />
+                <ToastContainer position="top-center" autoClose={2000}/>
             </div>
         </>
 

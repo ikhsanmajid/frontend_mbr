@@ -2,7 +2,7 @@ import { AxiosError } from "axios"
 import { checkBagian, add_bagian, useGetAllBagian, useGetAllJabatan, checkBagianJabatan, add_bagian_jabatan } from "@/app/lib/admin/users/userAPIRequest"
 import { FormEvent } from "react"
 import { Modal, Button } from "react-bootstrap"
-import { toast, Toaster } from "react-hot-toast"
+import { ToastContainer, toast } from 'react-toastify'
 import { useState } from "react"
 import { z, ZodIssue } from "zod"
 import { IBagian } from "../bagian/ListBagian"
@@ -130,7 +130,7 @@ export default function ModalAdd({ show, session, onClose, mutate }: { show: boo
                 </Modal.Footer>
 
             </Modal>
-            <Toaster />
+            <ToastContainer/>
         </>
     )
 }

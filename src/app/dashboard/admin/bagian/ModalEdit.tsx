@@ -4,7 +4,7 @@ import { Modal, Button } from "react-bootstrap"
 import { useState, FormEvent } from "react"
 import { z, ZodIssue } from "zod"
 import { AxiosError } from "axios"
-import toast, { Toaster } from "react-hot-toast"
+import { toast } from 'react-toastify'
 import React from "react"
 
 export default function ModalEdit({ show, session, onClose, editData, bagianMutate }: { show: boolean, session: string, onClose: () => void, editData: IBagian | null, bagianMutate: () => void }) {
@@ -69,7 +69,7 @@ export default function ModalEdit({ show, session, onClose, editData, bagianMuta
             const postEditBagian = await edit_bagian(editData?.id, e, session)
             if (postEditBagian.type !== "error") {
                 toast.success("Bagian Berhasil Diupdate", {
-                    duration: 2000
+                    autoClose: 2000
                 })
                 bagianMutate()
                 onClose()
