@@ -7,7 +7,7 @@ import PaginationComponent from "@/app/component/pagination/Pagination";
 import ModalDelete from "./ModalDelete";
 import RowActions from "./RowActions";
 import { useRouter } from 'next/navigation'
-import toast from "react-hot-toast";
+import { toast } from "react-toastify";
 import FilterComponentUser from "./FilterComponent";
 
 const columnHelper = createColumnHelper<IUser>()

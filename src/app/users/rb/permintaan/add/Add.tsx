@@ -91,12 +91,16 @@ export default function AddPermintaanRB({ session }: { session: string }) {
     function validateInputs() {
         for (const permintaan of listPermintaan || []) {
             if (!permintaan.idProduk || permintaan.mbr.some(mbr => !mbr.no_mbr || !mbr.jumlah || !mbr.tipe_mbr)) {
-                toast.error("Semua field Nama Produk, No MBR, Tipe MBR, dan Jumlah harus diisi.");
+                toast.error("Semua field Nama Produk, No MBR, Tipe MBR, dan Jumlah harus diisi.", {
+                    className: "w-75"
+                });
                 return false;
             }
 
             if (permintaan.mbr.some(mbr => (mbr.no_mbr.match(/-/g) || []).length < 2)) {
-                toast.error("No MBR harus memiliki minimal 2 karakter '-'.");
+                toast.error("No MBR harus memiliki minimal 2 karakter '-'.", {
+                    className: "w-100"
+                });
                 return false;
             }
         }
@@ -238,7 +242,7 @@ export default function AddPermintaanRB({ session }: { session: string }) {
 
     return (
         <div className="card mt-3">
-            <div><ToastContainer/></div>
+            <div><ToastContainer theme="colored" pauseOnHover={false} /></div>
             <div className="card-header">
                 <span className="fw-bold">Form Permintaan RB</span>
             </div>
@@ -272,18 +276,6 @@ export default function AddPermintaanRB({ session }: { session: string }) {
                                 </div>
                                 <div className="col-3">
                                     {isMounted ? <Select className="mb-2" onChange={(e) => handleChangeProduk(data.uuid, e!.value, e!.label)} options={produkList} isSearchable isLoading={isLoadingListProduk} /> : null}
-                                    {/* <select
-                                        onChange={(e) => handleChangeProduk(data.uuid, e.target.value)}
-                                        className="form-select mb-2"
-                                        aria-label="Default select example"
-                                        value={data.idProduk}
-                                        disabled={isSubmitting}
-                                    >
-                                        <option value="0">--- Pilih Produk ---</option>
-                                        { produkList?.filter(data => data.isActive).map((data, index) => (
-                                            <option key={index} value={data.id}>{data.namaProduk}</option>
-                                        ))}
-                                    </select> */}
                                     <button onClick={() => deleteProduk(data.uuid)} className="btn btn-sm btn-danger mb-3" disabled={isSubmitting}>Delete Produk</button>
                                 </div>
 

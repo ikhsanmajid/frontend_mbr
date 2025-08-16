@@ -7,7 +7,7 @@ import axios, { AxiosError } from "axios"
 import { ToastContainer, toast } from 'react-toastify'
 import { IBagian } from "../bagian/ListBagian"
 import { Jabatan } from "../jabatan/JabatanTable"
-import { apiURL } from "@/app/option"
+import { apiURL } from "@/app/auth"
 
 export default function ModalEdit({ show, session, onClose, editData, mutate }: { show: boolean, session: string, onClose: () => void, editData: IBagianJabatan | null, mutate: () => void }) {
     const [issues, setIssues] = useState<ZodIssue[] | null>(null)

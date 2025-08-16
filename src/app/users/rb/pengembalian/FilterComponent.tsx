@@ -6,7 +6,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState, useEffect } from "react";
 import DatePicker from "react-datepicker";
 import Select from "react-select";
-import toast from "react-hot-toast";
+import { toast } from "react-toastify";
 import "react-datepicker/dist/react-datepicker.css";
 import { useFilterState } from "./useFilterState";
 
