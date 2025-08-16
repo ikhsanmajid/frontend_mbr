@@ -6,7 +6,7 @@ import { flexRender, getCoreRowModel, useReactTable, createColumnHelper, Paginat
 import axios, { AxiosError } from "axios";
 import { useEffect, useRef } from "react";
 import { useMemo, useState } from "react";
-import { toast } from "react-hot-toast";
+import { toast } from "react-toastify";;
 
 interface IListNomorRB {
     id: number;

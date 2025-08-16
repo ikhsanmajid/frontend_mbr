@@ -7,7 +7,7 @@ import axios, { AxiosError } from "axios";
 import { useEffect, useRef } from "react";
 import { useMemo, useState } from "react";
 import { Button, Modal } from "react-bootstrap";
-import { toast } from "react-hot-toast";
+import { toast } from "react-toastify";;
 
 
 

@@ -1,7 +1,7 @@
 import { Modal, Button } from "react-bootstrap"
 import { useState } from "react";
 import { deleteUser } from "@/app/lib/admin/users/userAPIRequest";
-import { toast } from "react-hot-toast"
+import { toast } from "react-toastify";
 import React from "react";
 import { IUser } from "./ListUsers";
 
