@@ -7,7 +7,7 @@ import { addBagianJabatan, apiURL, checkEmail, deleteBagianJabatanUser, GetDetai
 import { Image } from "react-bootstrap"
 import { useRouter } from 'next/navigation'
 import { z, ZodIssue } from "zod"
-import toast, { Toaster } from 'react-hot-toast'
+import { ToastContainer, toast } from 'react-toastify'
 import axios, { AxiosError } from 'axios'
 import { IBagian } from '../../../bagian/ListBagian'
 import { Modal, Button } from 'react-bootstrap'
@@ -368,7 +368,6 @@ export function EditUser({ id, session }: { id: number, session: string }) {
                     <button className="btn btn-sm btn-warning text-white" onClick={(e) => {
                         e.preventDefault()
                         router.back()
-                        toast.remove()
                     }}><FontAwesomeIcon icon={faCaretLeft} /> &nbsp; Back</button>
                 </div>
             </div>
@@ -609,7 +608,7 @@ export function EditUser({ id, session }: { id: number, session: string }) {
                     </div>
                 </div>
             </div>
-            <Toaster />
+            <ToastContainer/>
         </div >
     )
 }

@@ -3,7 +3,7 @@ import { Modal, Button } from "react-bootstrap"
 import { useState, FormEvent } from "react"
 import { z, ZodIssue } from "zod"
 import { AxiosError } from "axios"
-import toast, { Toaster } from "react-hot-toast"
+import { toast } from 'react-toastify'
 import React from "react"
 
 export default function ModalAdd({ show, session, onClose, mutate }: { show: boolean, session: string, onClose: () => void, mutate: null | VoidFunction }) {

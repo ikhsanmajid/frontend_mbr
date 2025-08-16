@@ -1,5 +1,5 @@
 "use client"
-import { toast, Toaster } from "react-hot-toast";
+import { ToastContainer, toast } from 'react-toastify'
 import { useState, useEffect } from "react";
 import ModalAdd from "@/app/dashboard/admin/users/ModalAdd";
 import UserTable from "@/app/dashboard/admin/users/UserTable";
@@ -42,7 +42,7 @@ export default function ListUsers({ session }: { session: string }) {
                 mutate={mutateUsers.mutate}
             />
 
-            <Toaster />
+            <ToastContainer/>
         </>
     )
 

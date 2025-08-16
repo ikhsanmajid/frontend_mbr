@@ -1,5 +1,5 @@
 import { Modal, Button } from "react-bootstrap"
-import { toast, Toaster } from "react-hot-toast"
+import { ToastContainer, toast } from 'react-toastify'
 import { useState } from "react"
 import TableLihatNomor from "./TableLihatNomor"
 
@@ -92,7 +92,7 @@ export default function ModalLihat({ show, session, onClose, data }: { show: boo
                 </Modal.Footer>
 
             </Modal >
-            <Toaster />
+            <ToastContainer/>
         </>
     )
 }

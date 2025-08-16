@@ -4,7 +4,7 @@ import { Modal, Button } from "react-bootstrap"
 import { useState, FormEvent, useEffect } from "react"
 import { z, ZodIssue } from "zod"
 import axios, { AxiosError } from "axios"
-import toast, { Toaster } from "react-hot-toast"
+import { ToastContainer, toast } from 'react-toastify'
 import { IBagian } from "../bagian/ListBagian"
 import { Jabatan } from "../jabatan/JabatanTable"
 import { apiURL } from "@/app/option"
@@ -75,7 +75,7 @@ export default function ModalEdit({ show, session, onClose, editData, mutate }: 
             const postEditJabatan = await edit_bagian_jabatan(editData?.id, e, session)
             if (postEditJabatan.type !== "error") {
                 toast.success("Bagian vs Jabatan Berhasil Diupdate", {
-                    duration: 2000
+                    autoClose: 2000
                 })
                 mutate()
                 onClose()
@@ -175,7 +175,7 @@ export default function ModalEdit({ show, session, onClose, editData, mutate }: 
                 </Modal.Footer>
 
             </Modal>
-            <Toaster />
+            <ToastContainer/>
         </>
     )
 }

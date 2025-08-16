@@ -1,6 +1,6 @@
 import { IPermintaan } from "./List";
 import { Modal, Button } from "react-bootstrap";
-import { Toaster, toast } from "react-hot-toast";
+import { ToastContainer, toast } from 'react-toastify';
 import { FetchAllProduk, addPermintaanNomor, GetDetailPermintaan, editPermintaanNomor } from "@/app/lib/admin/users/userAPIRequest";
 import { useEffect, useState } from "react";
 import { useRouter } from 'next/navigation';
@@ -411,7 +411,7 @@ export default function ModalEdit({ session, data, show, onClose }: { session: s
                     </Button>
                 </Modal.Footer>
             </Modal>
-            <Toaster />
+            <ToastContainer/>
         </>
     )
 }

@@ -5,7 +5,7 @@ import { useState, useMemo, useEffect, useRef } from "react";
 import { GetPermintaanRBAdmin } from "@/app/lib/admin/users/userAPIRequest";
 import PaginationComponent from "@/app/component/pagination/Pagination";
 import { useFilterState } from "./useFilterState";
-import toast, { Toaster } from "react-hot-toast";
+import { ToastContainer, toast } from 'react-toastify'
 import RowActions from "./RowActions";
 import ModalLihat from "./ModalLihat";
 import { faRefresh } from "@fortawesome/free-solid-svg-icons";
@@ -230,12 +230,13 @@ export default function PermintaanTable({ session }: { session: string }) {
 
             <ModalLihat session={session} data={dataLihat} show={showModalLihat} onClose={() => {
                 setShowModalLihat(false)
+                mutateListPermintaan()
             }} onSave={() => {                
                 setShowModalLihat(false)
                 mutateListPermintaan()
                 toast.success("Berhasil Mengonfirmasi Permintaan")
             }}></ModalLihat>
-            <Toaster/>
+            <ToastContainer/>
         </div >
     )
 }

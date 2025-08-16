@@ -4,7 +4,7 @@ import { Modal, Button } from "react-bootstrap"
 import { useState, FormEvent } from "react"
 import { z, ZodIssue } from "zod"
 import { AxiosError } from "axios"
-import toast, { Toaster } from "react-hot-toast"
+import { ToastContainer, toast } from 'react-toastify'
 
 export default function ModalEdit({ show, session, onClose, editData, mutate }: { show: boolean, session: string, onClose: () => void, editData: Jabatan | null, mutate: () => void }) {
     const [issues, setIssues] = useState<ZodIssue[] | null>(null)
@@ -49,7 +49,7 @@ export default function ModalEdit({ show, session, onClose, editData, mutate }: 
             const postEditJabatan = await edit_jabatan(editData?.id, e, session)
             if (postEditJabatan.type !== "error") {
                 toast.success("Jabatan Berhasil Diupdate", {
-                    duration: 2000
+                    autoClose: 2000
                 })
                 mutate()
             }
@@ -124,7 +124,7 @@ export default function ModalEdit({ show, session, onClose, editData, mutate }: 
                 </Modal.Footer>
 
             </Modal>
-            <Toaster />
+            <ToastContainer/>
         </>
     )
 }

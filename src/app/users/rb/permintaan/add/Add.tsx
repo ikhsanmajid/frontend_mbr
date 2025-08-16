@@ -1,7 +1,7 @@
 "use client";
 import { FetchAllProduk, addPermintaanNomor } from "@/app/lib/admin/users/userAPIRequest";
 import { useEffect, useState } from "react";
-import { Toaster, toast } from "react-hot-toast";
+import { ToastContainer, toast } from 'react-toastify';
 import { useRouter } from 'next/navigation';
 import { nanoid } from 'nanoid';
 import Select from 'react-select';
@@ -238,7 +238,7 @@ export default function AddPermintaanRB({ session }: { session: string }) {
 
     return (
         <div className="card mt-3">
-            <div><Toaster/></div>
+            <div><ToastContainer/></div>
             <div className="card-header">
                 <span className="fw-bold">Form Permintaan RB</span>
             </div>

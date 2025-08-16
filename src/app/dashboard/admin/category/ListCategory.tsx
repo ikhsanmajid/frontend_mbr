@@ -1,5 +1,5 @@
 "use client";
-import { toast, Toaster } from "react-hot-toast";
+import { ToastContainer, toast } from 'react-toastify'
 import { useEffect, useState } from "react";
 import CategoryTable from "./CategoryTable";
 import ModalAdd from "./ModalAdd";
@@ -37,7 +37,7 @@ export default function ListCategory({ session }: { session: string }) {
                 mutate={mutateBagian.mutate}
             />
 
-            <Toaster/>
+            <ToastContainer/>
         </>
     );
 }

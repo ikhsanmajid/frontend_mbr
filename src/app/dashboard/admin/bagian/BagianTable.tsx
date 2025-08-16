@@ -7,7 +7,7 @@ import ModalEdit from "./ModalEdit"
 import RowActions from "./RowActions"
 import ModalDelete from "./ModalDelete"
 import PaginationComponent from "@/app/component/pagination/Pagination"
-import { Toaster } from "react-hot-toast"
+import { ToastContainer } from 'react-toastify'
 
 const columnHelper = createColumnHelper<IBagian>()
 
@@ -211,7 +211,7 @@ export default function BagianTable({ session, onAdd, mutate }: { session: strin
 
             <ModalEdit show={showModalEdit} session={session} onClose={() => { setShowModalEdit(false); setDataEdit(null) }} editData={dataEdit} bagianMutate={mutateBagian}></ModalEdit>
             <ModalDelete show={showModalDelete} session={session} onClose={() => { setShowModalDelete(false); setDataDelete(null) }} deleteData={dataDelete} bagianMutate={mutateBagian}></ModalDelete>
-            <Toaster/>
+            <ToastContainer/>
         </div >
     )
 }

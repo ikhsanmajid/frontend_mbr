@@ -1,7 +1,7 @@
 import { IPermintaan } from "./List";
 import { Modal, Button } from "react-bootstrap";
 import { useState } from "react";
-import { Toaster, toast } from "react-hot-toast";
+import { ToastContainer, toast } from 'react-toastify';
 import { GetDetailPermintaan, GetDetailPermintaanNomor, usedPermintaanNomor } from "@/app/lib/admin/users/userAPIRequest";
 
 import React from "react";
@@ -210,7 +210,7 @@ export default function ModalLihat({ session, data, show, onClose, onSave }: { s
                     </Button>
                 </Modal.Footer>
             </Modal>
-            <Toaster />
+            <ToastContainer/>
         </>
     )
 }

@@ -3,7 +3,7 @@ import { faFloppyDisk } from "@fortawesome/free-regular-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
-import { Toaster, toast } from "react-hot-toast"
+import { ToastContainer, toast } from 'react-toastify'
 import { faCaretLeft } from "@fortawesome/free-solid-svg-icons"
 import axios, { AxiosError } from "axios"
 import { apiURL } from "@/app/lib/admin/users/userAPIRequest"
@@ -199,7 +199,7 @@ export default function Profile({ userInfo, session }: { userInfo: any, session:
                             </div>
                         </div>
                     </div>
-                    <Toaster />
+                    <ToastContainer/>
                 </div>}
         </>
     )

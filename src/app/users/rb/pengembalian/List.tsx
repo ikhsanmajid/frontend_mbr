@@ -3,7 +3,7 @@ import { faRefresh } from "@fortawesome/free-solid-svg-icons";
 import { flexRender, getCoreRowModel, useReactTable, createColumnHelper, PaginationState, getPaginationRowModel } from "@tanstack/react-table";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { GetAllReturnRBByProduct } from "@/app/lib/admin/users/userAPIRequest";
-import { Toaster, toast } from "react-hot-toast";
+import { ToastContainer, toast } from 'react-toastify';
 import { useEffect } from "react";
 import { useFilterState } from "./useFilterState";
 import { useMemo, useState } from "react";
@@ -263,7 +263,7 @@ export default function ListPengembalianUser({ session }: { session: string }) {
                 setDataLihatEdit(null)
             }}></ModalEdit>} */}
             </div>
-            <Toaster />
+            <ToastContainer/>
         </>
     )
 }

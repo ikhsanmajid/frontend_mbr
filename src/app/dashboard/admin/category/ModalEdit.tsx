@@ -4,7 +4,7 @@ import { Modal, Button } from "react-bootstrap"
 import { useState, FormEvent } from "react"
 import { z, ZodIssue } from "zod"
 import { AxiosError } from "axios"
-import toast, { Toaster } from "react-hot-toast"
+import { ToastContainer, toast } from 'react-toastify'
 import React from "react"
 
 export default function ModalEdit({ show, session, onClose, editData, kategoriMutate }: { show: boolean, session: string, onClose: () => void, editData: ICategory | null, kategoriMutate: () => void }) {
@@ -57,7 +57,7 @@ export default function ModalEdit({ show, session, onClose, editData, kategoriMu
             const postEditCategory = await edit_kategori(editData?.id, e, session)
             if (postEditCategory.type !== "error") {
                 toast.success("Kategori Berhasil Diupdate", {
-                    duration: 2000
+                    autoClose: 2000
                 })
                 kategoriMutate()
             }
@@ -131,7 +131,7 @@ export default function ModalEdit({ show, session, onClose, editData, kategoriMu
                 </Modal.Footer>
 
             </Modal>
-            <Toaster />
+            <ToastContainer/>
         </>
     )
 }

@@ -1,5 +1,5 @@
 "use client"
-import { Toaster, toast } from "react-hot-toast";
+import { ToastContainer, toast } from 'react-toastify';
 import FilterComponentLaporanRB from "./FilterComponent";
 import { useFilterState } from "./useFilterState";
 import { apiURL } from "@/app/lib/admin/users/userAPIRequest";
@@ -110,7 +110,7 @@ export default function DownloadRB({ session }: { session: string }) {
                         </table>
                     </div>
                 </div>
-                <Toaster />
+                <ToastContainer/>
             </div>
             <div className="card-footer d-flex justify-content-between px-4 pt-3">
             </div>

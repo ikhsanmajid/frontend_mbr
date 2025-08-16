@@ -9,7 +9,7 @@ import ModalLihat from "./ModalLihat";
 import PaginationComponent from "@/app/component/pagination/Pagination";
 import React from "react";
 import RowActions from "./RowActions";
-import toast, { Toaster } from "react-hot-toast";
+import { ToastContainer, toast } from 'react-toastify'
 import FilterComponentPermintaan from "./FilterComponent";
 import ModalEdit from "./ModalEdit";
 
@@ -167,7 +167,7 @@ export default function ListMBR({ session }: { session: string }) {
 
     return (
         <>
-            <div><Toaster /></div>
+            <div><ToastContainer/></div>
             <div className="card mt-3">
                 <div className="card-header d-flex justify-content-between">
                     <span className="fw-bold">Daftar Permintaan</span>
