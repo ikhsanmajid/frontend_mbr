@@ -111,7 +111,7 @@ export default function ModalAdd({ show, onClose, mutate }: { show: boolean, onC
                 onClose()
             }
         }).catch(e => {
-            console.log("add user catch ", e)
+            //console.log("add user catch ", e)
             if (e instanceof z.ZodError) {
                 setIssues(e.issues)
             }

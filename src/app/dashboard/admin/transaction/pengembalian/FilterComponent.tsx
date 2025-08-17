@@ -91,6 +91,11 @@ export default function FilterComponentPengembalian() {
             return
         }
 
+        if (date1 == null && date2 == null) {
+            setStartDate(null)
+            setEndDate(null)
+        }
+
         if (date1 != null && date2 == null) {
             toast.error("Tentukan Tanggal Akhir");
             return

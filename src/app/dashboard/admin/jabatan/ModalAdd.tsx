@@ -49,7 +49,7 @@ export default function ModalAdd({ show, onClose, mutate }: { show: boolean, onC
         }).then(async (data) => {
             setIssues([])
             const postAddJabatan = await add_jabatan(data)
-            console.log("request: ", postAddJabatan)
+            //console.log("request: ", postAddJabatan)
             if (postAddJabatan.type !== "error") {
                 toast.success("Jabatan Berhasil Ditambahkan")
                 mutate!()

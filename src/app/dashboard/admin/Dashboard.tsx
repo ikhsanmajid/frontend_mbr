@@ -23,7 +23,7 @@ export default function Dashboard() {
             setDashboardData(null);
         }
         if (error) {
-            console.log(error);
+            //console.log(error);
         }
     }, [isLoadingListDashboardData, listDashboardData, error]);
 

@@ -63,6 +63,11 @@ export default function FilterComponentPengembalian() {
             return
         }
 
+        if (date1 == null && date2 == null) {
+            setStartDate(null)
+            setEndDate(null)
+        }
+
 
         setIdProduk(idProdukChoosen)
         setStatusKembali(statusKembaliChoosen)

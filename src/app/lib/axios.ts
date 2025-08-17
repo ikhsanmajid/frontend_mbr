@@ -6,6 +6,9 @@ const api = axios.create({
   headers: {
     "Content-Type": "application/json",
   },
+  // validateStatus: (status) => {
+  //   return status >= 200 && status < 500
+  // },
   withCredentials: true,
 })
 
@@ -25,8 +28,9 @@ let isRedirecting = false;
 api.interceptors.response.use(
   (response) => response,
 
-  (error: AxiosError) => {
-    if (error.response?.status === 401) {
+  async (error: AxiosError) => {
+    const session = await getSession()
+    if (error.response?.status === 401 || session == null) {
 
       if (!isRedirecting) {
         isRedirecting = true;

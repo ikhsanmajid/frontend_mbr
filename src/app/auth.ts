@@ -17,7 +17,7 @@ class CustomError extends CredentialsSignin {
 export const { handlers, signIn, signOut, auth } = NextAuth({
     session: {
         strategy: "jwt",
-        maxAge: 60 * 60 * 2,
+        maxAge: 60 * 60 * 6,
     },
     providers: [
         Credentials({
@@ -59,7 +59,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
                     if (isOk) {
                         const data = user.data.data
-                        console.log("Status Response: ", data)
+                        //console.log("Status Response: ", data)
                         return {
                             id: data.detail.id,
                             email: data.detail.email,
