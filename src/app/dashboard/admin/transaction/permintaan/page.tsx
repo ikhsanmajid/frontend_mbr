@@ -7,11 +7,9 @@ export default async function Product() {
     const session = await auth()
     if (session?.user?.is_admin !== true) redirect("/")
 
-    const access_token = session?.user?.access_token as string
-
     return (
         <Suspense fallback={<>Loading...</>}>
-            <ListPermintaan session={access_token} />
+            <ListPermintaan />
         </Suspense>
     )
 }

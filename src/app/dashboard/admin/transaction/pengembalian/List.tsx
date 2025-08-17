@@ -3,13 +3,13 @@ import { faRefresh } from "@fortawesome/free-solid-svg-icons";
 import { flexRender, getCoreRowModel, useReactTable, createColumnHelper, PaginationState, getPaginationRowModel } from "@tanstack/react-table";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { GetAllReturnRBAdminByProduct } from "@/app/lib/admin/users/userAPIRequest";
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import { useEffect } from "react";
+import { useFilterState } from "./useFilterState";
 import { useMemo, useState } from "react";
 import FilterComponentPengembalian from "./FilterComponent";
 import Link from "next/link";
 import PaginationComponent from "@/app/component/pagination/Pagination";
-import { useFilterState } from "./useFilterState";
 
 
 interface IReturnRB {
@@ -26,7 +26,7 @@ interface IReturnRB {
 
 const columnHelper = createColumnHelper<IReturnRB>()
 
-export default function ListPengembalianUser({ session }: { session: string }) {
+export default function ListPengembalianUser() {
     const [count, setCount] = useState<number>(0)
     const [pagination, setPagination] = useState<PaginationState>({
         pageIndex: 0,
@@ -46,7 +46,7 @@ export default function ListPengembalianUser({ session }: { session: string }) {
     const startDate = useFilterState(state => state.startDate)
     const endDate = useFilterState(state => state.endDate)
 
-    const { listPengembalian, isLoadingListPengembalian, error, mutateListPengembalian } = GetAllReturnRBAdminByProduct(session, idProduk, pageSize, pageIndex * pageSize, { number: filterNomor, status: statusKembali, startDate: startDate, endDate: endDate, idBagian: idBagian })
+    const { listPengembalian, isLoadingListPengembalian, error, mutateListPengembalian } = GetAllReturnRBAdminByProduct(idProduk, pageSize, pageIndex * pageSize, { number: filterNomor, status: statusKembali, startDate: startDate, endDate: endDate, idBagian: idBagian })
 
     const columns = useMemo(() => [
         columnHelper.display({
@@ -117,10 +117,6 @@ export default function ListPengembalianUser({ session }: { session: string }) {
     const currentPage = table.getState().pagination.pageIndex
 
     useEffect(() => {
-        toast.dismiss()
-    }, [])
-
-    useEffect(() => {
         if (error) {
             if (error.message === "Pilih Produk Terlebih Dahulu") return
             toast.error(error.message)
@@ -169,9 +165,7 @@ export default function ListPengembalianUser({ session }: { session: string }) {
                 </div>
                 <div className="card-body">
                     <div className="row">
-                        <FilterComponentPengembalian
-                            session={session}
-                        />
+                        <FilterComponentPengembalian/>
                     </div>
 
                     <div className="row mb-2 mt-1 align-items-center">
@@ -262,22 +256,7 @@ export default function ListPengembalianUser({ session }: { session: string }) {
                         <PaginationComponent table={table} currentPage={currentPage} pageCount={pageCount} pageList={pageList}></PaginationComponent>
                     </div>
                 </div>
-
-                {/* {showModalLihat && <ModalLihat session={session} show={showModalLihat} data={dataLihatEdit} onClose={() => {
-                setShowModalLihat(false)
-                setDataLihatEdit(null)
-            }} onSave={mutateListPermintaan}></ModalLihat>}
-
-            {showEditModal && <ModalEdit session={session} show={showEditModal} data={dataLihatEdit} onClose={(message) => {
-                if (message) {
-                    toast.success(message)
-                }
-                mutateListPermintaan()
-                setShowEditModal(false)
-                setDataLihatEdit(null)
-            }}></ModalEdit>} */}
             </div>
-            <ToastContainer/>
         </>
     )
 }

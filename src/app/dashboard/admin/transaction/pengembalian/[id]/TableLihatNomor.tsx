@@ -1,13 +1,13 @@
 "use client"
-import PaginationComponent from "@/app/component/pagination/Pagination";
-import axiosInstance from "@/app/lib/admin/users/axios";
-import { apiURL, GetAllNomorReturnRBByIDDetailPermintaan } from "@/app/lib/admin/users/userAPIRequest";
+import { AxiosError } from "axios";
+import { Button, Modal } from "react-bootstrap";
 import { flexRender, getCoreRowModel, useReactTable, createColumnHelper, PaginationState, getPaginationRowModel } from "@tanstack/react-table";
-import axios, { AxiosError } from "axios";
+import { GetAllNomorReturnRBByIDDetailPermintaan } from "@/app/lib/admin/users/userAPIRequest";
+import { toast } from "react-toastify";
 import { useEffect, useRef } from "react";
 import { useMemo, useState } from "react";
-import { Button, Modal } from "react-bootstrap";
-import { toast } from "react-toastify";;
+import api from "@/app/lib/axios";
+import PaginationComponent from "@/app/component/pagination/Pagination";
 
 
 
@@ -22,7 +22,7 @@ interface IListNomorRB {
 
 const columnHelper = createColumnHelper<IListNomorRB>()
 
-export default function TableLihatNomor({ session, idData }: { session: string, idData: string | number }) {
+export default function TableLihatNomor({ idData }: { idData: string | number }) {
     const nomorBatchRef = useRef<HTMLInputElement>(null)
     const [idEdit, setIdEdit] = useState<string | number | null>(null)
     const [editData, setEditData] = useState<IListNomorRB | null>(null)
@@ -39,15 +39,10 @@ export default function TableLihatNomor({ session, idData }: { session: string, 
 
     const [pengembalianNomorData, setPengembalianNomorData] = useState<IListNomorRB[] | null>(null)
 
-    const { listNomorPengembalian, isLoadingListNomorPengembalian, error, mutateListNomorPengembalian } = GetAllNomorReturnRBByIDDetailPermintaan(session, idData, pageSize, pageIndex * pageSize)
+    const { listNomorPengembalian, isLoadingListNomorPengembalian, error, mutateListNomorPengembalian } = GetAllNomorReturnRBByIDDetailPermintaan(idData, pageSize, pageIndex * pageSize)
 
     const [show, setShow] = useState(false);
     const [idConfirm, setIdConfirm] = useState<number | null>(null)
-
-    useEffect(() => {
-        toast.dismiss()
-    }, [])
-
 
     function showModalConfirm(id: number) {
         setShow(true)
@@ -57,11 +52,7 @@ export default function TableLihatNomor({ session, idData }: { session: string, 
     async function handleConfirm() {
         setIsLoadingAdd(true)
         try {
-            const confirmData = await axiosInstance.post(`${apiURL}/admin/product_rb/confirmRBReturnAdmin/${idConfirm}`, {}, {
-                headers: {
-                    Authorization: `Bearer ${session}`
-                }
-            })
+            const confirmData = await api.post(`/admin/product_rb/confirmRBReturnAdmin/${idConfirm}`)
 
             if (confirmData.data.status === "success") {
                 toast.success("Data berhasil dikonfirmasi")
@@ -72,9 +63,9 @@ export default function TableLihatNomor({ session, idData }: { session: string, 
                 toast.error("Data gagal dikonfirmasi")
             }
         } catch (err) {
-            if (err instanceof AxiosError){
+            if (err instanceof AxiosError) {
                 if (error.response?.status === 401) {
-                    window.location.href = '/login?expired=true'; 
+                    window.location.href = '/login?expired=true';
                 }
             }
             toast.error("Data gagal dikonfirmasi, Backend Error")
@@ -85,7 +76,7 @@ export default function TableLihatNomor({ session, idData }: { session: string, 
 
     async function handleSave() {
         setIsLoadingAdd(true)
-        const dateTime = await axiosInstance.get(`${apiURL}/time`)
+        const dateTime = await api.get(`/time`)
         const dateUpload = new Date(dateTime.data.time)
         const dateShow = dateUpload.toLocaleString("id-ID", { timeZone: "Asia/Jakarta" })
 
@@ -96,14 +87,10 @@ export default function TableLihatNomor({ session, idData }: { session: string, 
         }
 
         try {
-            const updateData = await axiosInstance.put(`${apiURL}/users/rb/updateNomorRBReturn/${idEdit}`, {
+            const updateData = await api.put(`/users/rb/updateNomorRBReturn/${idEdit}`, {
                 status: editData?.status,
                 nomor_batch: nomorBatchRef.current?.value.toUpperCase() ?? "",
                 tanggal_kembali: editData?.status === "KEMBALI" || editData?.status === "BATAL" ? dateTime.data.time : ""
-            }, {
-                headers: {
-                    Authorization: `Bearer ${session}`
-                }
             })
 
             if (updateData.data.status === "success") {
@@ -124,13 +111,13 @@ export default function TableLihatNomor({ session, idData }: { session: string, 
                 toast.error("Data gagal diupdate")
             }
         } catch (err) {
-            if (err instanceof AxiosError){
+            if (err instanceof AxiosError) {
                 if (error.response?.status === 401) {
-                    window.location.href = '/login?expired=true'; 
+                    window.location.href = '/login?expired=true';
                 }
             }
             console.log(err)
-        }finally {
+        } finally {
             setIsLoadingAdd(false)
         }
     }
@@ -320,10 +307,6 @@ export default function TableLihatNomor({ session, idData }: { session: string, 
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [pageCount])
 
-    useEffect(() => {
-        toast.dismiss()
-    }, [])
-
     return (
         <div className="row">
             <div className="table-responsive">
@@ -419,7 +402,6 @@ export default function TableLihatNomor({ session, idData }: { session: string, 
                     <Button variant="primary" onClick={handleConfirm} disabled={isLoadingAdd}>Confirm</Button>
                 </Modal.Footer>
             </Modal>
-
         </div>
     );
 }

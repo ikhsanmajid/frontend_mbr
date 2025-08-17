@@ -7,7 +7,7 @@ import { AxiosError } from "axios"
 import { toast } from 'react-toastify'
 import React from "react"
 
-export default function ModalEdit({ show, session, onClose, editData, bagianMutate }: { show: boolean, session: string, onClose: () => void, editData: IBagian | null, bagianMutate: () => void }) {
+export default function ModalEdit({ show, onClose, editData, bagianMutate }: { show: boolean, onClose: () => void, editData: IBagian | null, bagianMutate: () => void }) {
     const [issues, setIssues] = useState<ZodIssue[] | null>(null)
     const [isLoadingAdd, setIsLoadingAdd] = useState(false)
 
@@ -38,7 +38,7 @@ export default function ModalEdit({ show, session, onClose, editData, bagianMuta
             return
         }
 
-        const bagianExist = await checkBagian(bagian, session)
+        const bagianExist = await checkBagian(bagian)
 
         if (bagianExist.data.message == "exist") {
             ctx.addIssue({
@@ -64,9 +64,9 @@ export default function ModalEdit({ show, session, onClose, editData, bagianMuta
             bagian: dataBagian,
             active: dataActive,
             kategori: dataKategori
-        }).then(async (e) => {
+        }).then(async (data) => {
             setIssues(null)
-            const postEditBagian = await edit_bagian(editData?.id, e, session)
+            const postEditBagian = await edit_bagian(editData?.id, data)
             if (postEditBagian.type !== "error") {
                 toast.success("Bagian Berhasil Diupdate", {
                     autoClose: 2000
@@ -165,7 +165,6 @@ export default function ModalEdit({ show, session, onClose, editData, bagianMuta
                 </Modal.Footer>
 
             </Modal>
- 
         </>
     )
 }

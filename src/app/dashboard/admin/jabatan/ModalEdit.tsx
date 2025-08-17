@@ -1,12 +1,12 @@
+import { AxiosError } from "axios"
 import { checkJabatan, edit_jabatan } from "@/app/lib/admin/users/userAPIRequest"
 import { Jabatan } from "./JabatanTable"
 import { Modal, Button } from "react-bootstrap"
+import { toast } from 'react-toastify'
 import { useState, FormEvent } from "react"
 import { z, ZodIssue } from "zod"
-import { AxiosError } from "axios"
-import { ToastContainer, toast } from 'react-toastify'
 
-export default function ModalEdit({ show, session, onClose, editData, mutate }: { show: boolean, session: string, onClose: () => void, editData: Jabatan | null, mutate: () => void }) {
+export default function ModalEdit({ show, onClose, editData, mutate }: { show: boolean, onClose: () => void, editData: Jabatan | null, mutate: () => void }) {
     const [issues, setIssues] = useState<ZodIssue[] | null>(null)
     const [isLoadingAdd, setIsLoadingAdd] = useState(false)
 
@@ -20,7 +20,7 @@ export default function ModalEdit({ show, session, onClose, editData, mutate }: 
             return
         }
 
-        const jabatanExist = await checkJabatan(jabatan, session)
+        const jabatanExist = await checkJabatan(jabatan)
 
         if (jabatanExist.data.message == "exist") {
             ctx.addIssue({
@@ -44,9 +44,9 @@ export default function ModalEdit({ show, session, onClose, editData, mutate }: 
         await Jabatan.parseAsync({
             jabatan: dataJabatan,
             active: dataActive
-        }).then(async (e) => {
+        }).then(async (data) => {
             setIssues(null)
-            const postEditJabatan = await edit_jabatan(editData?.id, e, session)
+            const postEditJabatan = await edit_jabatan(editData?.id, data)
             if (postEditJabatan.type !== "error") {
                 toast.success("Jabatan Berhasil Diupdate", {
                     autoClose: 2000
@@ -124,7 +124,6 @@ export default function ModalEdit({ show, session, onClose, editData, mutate }: 
                 </Modal.Footer>
 
             </Modal>
-            <ToastContainer/>
         </>
     )
 }

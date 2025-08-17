@@ -1,18 +1,18 @@
-import React from "react";
-import { IUser } from "./ListUsers";
-import { flexRender, getCoreRowModel, useReactTable, createColumnHelper, PaginationState, getPaginationRowModel } from "@tanstack/react-table";
-import { useState, useMemo, useEffect, useRef } from "react";
 import { FetchAllUser } from "@/app/lib/admin/users/userAPIRequest";
-import PaginationComponent from "@/app/component/pagination/Pagination";
-import ModalDelete from "./ModalDelete";
-import RowActions from "./RowActions";
-import { useRouter } from 'next/navigation'
+import { flexRender, getCoreRowModel, useReactTable, createColumnHelper, PaginationState, getPaginationRowModel } from "@tanstack/react-table";
+import { IUser } from "./ListUsers";
 import { toast } from "react-toastify";
+import { useRouter } from 'next/navigation'
+import { useState, useMemo, useEffect } from "react";
 import FilterComponentUser from "./FilterComponent";
+import ModalDelete from "./ModalDelete";
+import PaginationComponent from "@/app/component/pagination/Pagination";
+import React from "react";
+import RowActions from "./RowActions";
 
 const columnHelper = createColumnHelper<IUser>()
 
-export default function UserTable({ session, mutateUsers, onAdd }: { session: string, mutateUsers: (mutate: VoidFunction) => void, onAdd: (state: boolean) => void }) {
+export default function UserTable({ mutateUsers, onAdd }: { mutateUsers: (mutate: VoidFunction) => void, onAdd: (state: boolean) => void }) {
     const [count, setCount] = useState<number>(0)
     const [pagination, setPagination] = useState<PaginationState>({
         pageIndex: 0,
@@ -32,7 +32,7 @@ export default function UserTable({ session, mutateUsers, onAdd }: { session: st
     const [searchUser, setSearchUser] = useState<string>("")
     const [statusUser, setStatusUser] = useState<string>("all")
 
-    const { listUser, isLoadingUser, error: errorUser, mutateUser } = FetchAllUser(session, pageSize, pageIndex * pageSize, { search_user: searchUser, active: statusUser })
+    const { listUser, isLoadingUser, error: errorUser, mutateUser } = FetchAllUser(pageSize, pageIndex * pageSize, { search_user: searchUser, active: statusUser })
 
     const handleEdit = (data: number | null) => {
         if (data == null) {
@@ -230,7 +230,7 @@ export default function UserTable({ session, mutateUsers, onAdd }: { session: st
                 </div>
             </div>
 
-            <ModalDelete show={showModalDelete} session={session} onClose={() => { setShowModalDelete(false); setDataDelete(null) }} deleteData={dataDelete} usersMutate={mutateUser}></ModalDelete>
+            <ModalDelete show={showModalDelete} onClose={() => { setShowModalDelete(false); setDataDelete(null) }} deleteData={dataDelete} usersMutate={mutateUser}></ModalDelete>
         </div >
     )
 }

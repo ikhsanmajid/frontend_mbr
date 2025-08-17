@@ -1,8 +1,7 @@
 "use client";
-import { useState, useEffect } from "react";
-import ModalAdd from "@/app/dashboard/admin/jabatan/ModalAdd";
+import { useState } from "react";
 import JabatanTable from "@/app/dashboard/admin/jabatan/JabatanTable";
-import { ToastContainer, toast } from 'react-toastify'
+import ModalAdd from "@/app/dashboard/admin/jabatan/ModalAdd";
 
 
 export type JabatanType = {
@@ -11,32 +10,25 @@ export type JabatanType = {
     isActive?: boolean
 }
 
-export function ListJabatan({ session }: { session: string }) {
+export function ListJabatan() {
     // Add Data
     const [showModalAdd, setShowModalAdd] = useState(false);
     const [mutateJabatan, setMutateJabatan] = useState<{mutate: null | VoidFunction}>({mutate: null});
 
-    useEffect(() => {
-        toast.dismiss()
-    }, [])
-
     return (
         <>
             <JabatanTable
-                session={session}
                 onAdd={(state) => setShowModalAdd(state)}
                 mutate={(mutate: VoidFunction) => setMutateJabatan({mutate: mutate})}
             />
 
             <ModalAdd
                 show={showModalAdd}
-                session={session}
                 onClose={() => {
                     setShowModalAdd(false)
                 }}
                 mutate={mutateJabatan.mutate}
             />
-            <ToastContainer/>
         </>
     );
 }

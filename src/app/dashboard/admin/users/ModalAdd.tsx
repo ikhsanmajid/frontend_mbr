@@ -1,24 +1,18 @@
-import { apiURL, checkEmail } from "@/app/lib/admin/users/userAPIRequest"
-import { ToastContainer, toast } from 'react-toastify'
+import { checkEmail } from "@/app/lib/admin/users/userAPIRequest"
 import { Modal, Button } from "react-bootstrap"
+import { toast } from 'react-toastify'
 import { useState, FormEvent } from "react"
 import { z, ZodIssue } from "zod"
+import api from "@/app/lib/axios"
 import axios from "axios"
 import React from "react"
-import axiosInstance from "@/app/lib/admin/users/axios"
 
-export default function ModalAdd({ show, session, onClose, mutate }: { show: boolean, session: string, onClose: () => void, mutate: null | VoidFunction }) {
+export default function ModalAdd({ show, onClose, mutate }: { show: boolean, onClose: () => void, mutate: null | VoidFunction }) {
     const [issues, setIssues] = useState<ZodIssue[]>([])
     const [isLoadingAdd, setIsLoadingAdd] = useState(false)
 
     async function checkNIK(nik: string) {
-        const NIKCheck = await axios(apiURL + "/admin/users/checkNIK/?nik=" + nik, {
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": "Bearer " + session
-            }
-        })
-
+        const NIKCheck = await api.get("/admin/users/checkNIK/?nik=" + nik)
         return NIKCheck
     }
 
@@ -47,7 +41,7 @@ export default function ModalAdd({ show, session, onClose, mutate }: { show: boo
         password: z.string().min(8, { message: "Password harus lebih dari 8 karakter" }),
         repeatedPassword: z.string()
     }).superRefine(async ({ password, repeatedPassword, email, nik }, ctx) => {
-        const emailExist = await checkEmail(email, session)
+        const emailExist = await checkEmail(email)
         const NIKExist = await checkNIK(nik)
 
         if (emailExist.data.message == "exist") {
@@ -79,19 +73,16 @@ export default function ModalAdd({ show, session, onClose, mutate }: { show: boo
     })
 
     async function add_user(data: any) {
-        const addProcess = axiosInstance.post(apiURL + "/admin/users/addUser", {
-            email: data.email,
-            nik: data.nik,
-            nama: data.fullName,
-            password: data.repeatedPassword
-        }, {
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": "Bearer " + session
-            }
-        })
+        const addProcess = await api.post(
+            "/admin/users/addUser",
+            {
+                email: data.email,
+                nik: data.nik,
+                nama: data.fullName,
+                password: data.repeatedPassword
+            })
 
-        return (await addProcess).data
+        return addProcess.data
     }
 
     async function handleSubmit(formData: FormEvent<HTMLFormElement>) {
@@ -240,7 +231,6 @@ export default function ModalAdd({ show, session, onClose, mutate }: { show: boo
                 </Modal.Footer>
 
             </Modal>
-
         </>
     )
 }

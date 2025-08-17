@@ -16,7 +16,7 @@ export type Jabatan = {
 const columnHelper = createColumnHelper<Jabatan>()
 
 
-export default function JabatanTable({ session, onAdd, mutate }: { session: string, onAdd: (state: boolean) => void, mutate: (mutate: VoidFunction) => void }) {
+export default function JabatanTable({ onAdd, mutate }: { onAdd: (state: boolean) => void, mutate: (mutate: VoidFunction) => void }) {
     const [count, setCount] = useState<number>(0)
     const [pagination, setPagination] = useState<PaginationState>({
         pageIndex: 0,
@@ -33,7 +33,7 @@ export default function JabatanTable({ session, onAdd, mutate }: { session: stri
     const [showModalDelete, _setShowModalDelete] = useState<boolean>(false)
     const [dataDelete, _setDataDelete] = useState<Jabatan | null>(null)
 
-    const { detailJabatan, isLoadingJabatan, error, mutateJabatan } = useGetAllJabatan(session, pageSize, pageIndex * pageSize);
+    const { detailJabatan, isLoadingJabatan, error, mutateJabatan } = useGetAllJabatan(pageSize, pageIndex * pageSize);
 
     const columns = useMemo(() => [
         columnHelper.display({
@@ -181,8 +181,8 @@ export default function JabatanTable({ session, onAdd, mutate }: { session: stri
                 </div>
             </div>
 
-            <ModalEdit show={showModalEdit} session={session} onClose={() => { _setShowModalEdit(false); _setDataEdit(null) }} editData={dataEdit} mutate={mutateJabatan}></ModalEdit>
-            <ModalDelete show={showModalDelete} session={session} onClose={() => { _setShowModalDelete(false); _setDataDelete(null) }} deleteData={dataDelete} mutate={mutateJabatan}></ModalDelete>
+            <ModalEdit show={showModalEdit} onClose={() => { _setShowModalEdit(false); _setDataEdit(null) }} editData={dataEdit} mutate={mutateJabatan}></ModalEdit>
+            <ModalDelete show={showModalDelete}  onClose={() => { _setShowModalDelete(false); _setDataDelete(null) }} deleteData={dataDelete} mutate={mutateJabatan}></ModalDelete>
         </div >
     )
 }

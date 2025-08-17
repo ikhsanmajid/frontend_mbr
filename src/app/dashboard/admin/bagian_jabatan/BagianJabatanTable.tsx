@@ -23,7 +23,7 @@ export interface IBagianJabatan {
 const columnHelper = createColumnHelper<IBagianJabatan>()
 
 
-export default function BagianJabatanTable({ session, onAdd, mutate }: { session: string, onAdd: (state: boolean) => void, mutate: (mutateFn: VoidFunction) => void }) {
+export default function BagianJabatanTable({ onAdd, mutate }: { onAdd: (state: boolean) => void, mutate: (mutateFn: VoidFunction) => void }) {
     const [count, setCount] = useState<number>(0)
     const [pagination, setPagination] = useState<PaginationState>({
         pageIndex: 0,
@@ -40,7 +40,7 @@ export default function BagianJabatanTable({ session, onAdd, mutate }: { session
     const [showModalDelete, _setShowModalDelete] = useState<boolean>(false)
     const [dataDelete, _setDataDelete] = useState<IBagianJabatan | null>(null)
 
-    const { detailBagianJabatan, isLoadingBagianJabatan, error, mutateBagianJabatan } = useGetAllBagianJabatan(session, pageSize, pageIndex * pageSize, "asc");
+    const { detailBagianJabatan, isLoadingBagianJabatan, error, mutateBagianJabatan } = useGetAllBagianJabatan(pageSize, pageIndex * pageSize, "asc");
 
     const columns = useMemo(() => [
         columnHelper.display({
@@ -188,8 +188,8 @@ export default function BagianJabatanTable({ session, onAdd, mutate }: { session
                 </div>
             </div>
 
-            <ModalEdit show={showModalEdit} session={session} onClose={() => { _setShowModalEdit(false); _setDataEdit(null) }} editData={dataEdit} mutate={mutateBagianJabatan}></ModalEdit>
-            <ModalDelete show={showModalDelete} session={session} onClose={() => { _setShowModalDelete(false); _setDataDelete(null) }} deleteData={dataDelete} mutate={mutateBagianJabatan}></ModalDelete>
+            <ModalEdit show={showModalEdit} onClose={() => { _setShowModalEdit(false); _setDataEdit(null) }} editData={dataEdit} mutate={mutateBagianJabatan}></ModalEdit>
+            <ModalDelete show={showModalDelete} onClose={() => { _setShowModalDelete(false); _setDataDelete(null) }} deleteData={dataDelete} mutate={mutateBagianJabatan}></ModalDelete>
         </div>
     )
 }

@@ -1,21 +1,19 @@
+import {  toast } from 'react-toastify';
+import { GetDetailPermintaan, GetDetailPermintaanNomor, usedPermintaanNomor } from "@/app/lib/admin/users/userAPIRequest";
 import { IPermintaan } from "./List";
 import { Modal, Button } from "react-bootstrap";
 import { useState } from "react";
-import { ToastContainer, toast } from 'react-toastify';
-import { GetDetailPermintaan, GetDetailPermintaanNomor, usedPermintaanNomor } from "@/app/lib/admin/users/userAPIRequest";
 
-import React from "react";
-
-export default function ModalLihat({ session, data, show, onClose, onSave }: { session: string, data: IPermintaan | null, show: boolean, onClose: () => void, onSave: () => void }) {
+export default function ModalLihat({ data, show, onClose, onSave }: { data: IPermintaan | null, show: boolean, onClose: () => void, onSave: () => void }) {
     const [isSubmitting, setIsSubmitting] = useState(false);
 
-    const { detailPermintaan, isLoadingPermintaan, error, mutateListPermintaan } = data?.status !== "DITERIMA" ? GetDetailPermintaan(session, data ? Number(data.id) : null) : { detailPermintaan: null, isLoadingPermintaan: false, error: null, mutateListPermintaan: null }
-    const { detailPermintaanNomor, isLoadingPermintaanNomor, errorNomor, mutateListPermintaanNomor } = data?.status == "DITERIMA" ? GetDetailPermintaanNomor(session, data ? Number(data.id) : null) : { detailPermintaanNomor: null, isLoadingPermintaanNomor: false, errorNomor: null, mutateListPermintaanNomor: null }
+    const { detailPermintaan, isLoadingPermintaan, error, mutateListPermintaan } = data?.status !== "DITERIMA" ? GetDetailPermintaan(data ? Number(data.id) : null) : { detailPermintaan: null, isLoadingPermintaan: false, error: null, mutateListPermintaan: null }
+    const { detailPermintaanNomor, isLoadingPermintaanNomor, errorNomor, mutateListPermintaanNomor } = data?.status == "DITERIMA" ? GetDetailPermintaanNomor(data ? Number(data.id) : null) : { detailPermintaanNomor: null, isLoadingPermintaanNomor: false, errorNomor: null, mutateListPermintaanNomor: null }
 
     async function handleSudahDipakai() {
         setIsSubmitting(true);
         try {
-            const response = await usedPermintaanNomor(Number(data?.id), session);
+            const response = await usedPermintaanNomor(Number(data?.id));
             if (response.status === "success") {
                 toast.success("Berhasil menandai permintaan RB sudah dipakai.");
                 onSave();
@@ -210,7 +208,6 @@ export default function ModalLihat({ session, data, show, onClose, onSave }: { s
                     </Button>
                 </Modal.Footer>
             </Modal>
-            <ToastContainer/>
         </>
     )
 }

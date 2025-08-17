@@ -1,17 +1,15 @@
-import { apiURL } from "@/app/lib/admin/users/userAPIRequest"
 import { AxiosError } from "axios"
 import { edit_produk, useGetAllBagian, FetchAllKategori } from "@/app/lib/admin/users/userAPIRequest"
 import { IProduct } from "./ListProduct"
 import { Modal, Button } from "react-bootstrap"
+import { toast } from 'react-toastify'
 import { useState, FormEvent } from "react"
 import { z, ZodIssue } from "zod"
-import axios from "axios"
-import { ToastContainer, toast } from 'react-toastify'
-import axiosInstance from "@/app/lib/admin/users/axios"
+import api from "@/app/lib/axios"
 
-export default function ModalEdit({ show, session, onClose, editData, mutate }: { show: boolean, session: string, onClose: () => void, editData: IProduct | null, mutate: () => void }) {
-    const { detailBagian, isLoadingBagian, error: errorBagian, mutateBagian } = useGetAllBagian(session, true)
-    const { detailKategori, isLoadingKategori, error: errorKategori, mutateListKategori } = FetchAllKategori(session)
+export default function ModalEdit({ show, onClose, editData, mutate }: { show: boolean, onClose: () => void, editData: IProduct | null, mutate: () => void }) {
+    const { detailBagian, isLoadingBagian, error: errorBagian, mutateBagian } = useGetAllBagian(true)
+    const { detailKategori, isLoadingKategori, error: errorKategori, mutateListKategori } = FetchAllKategori()
     const [issues, setIssues] = useState<ZodIssue[] | null>(null)
     const [isLoadingAdd, setIsLoadingAdd] = useState(false)
 
@@ -20,12 +18,7 @@ export default function ModalEdit({ show, session, onClose, editData, mutate }: 
 
         const encodedNamaProduk = encodeURIComponent(namaProduk)
 
-        const productCheck = await axiosInstance.get(`${apiURL}/admin/product/checkProduct?nama_produk=${encodedNamaProduk}&id_bagian=${id_bagian}`, {
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": "Bearer " + session
-            }
-        })
+        const productCheck = await api.get(`/admin/product/checkProduct?nama_produk=${encodedNamaProduk}&id_bagian=${id_bagian}`)
 
         return productCheck
     }
@@ -72,7 +65,7 @@ export default function ModalEdit({ show, session, onClose, editData, mutate }: 
             active: dataActive
         }).then(async (data) => {
             setIssues(null)
-            const postEditProduct = await edit_produk(editData?.id, data, session)
+            const postEditProduct = await edit_produk(editData?.id, data)
             if (postEditProduct.type !== "error") {
                 toast.success("Produk Berhasil Diupdate", {
                     autoClose: 2000
@@ -193,7 +186,6 @@ export default function ModalEdit({ show, session, onClose, editData, mutate }: 
                 </Modal.Footer>
 
             </Modal>
-            <ToastContainer/>
         </>
     )
 }

@@ -1,15 +1,15 @@
-import { checkBagianJabatan, edit_bagian_jabatan, edit_jabatan, useGetAllBagian, useGetAllJabatan } from "@/app/lib/admin/users/userAPIRequest"
+import { AxiosError } from "axios"
+import { checkBagianJabatan, edit_bagian_jabatan, useGetAllBagian, useGetAllJabatan } from "@/app/lib/admin/users/userAPIRequest"
+import { IBagian } from "../bagian/ListBagian"
 import { IBagianJabatan } from "./BagianJabatanTable"
+import { Jabatan } from "../jabatan/JabatanTable"
 import { Modal, Button } from "react-bootstrap"
+import { toast } from 'react-toastify'
 import { useState, FormEvent, useEffect } from "react"
 import { z, ZodIssue } from "zod"
-import axios, { AxiosError } from "axios"
-import { ToastContainer, toast } from 'react-toastify'
-import { IBagian } from "../bagian/ListBagian"
-import { Jabatan } from "../jabatan/JabatanTable"
-import { apiURL } from "@/app/auth"
 
-export default function ModalEdit({ show, session, onClose, editData, mutate }: { show: boolean, session: string, onClose: () => void, editData: IBagianJabatan | null, mutate: () => void }) {
+
+export default function ModalEdit({ show, onClose, editData, mutate }: { show: boolean, onClose: () => void, editData: IBagianJabatan | null, mutate: () => void }) {
     const [issues, setIssues] = useState<ZodIssue[] | null>(null)
     const [isLoadingAdd, setIsLoadingAdd] = useState(false)
     const [jabatan, setJabatan] = useState<Jabatan[] | null>(null)
@@ -17,8 +17,8 @@ export default function ModalEdit({ show, session, onClose, editData, mutate }: 
     const [selectedBagian, setSelectedBagian] = useState<number | undefined>(undefined)
     const [selectedJabatan, setSelectedJabatan] = useState<number | undefined>(undefined)
 
-    const { detailBagian, isLoadingBagian } = useGetAllBagian(session, false, undefined, undefined)
-    const { detailJabatan, isLoadingJabatan } = useGetAllJabatan(session)
+    const { detailBagian, isLoadingBagian } = useGetAllBagian(false, undefined, undefined)
+    const { detailJabatan, isLoadingJabatan } = useGetAllJabatan()
 
     useEffect(() => {
         if (isLoadingBagian) return
@@ -47,7 +47,7 @@ export default function ModalEdit({ show, session, onClose, editData, mutate }: 
         bagian: z.string(),
         jabatan: z.string()
     }).superRefine(async ({ jabatan, bagian }, ctx) => {
-        const checkExist = await checkBagianJabatan(bagian, jabatan, session)
+        const checkExist = await checkBagianJabatan(bagian, jabatan)
 
         if (checkExist.data.message == "exist") {
             ctx.addIssue({
@@ -70,9 +70,9 @@ export default function ModalEdit({ show, session, onClose, editData, mutate }: 
         await BagianJabatan.parseAsync({
             jabatan: dataJabatan,
             bagian: dataBagian
-        }).then(async (e) => {
+        }).then(async (data) => {
             setIssues(null)
-            const postEditJabatan = await edit_bagian_jabatan(editData?.id, e, session)
+            const postEditJabatan = await edit_bagian_jabatan(editData?.id, data)
             if (postEditJabatan.type !== "error") {
                 toast.success("Bagian vs Jabatan Berhasil Diupdate", {
                     autoClose: 2000
@@ -175,7 +175,6 @@ export default function ModalEdit({ show, session, onClose, editData, mutate }: 
                 </Modal.Footer>
 
             </Modal>
-            <ToastContainer/>
         </>
     )
 }

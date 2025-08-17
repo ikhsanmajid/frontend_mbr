@@ -1,13 +1,13 @@
+import { AxiosError } from "axios"
 import { checkCategory, edit_bagian, edit_kategori } from "@/app/lib/admin/users/userAPIRequest"
 import { ICategory } from "./ListCategory"
 import { Modal, Button } from "react-bootstrap"
+import { toast } from 'react-toastify'
 import { useState, FormEvent } from "react"
 import { z, ZodIssue } from "zod"
-import { AxiosError } from "axios"
-import { ToastContainer, toast } from 'react-toastify'
 import React from "react"
 
-export default function ModalEdit({ show, session, onClose, editData, kategoriMutate }: { show: boolean, session: string, onClose: () => void, editData: ICategory | null, kategoriMutate: () => void }) {
+export default function ModalEdit({ show, onClose, editData, kategoriMutate }: { show: boolean, onClose: () => void, editData: ICategory | null, kategoriMutate: () => void }) {
     const [issues, setIssues] = useState<ZodIssue[] | null>(null)
     const [isLoadingAdd, setIsLoadingAdd] = useState(false)
 
@@ -28,7 +28,7 @@ export default function ModalEdit({ show, session, onClose, editData, kategoriMu
             return
         }
 
-        const categoryExist = await checkCategory(namaKategori, session)
+        const categoryExist = await checkCategory(namaKategori)
 
         if (categoryExist.data.message == "exist") {
             ctx.addIssue({
@@ -52,9 +52,9 @@ export default function ModalEdit({ show, session, onClose, editData, kategoriMu
         await Category.parseAsync({
             namaKategori: dataKategori,
             startingNumber: dataStartingNumber
-        }).then(async (e) => {
+        }).then(async (data) => {
             setIssues(null)
-            const postEditCategory = await edit_kategori(editData?.id, e, session)
+            const postEditCategory = await edit_kategori(editData?.id, data)
             if (postEditCategory.type !== "error") {
                 toast.success("Kategori Berhasil Diupdate", {
                     autoClose: 2000
@@ -130,8 +130,7 @@ export default function ModalEdit({ show, session, onClose, editData, kategoriMu
 
                 </Modal.Footer>
 
-            </Modal>
-            <ToastContainer/>
+            </Modal>           
         </>
     )
 }

@@ -1,16 +1,17 @@
 "use client"
-import { faAngleLeft, faBan, faPlus, faCaretLeft } from '@fortawesome/free-solid-svg-icons'
+import {  toast } from 'react-toastify'
+import { addBagianJabatan, checkEmail, deleteBagianJabatanUser, GetDetailUserInfo, GetJabatanByIDBagian, updateDataUser, updateDataUserBagianJabatan, useGetAllBagian } from '@/app/lib/admin/users/userAPIRequest'
+import { AxiosError } from 'axios'
+import { faBan, faPlus, faCaretLeft } from '@fortawesome/free-solid-svg-icons'
 import { faTrashCan, faPenToSquare, faFloppyDisk } from '@fortawesome/free-regular-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { FormEvent, useCallback, useEffect, useRef, useState } from 'react'
-import { addBagianJabatan, apiURL, checkEmail, deleteBagianJabatanUser, GetDetailUserInfo, GetJabatanByIDBagian, updateDataUser, updateDataUserBagianJabatan, useGetAllBagian } from '@/app/lib/admin/users/userAPIRequest'
+import { IBagian } from '../../../bagian/ListBagian'
 import { Image } from "react-bootstrap"
+import { Modal, Button } from 'react-bootstrap'
 import { useRouter } from 'next/navigation'
 import { z, ZodIssue } from "zod"
-import { ToastContainer, toast } from 'react-toastify'
-import axios, { AxiosError } from 'axios'
-import { IBagian } from '../../../bagian/ListBagian'
-import { Modal, Button } from 'react-bootstrap'
+import api from '@/app/lib/axios'
 
 type JabatanType = {
     id: number
@@ -48,11 +49,11 @@ type DetailUserType = {
 const enumBoolean = ["true", "false"] as const
 
 
-export function EditUser({ id, session }: { id: number, session: string }) {
+export function EditUser({ id }: { id: number }) {
     const router = useRouter()
 
-    const { detailUser: user, detailUserLoading, mutateUser }: { detailUser: DetailUserType, detailUserLoading: boolean, mutateUser: VoidFunction } = GetDetailUserInfo(id, session)
-    const { detailBagian: listBagian, isLoadingBagian, mutateBagian }: { detailBagian: { count: number, data: IBagian[] }, isLoadingBagian: boolean, mutateBagian: VoidFunction } = useGetAllBagian(session, false)
+    const { detailUser: user, detailUserLoading, mutateUser }: { detailUser: DetailUserType, detailUserLoading: boolean, mutateUser: VoidFunction } = GetDetailUserInfo(id)
+    const { detailBagian: listBagian, isLoadingBagian, mutateBagian }: { detailBagian: { count: number, data: IBagian[] }, isLoadingBagian: boolean, mutateBagian: VoidFunction } = useGetAllBagian(false)
 
     const [disabledBagianJabatanEditMode, setDisabledBagianJabatanEditMode] = useState<boolean>(true)
     const [addMode, setAddMode] = useState<boolean>(false)
@@ -75,10 +76,10 @@ export function EditUser({ id, session }: { id: number, session: string }) {
 
     const getJabatan = useCallback(async (idBagian: string) => {
         setIsLoadingJabatan(true)
-        const listJabatan = await GetJabatanByIDBagian(idBagian, session)
+        const listJabatan = await GetJabatanByIDBagian(idBagian)
         setListJabatan(listJabatan.data)
         setIsLoadingJabatan(false)
-    }, [session])
+    }, [])
 
     useEffect(() => {
         if (!isLoadingBagian && !detailUserLoading && user !== undefined) {
@@ -100,12 +101,7 @@ export function EditUser({ id, session }: { id: number, session: string }) {
     //console.log("data jabatan ", (defaultBagian))
 
     async function checkNIK(nik: string) {
-        const NIKCheck = await axios(apiURL + "/admin/users/checkNIK/?nik=" + nik, {
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": "Bearer " + session
-            }
-        })
+        const NIKCheck = await api.get( + "/admin/users/checkNIK/?nik=" + nik)
 
         return NIKCheck
     }
@@ -156,7 +152,7 @@ export function EditUser({ id, session }: { id: number, session: string }) {
             }
 
             // Check Email apakah ada?
-            const isEmailExist = await checkEmail(email, session)
+            const isEmailExist = await checkEmail(email)
 
             if (isEmailExist.data.message == "exist") {
                 ctx.addIssue({
@@ -228,7 +224,7 @@ export function EditUser({ id, session }: { id: number, session: string }) {
     const handleDeleteJabatanUser = async (id: string) => {
         setIsLoadingDelete(true)
         try {
-            const deleteProcess = await deleteBagianJabatanUser(id, session)
+            const deleteProcess = await deleteBagianJabatanUser(id)
             if (deleteProcess.data.message == "delete jabatan berhasil") {
                 toast.success("Delete Jabatan Berhasil")
                 setAddMode(false)
@@ -294,7 +290,7 @@ export function EditUser({ id, session }: { id: number, session: string }) {
             //console.log("data post, ", data)
 
             // Proses Update User
-            const processUpdateUser = await updateDataUser({ data: { ...data, id: user.data.id.toString() }, session })
+            const processUpdateUser = await updateDataUser({ data: { ...data, id: user.data.id.toString() } })
 
             // Jika update berhasil
             if (processUpdateUser.data.message == "update user berhasil") {
@@ -326,7 +322,7 @@ export function EditUser({ id, session }: { id: number, session: string }) {
 
         if (idBagianJabatan !== "") {
             try {
-                const addProcess = await updateDataUserBagianJabatan({ id: idBagianJabatan, idBagianJabatan: newIdBagianJabatan }, session)
+                const addProcess = await updateDataUserBagianJabatan({ id: idBagianJabatan, idBagianJabatan: newIdBagianJabatan })
                 //console.log("status text", addProcess)
                 if (addProcess.data.status == "success") {
                     toast.success("Update Bagian Jabatan Berhasil")
@@ -341,7 +337,7 @@ export function EditUser({ id, session }: { id: number, session: string }) {
             }
         } else {
             try {
-                const addProcess = await addBagianJabatan({ idBagianJabatan: newIdBagianJabatan, idUser: userId }, session)
+                const addProcess = await addBagianJabatan({ idBagianJabatan: newIdBagianJabatan, idUser: userId })
                 console.log("status text: ", addProcess)
                 if (addProcess.status == 200) {
                     toast.success("Tambah Bagian Jabatan Berhasil")
@@ -608,7 +604,6 @@ export function EditUser({ id, session }: { id: number, session: string }) {
                     </div>
                 </div>
             </div>
-            <ToastContainer/>
         </div >
     )
 }

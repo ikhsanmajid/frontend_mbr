@@ -2,8 +2,8 @@ import { Accordion } from "react-bootstrap";
 import { useRef, useState } from "react";
 import { useGetAllBagian } from "@/app/lib/admin/users/userAPIRequest";
 
-export default function FilterComponentProduct({ valueNamaProduk, valueBagian, statusProduct, session }: { valueNamaProduk: (value: string) => void, valueBagian: (value: string) => void, statusProduct: (value: string) => void, session: string }) {
-    const { detailBagian, isLoadingBagian, error, mutateBagian } = useGetAllBagian(session, true)
+export default function FilterComponentProduct({ valueNamaProduk, valueBagian, statusProduct }: { valueNamaProduk: (value: string) => void, valueBagian: (value: string) => void, statusProduct: (value: string) => void }) {
+    const { detailBagian, isLoadingBagian, error, mutateBagian } = useGetAllBagian(true)
 
     const inputSearchRef = useRef<HTMLInputElement>(null)
     const inputSelectRef = useRef<HTMLSelectElement>(null)

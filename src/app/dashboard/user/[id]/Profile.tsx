@@ -1,15 +1,14 @@
 "use client"
+import { AxiosError } from "axios"
+import { faCaretLeft } from "@fortawesome/free-solid-svg-icons"
 import { faFloppyDisk } from "@fortawesome/free-regular-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { toast } from 'react-toastify'
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
-import { ToastContainer, toast } from 'react-toastify'
-import { faCaretLeft } from "@fortawesome/free-solid-svg-icons"
-import axios, { AxiosError } from "axios"
-import { apiURL } from "@/app/lib/admin/users/userAPIRequest"
-import axiosInstance from "@/app/lib/admin/users/axios"
+import api from "@/app/lib/axios"
 
-export default function Profile({ userInfo, session }: { userInfo: any, session: string }) {
+export default function Profile({ userInfo }: { userInfo: any }) {
     const router = useRouter()
     const [isLoading, setIsLoading] = useState(false)
     const [password, setPassword] = useState('')
@@ -18,6 +17,7 @@ export default function Profile({ userInfo, session }: { userInfo: any, session:
     const [isLoadingChangePassword, setIsLoadingChangePassword] = useState(false)
 
     async function handleSaveChanges(e: React.FormEvent<HTMLFormElement>) {
+        setIsLoading(true)
         e.preventDefault()
         if (password.length < 8 && confirmPassword.length < 8) {
             toast.error('Password Minimal 8 Karakter')
@@ -48,23 +48,16 @@ export default function Profile({ userInfo, session }: { userInfo: any, session:
 
         if (password == confirmPassword) {
             try {
-                const request = await axiosInstance.patch(`${apiURL}/admin/users/updatePassword/${userInfo.id}`, {
+                const request = await api.patch(`/admin/users/updatePassword/${userInfo.id}`, {
                     password: password,
                     confirm_password: confirmPassword
-                }, {
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${session}`
-
-                    }
                 })
 
                 if (request.status === 200) {
                     toast.success('Berhasil Mengubah Password')
                     setPassword('')
                     setConfirmPassword('')
-                }
-
+                }               
 
             } catch (e) {
                 if (e instanceof AxiosError) {
@@ -73,6 +66,8 @@ export default function Profile({ userInfo, session }: { userInfo: any, session:
                     }
                 }
                 toast.error('Gagal Mengubah Password')
+            } finally {
+                setIsLoading(false)
             }
         }
     }
@@ -92,7 +87,6 @@ export default function Profile({ userInfo, session }: { userInfo: any, session:
                             <button className="btn btn-sm btn-warning text-white" onClick={(e) => {
                                 e.preventDefault()
                                 router.back()
-                                toast.remove()
                             }}>
                                 <FontAwesomeIcon icon={faCaretLeft} /> &nbsp; Back
                             </button>
@@ -199,7 +193,6 @@ export default function Profile({ userInfo, session }: { userInfo: any, session:
                             </div>
                         </div>
                     </div>
-                    <ToastContainer/>
                 </div>}
         </>
     )

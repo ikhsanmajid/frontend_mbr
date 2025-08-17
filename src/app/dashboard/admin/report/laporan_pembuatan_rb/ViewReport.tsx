@@ -1,13 +1,12 @@
 "use client"
-import { ToastContainer, toast } from 'react-toastify';
-import FilterComponentLaporanRB from "./FilterComponent";
+import { AxiosError } from "axios";
+import { toast } from 'react-toastify';
 import { useFilterState } from "./useFilterState";
-import { apiURL } from "@/app/lib/admin/users/userAPIRequest";
-import axios, { AxiosError } from "axios";
-import { useEffect, useMemo, useState } from "react";
-import axiosInstance from "@/app/lib/admin/users/axios";
+import { useState } from "react";
+import api from '@/app/lib/axios';
+import FilterComponentLaporanRB from "./FilterComponent";
 
-export default function DownloadRB({ session }: { session: string }) {
+export default function DownloadRB() {
     const [data, setData] = useState<any[any] | null>(null);
 
     const isLoading = useFilterState((state) => state.isLoading);
@@ -23,14 +22,9 @@ export default function DownloadRB({ session }: { session: string }) {
 
         try {
             setIsLoading(true);
-            let query = `${apiURL}/admin/product_rb/generateReportPembuatanRB?tahun=${startDate}`;
+            let query = `/admin/product_rb/generateReportPembuatanRB?tahun=${startDate}`;
 
-            const response = await axiosInstance.get(query, {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${session}`
-                }
-            });
+            const response = await api.get(query);
 
             if (response.status === 200) {
                 setData(response.data);
@@ -110,7 +104,6 @@ export default function DownloadRB({ session }: { session: string }) {
                         </table>
                     </div>
                 </div>
-                <ToastContainer/>
             </div>
             <div className="card-footer d-flex justify-content-between px-4 pt-3">
             </div>

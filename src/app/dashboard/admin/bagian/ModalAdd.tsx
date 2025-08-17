@@ -1,4 +1,4 @@
-import { add_bagian, apiURL, checkBagian } from "@/app/lib/admin/users/userAPIRequest"
+import { add_bagian, checkBagian } from "@/app/lib/admin/users/userAPIRequest"
 import { Modal, Button } from "react-bootstrap"
 import { useState, FormEvent } from "react"
 import { z, ZodIssue } from "zod"
@@ -6,7 +6,7 @@ import { AxiosError } from "axios"
 import { toast } from 'react-toastify'
 import React from "react"
 
-export default function ModalAdd({ show, session, onClose, mutate }: { show: boolean, session: string, onClose: () => void, mutate: null | VoidFunction }) {
+export default function ModalAdd({ show, onClose, mutate }: { show: boolean, onClose: () => void, mutate: null | VoidFunction }) {
     const [issues, setIssues] = useState<ZodIssue[]>([])
     const [isLoadingAdd, setIsLoadingAdd] = useState(false)
 
@@ -14,7 +14,7 @@ export default function ModalAdd({ show, session, onClose, mutate }: { show: boo
         bagian: z.string().min(1, { message: "Nama Bagian minimal 1 karakter" }),
         kategori: z.string()
     }).superRefine(async ({ bagian, kategori }, ctx) => {
-        const bagianExist = await checkBagian(bagian, session)
+        const bagianExist = await checkBagian(bagian)
 
         if (bagianExist.data.message == "exist") {
             ctx.addIssue({
@@ -54,7 +54,7 @@ export default function ModalAdd({ show, session, onClose, mutate }: { show: boo
             kategori: dataKategori
         }).then(async (data) => {
             setIssues([])
-            const postAddUser = await add_bagian(data, session)
+            const postAddUser = await add_bagian(data)
             if (postAddUser.type !== "error") {
                 toast.success("Bagian Berhasil Ditambahkan")
                 mutate!()

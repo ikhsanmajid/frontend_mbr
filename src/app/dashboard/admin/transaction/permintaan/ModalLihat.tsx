@@ -1,27 +1,34 @@
+import { faSave } from "@fortawesome/free-regular-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { GetDetailPermintaan, GetDetailPermintaanNomor, confirmPermintaan } from "@/app/lib/admin/users/userAPIRequest";
 import { IPermintaan } from "./PermintaanTable";
 import { Modal, Button } from "react-bootstrap";
-import { GetDetailPermintaan, GetDetailPermintaanNomor, confirmPermintaan } from "@/app/lib/admin/users/userAPIRequest";
+import { toast } from 'react-toastify';
 import { useState, useRef, useEffect } from "react";
 import React from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSave } from "@fortawesome/free-regular-svg-icons";
-import { ToastContainer, toast } from 'react-toastify';
 
-export default function ModalLihat({ session, data, show, onClose, onSave }: { session: string, data: IPermintaan | null, show: boolean, onClose: () => void, onSave: () => void }) {
+export default function ModalLihat({ data, show, onClose, onSave }: { data: IPermintaan | null, show: boolean, onClose: () => void, onSave: () => void }) {
     const [keputusan, setKeputusan] = useState<string | null>(null)
     const keputusanRef = useRef<HTMLSelectElement | null>(null)
     const reasonRef = useRef<HTMLInputElement | null>(null)
-    const [idData, setIdData] = useState<number | null>(null)
+
+    const id = data?.id ?? null;
+    const isAccepted = data?.status === "DITERIMA";
+
+    const {
+        detailPermintaanNomor, isLoadingPermintaanNomor, errorNomor, mutateListPermintaanNomor
+    } = GetDetailPermintaanNomor(isAccepted && id ? id : null);
+
+    const {
+        detailPermintaan, isLoadingPermintaan, error, mutateListPermintaan
+    } = GetDetailPermintaan(!isAccepted && id ? id : null);
 
     useEffect(() => {
-        if (data) {
-            setIdData(data.id)
-        }
+        if (!show || !id) return;
+        if (isAccepted) mutateListPermintaanNomor(); else mutateListPermintaan();
+    }, [show, id, isAccepted, mutateListPermintaan, mutateListPermintaanNomor]);
 
-    }, [data?.status, data?.id, data])
-
-    const { detailPermintaan, isLoadingPermintaan, error, mutateListPermintaan } = data?.status !== "DITERIMA" ? GetDetailPermintaan(session, data ? data.id : null) : { detailPermintaan: null, isLoadingPermintaan: false, error: null, mutateListPermintaan: null }
-    const { detailPermintaanNomor, isLoadingPermintaanNomor, errorNomor, mutateListPermintaanNomor } = data?.status == "DITERIMA" ? GetDetailPermintaanNomor(session, data ? data.id : null) : { detailPermintaanNomor: null, isLoadingPermintaanNomor: false, errorNomor: null, mutateListPermintaanNomor: null }
+    console.log("Props: ", detailPermintaanNomor)
 
     function checkReason() {
         if (keputusan == "2") {
@@ -38,7 +45,7 @@ export default function ModalLihat({ session, data, show, onClose, onSave }: { s
         }
 
         let keputusanValue: "confirm" | "reject" = keputusanRef.current?.value == "1" ? "confirm" : "reject"
-        const confirm = await confirmPermintaan(data, session, keputusanValue, reasonRef.current?.value)
+        const confirm = await confirmPermintaan(data, keputusanValue, reasonRef.current?.value)
         if ('data' in confirm!) {
             onSave()
             setKeputusan(null)
@@ -154,9 +161,10 @@ export default function ModalLihat({ session, data, show, onClose, onSave }: { s
                                     ))
                                 ))}
 
-                                {(!isLoadingPermintaan || !isLoadingPermintaanNomor) && error &&
+                                {(!isLoadingPermintaan || !isLoadingPermintaanNomor) && errorNomor && error &&
                                     <tr>
-                                        <td colSpan={data?.status == "DITERIMA" ? 7 : 5} className="text-center">{error.message}</td>
+                                        <td colSpan={data?.status == "DITERIMA" ? 7 : 5} className="text-center">{errorNomor.message}</td>
+                                        <td colSpan={data?.status != "DITERIMA" ? 7 : 5} className="text-center">{error.message}</td>
                                     </tr>
                                 }
                             </tbody>
@@ -246,7 +254,6 @@ export default function ModalLihat({ session, data, show, onClose, onSave }: { s
                     </Button>
                 </Modal.Footer>
             </Modal>
-            <ToastContainer/>
         </>
     )
 }

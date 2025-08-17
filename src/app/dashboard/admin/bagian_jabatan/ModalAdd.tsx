@@ -1,23 +1,23 @@
 import { AxiosError } from "axios"
-import { checkBagian, add_bagian, useGetAllBagian, useGetAllJabatan, checkBagianJabatan, add_bagian_jabatan } from "@/app/lib/admin/users/userAPIRequest"
 import { FormEvent } from "react"
+import { IBagian } from "../bagian/ListBagian"
 import { Modal, Button } from "react-bootstrap"
-import { ToastContainer, toast } from 'react-toastify'
+import { toast } from 'react-toastify'
+import { useGetAllBagian, useGetAllJabatan, checkBagianJabatan, add_bagian_jabatan } from "@/app/lib/admin/users/userAPIRequest"
 import { useState } from "react"
 import { z, ZodIssue } from "zod"
-import { IBagian } from "../bagian/ListBagian"
 
-export default function ModalAdd({ show, session, onClose, mutate }: { show: boolean, session: string, onClose: () => void, mutate: null | VoidFunction }) {
+export default function ModalAdd({ show, onClose, mutate }: { show: boolean, onClose: () => void, mutate: null | VoidFunction }) {
     const [issues, setIssues] = useState<ZodIssue[]>([])
     const [isLoadingAdd, setIsLoadingAdd] = useState(false)
-    const { detailBagian, isLoadingBagian, error: errorBagian, mutateBagian } = useGetAllBagian(session, false)
-    const { detailJabatan, isLoadingJabatan, error: errorJabatan, mutateJabatan } = useGetAllJabatan(session)
+    const { detailBagian, isLoadingBagian, error: errorBagian, mutateBagian } = useGetAllBagian(false)
+    const { detailJabatan, isLoadingJabatan, error: errorJabatan, mutateJabatan } = useGetAllJabatan()
 
     const BagianJabatan = z.object({
         bagian: z.string().min(1, { message: "Bagian Tidak Boleh Kosong" }),
         jabatan: z.string().min(1, { message: "Jabatan Tidak Boleh Kosong" }),
     }).superRefine(async ({ bagian, jabatan }, ctx) => {
-        const bagianJabatanExist = await checkBagianJabatan(bagian, jabatan, session)
+        const bagianJabatanExist = await checkBagianJabatan(bagian, jabatan)
 
         if (bagianJabatanExist.data.message == "exist") {
             ctx.addIssue({
@@ -48,7 +48,7 @@ export default function ModalAdd({ show, session, onClose, mutate }: { show: boo
             jabatan: dataJabatan,
         }).then(async (data) => {
             setIssues([])
-            const postAddBagianJabatan = await add_bagian_jabatan(data, session)
+            const postAddBagianJabatan = await add_bagian_jabatan(data)
             if (postAddBagianJabatan.type !== "error") {
                 toast.success("Bagian vs Jabatan Berhasil Ditambahkan")
                 mutate!()
@@ -128,9 +128,7 @@ export default function ModalAdd({ show, session, onClose, mutate }: { show: boo
                     <button type="submit" disabled={isLoadingAdd} className="btn btn-sm btn-success" form="addForm" name="submit">{isLoadingAdd ? "Loading" : "Save"}</button>
 
                 </Modal.Footer>
-
             </Modal>
-            <ToastContainer/>
         </>
     )
 }
