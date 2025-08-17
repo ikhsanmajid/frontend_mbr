@@ -53,7 +53,11 @@ export default function ModalAdd({ show, onClose, mutate }: { show: boolean, onC
     })
 
     async function add_product(data: any) {
-        const addProcess = await api.post("/admin/product/addProduct")
+        const addProcess = await api.post("/admin/product/addProduct", {
+            nama_produk: data.nama_produk,
+            id_bagian: data.id_bagian,
+            id_kategori: data.id_kategori
+        })
 
         return addProcess.data
     }
@@ -75,6 +79,8 @@ export default function ModalAdd({ show, onClose, mutate }: { show: boolean, onC
             const postAddProduct = await add_product(data)
             if (postAddProduct.type !== "error") {
                 toast.success("Produk Berhasil Ditambahkan")
+                onClose()
+                setIssues(null)
                 mutate!()
             }
         }).catch(e => {

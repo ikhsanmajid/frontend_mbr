@@ -73,7 +73,7 @@ export default function Profile({ userInfo }: { userInfo: any }) {
     }
 
     useEffect(() => {
-        console.log(userInfo)
+        //console.log(userInfo)
         //eslint-disable-next-line
     }, [])
 

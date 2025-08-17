@@ -52,7 +52,7 @@ export default function DownloadRB() {
             link.href = url;
 
             const contentDisposition = response.headers["content-disposition"];
-            console.log("Content ", response)
+            //console.log("Content ", response)
             const fileName = contentDisposition
                 ? contentDisposition.split("filename=")[1].replace(/"/g, "")
                 : "downloaded_file";

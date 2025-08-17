@@ -48,6 +48,8 @@ export default function ListPengembalianUser() {
 
     const { listPengembalian, isLoadingListPengembalian, error, mutateListPengembalian } = GetAllReturnRBAdminByProduct(idProduk, pageSize, pageIndex * pageSize, { number: filterNomor, status: statusKembali, startDate: startDate, endDate: endDate, idBagian: idBagian })
 
+    //console.log("Pengembalian Data: ", listPengembalian)
+
     const columns = useMemo(() => [
         columnHelper.display({
             header: "No",

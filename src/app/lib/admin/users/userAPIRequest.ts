@@ -778,7 +778,7 @@ export async function edit_kategori(id: string | number | undefined, data: any) 
 export async function deleteCategory(deleteData: any) {
     const processDelete = await api.delete("/admin/product/deleteCategory/" + deleteData.id)
 
-    return processDelete
+    return processDelete.data
 }
 
 //ANCHOR - Tambah Bagian

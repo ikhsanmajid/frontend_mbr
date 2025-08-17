@@ -28,7 +28,7 @@ export default function ModalLihat({ data, show, onClose, onSave }: { data: IPer
         if (isAccepted) mutateListPermintaanNomor(); else mutateListPermintaan();
     }, [show, id, isAccepted, mutateListPermintaan, mutateListPermintaanNomor]);
 
-    console.log("Props: ", detailPermintaanNomor)
+    //console.log("Props: ", detailPermintaanNomor)
 
     function checkReason() {
         if (keputusan == "2") {
@@ -45,14 +45,18 @@ export default function ModalLihat({ data, show, onClose, onSave }: { data: IPer
         }
 
         let keputusanValue: "confirm" | "reject" = keputusanRef.current?.value == "1" ? "confirm" : "reject"
-        const confirm = await confirmPermintaan(data, keputusanValue, reasonRef.current?.value)
-        if ('data' in confirm!) {
-            onSave()
-            setKeputusan(null)
-            onClose()
-        } else {
+
+        try {
+            const confirm = await confirmPermintaan(data, keputusanValue, reasonRef.current?.value)
+            if ('data' in confirm!) {
+                onSave()
+                setKeputusan(null)
+                onClose()
+            }
+        } catch (error) {
             toast.error("Konfirmasi Gagal!")
         }
+
     }
 
     return (

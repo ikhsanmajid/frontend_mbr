@@ -127,7 +127,7 @@ export function SidebarElement() {
 
     useEffect(() => {
         setActiveLink(pathname);
-        console.log("pathname ", pathname)
+        //console.log("pathname ", pathname)
     }, [pathname]);
 
     useEffect(() => {

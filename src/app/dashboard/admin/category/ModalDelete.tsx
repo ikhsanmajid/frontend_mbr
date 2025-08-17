@@ -14,7 +14,7 @@ export default function ModalDelete({ show, deleteData, onClose, kategoriMutate 
         const kategoriDelete = await deleteCategory(deleteData);
         setIsLoadingDelete(false);
 
-        if (kategoriDelete.data) {
+        if (kategoriDelete.type !== "error") {
             onClose()
             toast.success("Kategori Berhasil Dihapus");
             kategoriMutate();
