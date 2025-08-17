@@ -5,7 +5,7 @@ import { useFilterState } from "./useFilterState";
 import { apiURL } from "@/app/lib/admin/users/userAPIRequest";
 import axios from "axios";
 import { useState } from "react";
-import axiosInstance from "@/app/lib/admin/users/axios";
+import axiosInstance from "@/app/lib/axios";
 
 export default function DownloadRB({ session }: { session: string }) {
     const [isLoading, setIsLoading] = useState<boolean>(false);

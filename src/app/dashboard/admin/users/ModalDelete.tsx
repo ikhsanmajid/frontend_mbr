@@ -5,16 +5,16 @@ import { toast } from "react-toastify";
 import React from "react";
 import { IUser } from "./ListUsers";
 
-export default function ModalDelete({show, session, deleteData, onClose, usersMutate}: { show: boolean, session: string, deleteData: IUser | null, onClose: () => void, usersMutate: () => void }){
+export default function ModalDelete({show, deleteData, onClose, usersMutate}: { show: boolean, deleteData: IUser | null, onClose: () => void, usersMutate: () => void }){
     const [isLoadingDelete, setIsLoadingDelete] = useState<boolean>(false);
 
     // Menangani fungsi delete data
     async function handleDelete() {
         setIsLoadingDelete(true);
-        const userDelete = await deleteUser(deleteData, session);
+        const userDelete = await deleteUser(deleteData);
         setIsLoadingDelete(false);
 
-        if (userDelete.ok) {
+        if (userDelete.data.status == "success") {
             onClose()
             toast.success("User Berhasil Dihapus");
             usersMutate();

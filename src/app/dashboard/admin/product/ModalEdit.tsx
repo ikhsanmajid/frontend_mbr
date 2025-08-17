@@ -7,7 +7,7 @@ import { useState, FormEvent } from "react"
 import { z, ZodIssue } from "zod"
 import axios from "axios"
 import { ToastContainer, toast } from 'react-toastify'
-import axiosInstance from "@/app/lib/admin/users/axios"
+import axiosInstance from "@/app/lib/axios"
 
 export default function ModalEdit({ show, session, onClose, editData, mutate }: { show: boolean, session: string, onClose: () => void, editData: IProduct | null, mutate: () => void }) {
     const { detailBagian, isLoadingBagian, error: errorBagian, mutateBagian } = useGetAllBagian(session, true)

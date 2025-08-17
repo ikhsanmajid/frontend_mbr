@@ -3,27 +3,26 @@
 import { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import useSWRImmutable from "swr/immutable";
-import { AxiosInstance } from "axios"
-import axiosInstance from "./axios";
+import api from "../../axios";
 
-export const apiURL = process.env.NEXT_PUBLIC_APIENDPOINT_URL as string
+// export const apiURL = process.env.NEXT_PUBLIC_APIENDPOINT_URL as string
 
 
-export const apiRequest = axios.create({
-    baseURL: apiURL
-});
+// export const apiRequest = axios.create({
+//     baseURL: apiURL
+// });
 
-apiRequest.interceptors.request.use((config) => {
-    return config
-}, (error) => {
-    Promise.reject(error)
-})
+// apiRequest.interceptors.request.use((config) => {
+//     return config
+// }, (error) => {
+//     Promise.reject(error)
+// })
 
-export const fetcher = ([endpoint, options]: [string, object]) => apiRequest.get(endpoint, options).then(res => { return res.data })
+//export const fetcher = ([endpoint, options]: [string, object]) => apiRequest.get(endpoint, options).then(res => { return res.data })
 
 //SECTION - User API Endpoint
 //ANCHOR - Get Semua Users
-export function FetchAllUser(session: string | undefined, limit?: number, offset?: number, params?: { search_user?: string, active?: string }) {
+export function FetchAllUser(limit?: number, offset?: number, params?: { search_user?: string, active?: string }) {
     const [listUser, setListUser] = useState<any>(null);
     const [isLoadingUser, setIsLoadingUser] = useState<boolean>(true);
     const [error, setError] = useState<any>(null);
@@ -33,26 +32,24 @@ export function FetchAllUser(session: string | undefined, limit?: number, offset
             setIsLoadingUser(true)
             setError(null)
 
-            let query: string = `${apiURL}/admin/users/findAll?`
+            let query: string = `/admin/users/findAll?`
 
-            if (limit !== undefined && offset !== undefined) {
-                query += `limit=${limit}&offset=${offset}&`
-            }
+            const queryParams = new URLSearchParams({
+
+            })
+
+            if (limit) queryParams.append('limit', String(limit))
+            if (offset) queryParams.append('offset', String(offset))
 
             if (params !== undefined) {
                 for (const [key, value] of Object.entries(params)) {
                     if (value != "") {
-                        query += `${key}=${value}&`
+                        queryParams.append(key, value)
                     }
                 }
             }
 
-            const response = await axiosInstance.get(query, {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${session}`
-                }
-            });
+            const response = await api.get(query, { params: queryParams });
 
             setListUser(response.data);
 
@@ -62,7 +59,7 @@ export function FetchAllUser(session: string | undefined, limit?: number, offset
             setIsLoadingUser(false)
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [session, limit, offset, params?.active, params?.search_user])
+    }, [limit, offset, params?.active, params?.search_user])
 
     useEffect(() => {
         fetchData()
@@ -80,31 +77,18 @@ export function FetchAllUser(session: string | undefined, limit?: number, offset
 }
 
 //ANCHOR - Delete User by Id
-export async function deleteUser(deleteData: any, session: string) {
-    const processDelete = await fetch(apiURL + "/admin/users/deleteUser/" + deleteData.id, {
-        method: "DELETE",
-        headers: {
-            "Content-Type": "application/json",
-            "Authorization": "Bearer " + session
-        }
-    })
+export async function deleteUser(deleteData: any) {
+    const processDelete = await api.delete(`/admin/users/deleteUser/${deleteData.id}`)
 
     return processDelete
 }
 
 //ANCHOR - Tambah Bagian Jabatan ke User
-export async function addBagianJabatan(data: any, session: string) {
-    const addProcess = await axiosInstance.post(apiURL + "/admin/users/addUserJabatan", {
+export async function addBagianJabatan(data: any) {
+    const addProcess = await api.post("/admin/users/addUserJabatan", {
         "idBagianJabatan": data.idBagianJabatan,
         "idUser": data.idUser
-    }, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            "Authorization": "Bearer " + session
-        }
     })
-
     return addProcess
 }
 
@@ -175,15 +159,11 @@ export async function deleteBagianJabatanUser(id: string, session: string) {
 
 //ANCHOR - Check Email Exist
 export async function checkEmail(email: string, session: string) {
-    const emailCheck = await axios(apiURL + "/admin/users/checkEmail/?email=" + email, {
-        headers: {
-            "Content-Type": "application/json",
-            "Authorization": "Bearer " + session
-        }
-    })
-
+    const emailCheck = await api.get("/admin/users/checkEmail/?email=" + email)
     return emailCheck
 }
+
+
 //!SECTION
 
 //SECTION - Bagian API Endpoint

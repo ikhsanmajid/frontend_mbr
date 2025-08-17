@@ -12,7 +12,7 @@ import FilterComponentUser from "./FilterComponent";
 
 const columnHelper = createColumnHelper<IUser>()
 
-export default function UserTable({ session, mutateUsers, onAdd }: { session: string, mutateUsers: (mutate: VoidFunction) => void, onAdd: (state: boolean) => void }) {
+export default function UserTable({ mutateUsers, onAdd }: { mutateUsers: (mutate: VoidFunction) => void, onAdd: (state: boolean) => void }) {
     const [count, setCount] = useState<number>(0)
     const [pagination, setPagination] = useState<PaginationState>({
         pageIndex: 0,
@@ -32,7 +32,7 @@ export default function UserTable({ session, mutateUsers, onAdd }: { session: st
     const [searchUser, setSearchUser] = useState<string>("")
     const [statusUser, setStatusUser] = useState<string>("all")
 
-    const { listUser, isLoadingUser, error: errorUser, mutateUser } = FetchAllUser(session, pageSize, pageIndex * pageSize, { search_user: searchUser, active: statusUser })
+    const { listUser, isLoadingUser, error: errorUser, mutateUser } = FetchAllUser(pageSize, pageIndex * pageSize, { search_user: searchUser, active: statusUser })
 
     const handleEdit = (data: number | null) => {
         if (data == null) {
@@ -230,7 +230,7 @@ export default function UserTable({ session, mutateUsers, onAdd }: { session: st
                 </div>
             </div>
 
-            <ModalDelete show={showModalDelete} session={session} onClose={() => { setShowModalDelete(false); setDataDelete(null) }} deleteData={dataDelete} usersMutate={mutateUser}></ModalDelete>
+            <ModalDelete show={showModalDelete} onClose={() => { setShowModalDelete(false); setDataDelete(null) }} deleteData={dataDelete} usersMutate={mutateUser}></ModalDelete>
         </div >
     )
 }

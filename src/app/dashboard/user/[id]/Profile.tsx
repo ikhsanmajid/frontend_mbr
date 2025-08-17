@@ -7,7 +7,7 @@ import { ToastContainer, toast } from 'react-toastify'
 import { faCaretLeft } from "@fortawesome/free-solid-svg-icons"
 import axios, { AxiosError } from "axios"
 import { apiURL } from "@/app/lib/admin/users/userAPIRequest"
-import axiosInstance from "@/app/lib/admin/users/axios"
+import axiosInstance from "@/app/lib/axios"
 
 export default function Profile({ userInfo, session }: { userInfo: any, session: string }) {
     const router = useRouter()

@@ -155,9 +155,7 @@ export default function ListPengembalianUser({ session }: { session: string }) {
                 </div>
                 <div className="card-body">
                     <div className="row">
-                        <FilterComponentPengembalian
-                            session={session}
-                        />
+                        <FilterComponentPengembalian />
                     </div>
 
                     <div className="row mb-2 mt-1 align-items-center">

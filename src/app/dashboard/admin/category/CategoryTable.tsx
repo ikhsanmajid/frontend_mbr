@@ -206,8 +206,8 @@ export default function CategoryTable({ session, onAdd, mutate }: { session: str
                 </div>
             </div>
 
-            <ModalEdit show={showModalEdit} session={session} onClose={() => { setShowModalEdit(false); setDataEdit(null) }} editData={dataEdit} kategoriMutate={mutateListKategori}></ModalEdit>
-            <ModalDelete show={showModalDelete} session={session} onClose={() => { setShowModalDelete(false); setDataDelete(null) }} deleteData={dataDelete} kategoriMutate={mutateListKategori}></ModalDelete>
+            <ModalEdit show={showModalEdit} onClose={() => { setShowModalEdit(false); setDataEdit(null) }} editData={dataEdit} kategoriMutate={mutateListKategori}></ModalEdit>
+            <ModalDelete show={showModalDelete} onClose={() => { setShowModalDelete(false); setDataDelete(null) }} deleteData={dataDelete} kategoriMutate={mutateListKategori}></ModalDelete>
         </div >
     )
 }

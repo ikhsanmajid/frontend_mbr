@@ -155,7 +155,7 @@ export default function PermintaanTable({ session }: { session: string }) {
             </div>
             <div className="card-body">
                 <div className="row">
-                    <FilterComponentPermintaan session={session}/>
+                    <FilterComponentPermintaan />
 
                 </div>
 
@@ -228,7 +228,7 @@ export default function PermintaanTable({ session }: { session: string }) {
                 </div>
             </div>
 
-            <ModalLihat session={session} data={dataLihat} show={showModalLihat} onClose={() => {
+            <ModalLihat data={dataLihat} show={showModalLihat} onClose={() => {
                 setShowModalLihat(false)
                 mutateListPermintaan()
             }} onSave={() => {                

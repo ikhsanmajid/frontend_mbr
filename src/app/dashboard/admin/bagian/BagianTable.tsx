@@ -209,8 +209,8 @@ export default function BagianTable({ session, onAdd, mutate }: { session: strin
                 </div>
             </div>
 
-            <ModalEdit show={showModalEdit} session={session} onClose={() => { setShowModalEdit(false); setDataEdit(null) }} editData={dataEdit} bagianMutate={mutateBagian}></ModalEdit>
-            <ModalDelete show={showModalDelete} session={session} onClose={() => { setShowModalDelete(false); setDataDelete(null) }} deleteData={dataDelete} bagianMutate={mutateBagian}></ModalDelete>
+            <ModalEdit show={showModalEdit} onClose={() => { setShowModalEdit(false); setDataEdit(null) }} editData={dataEdit} bagianMutate={mutateBagian}></ModalEdit>
+            <ModalDelete show={showModalDelete} onClose={() => { setShowModalDelete(false); setDataDelete(null) }} deleteData={dataDelete} bagianMutate={mutateBagian}></ModalDelete>
             <ToastContainer/>
         </div >
     )

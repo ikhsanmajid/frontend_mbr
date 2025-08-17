@@ -1,6 +1,6 @@
 "use client"
 import PaginationComponent from "@/app/component/pagination/Pagination";
-import axiosInstance from "@/app/lib/admin/users/axios";
+import axiosInstance from "@/app/lib/axios";
 import { apiURL, GetAllNomorReturnRBByIDDetailPermintaan } from "@/app/lib/admin/users/userAPIRequest";
 import { flexRender, getCoreRowModel, useReactTable, createColumnHelper, PaginationState, getPaginationRowModel } from "@tanstack/react-table";
 import axios, { AxiosError } from "axios";

@@ -27,14 +27,12 @@ export default function ListProduct({ session }: { session: string }) {
     return (
         <>
             <ProductTable
-                session={session}
                 onAdd={(state: boolean) => setShowModalAdd(state)}
                 mutate={(mutate: VoidFunction) => setMutateProduct({mutate: mutate})}
             />
 
             <ModalAdd
                 show={showModalAdd}
-                session={session}
                 onClose={() => {
                     setShowModalAdd(false)
                     toast.dismiss()

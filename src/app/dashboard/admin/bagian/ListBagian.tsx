@@ -24,14 +24,12 @@ export default function ListBagian({ session }: { session: string }) {
     return (
         <>
             <BagianTable
-                session={session}
                 onAdd={(state) => setShowModalAdd(state)}
                 mutate={(mutate: VoidFunction) => setMutateBagian({mutate: mutate})}                
             />
 
             <ModalAdd
                 show={showModalAdd}
-                session={session}
                 onClose={() => {
                     setShowModalAdd(false)
                 }}

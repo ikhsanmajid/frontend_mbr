@@ -5,7 +5,7 @@ import { useFilterState } from "./useFilterState";
 import { apiURL } from "@/app/lib/admin/users/userAPIRequest";
 import axios, { AxiosError } from "axios";
 import { useState } from "react";
-import axiosInstance from "@/app/lib/admin/users/axios";
+import axiosInstance from "@/app/lib/axios";
 
 export default function DownloadRB({ session }: { session: string }) {
     const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -84,9 +84,7 @@ export default function DownloadRB({ session }: { session: string }) {
             </div>
             <div className="card-body">
                 <div className="row">
-                    <FilterComponentLaporanRB
-                        session={session}
-                    />
+                    <FilterComponentLaporanRB/>
                 </div>
 
                 <div className="row mb-2 mt-3">

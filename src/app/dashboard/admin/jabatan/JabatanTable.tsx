@@ -181,8 +181,8 @@ export default function JabatanTable({ session, onAdd, mutate }: { session: stri
                 </div>
             </div>
 
-            <ModalEdit show={showModalEdit} session={session} onClose={() => { _setShowModalEdit(false); _setDataEdit(null) }} editData={dataEdit} mutate={mutateJabatan}></ModalEdit>
-            <ModalDelete show={showModalDelete} session={session} onClose={() => { _setShowModalDelete(false); _setDataDelete(null) }} deleteData={dataDelete} mutate={mutateJabatan}></ModalDelete>
+            <ModalEdit show={showModalEdit} onClose={() => { _setShowModalEdit(false); _setDataEdit(null) }} editData={dataEdit} mutate={mutateJabatan}></ModalEdit>
+            <ModalDelete show={showModalDelete}  onClose={() => { _setShowModalDelete(false); _setDataDelete(null) }} deleteData={dataDelete} mutate={mutateJabatan}></ModalDelete>
         </div >
     )
 }

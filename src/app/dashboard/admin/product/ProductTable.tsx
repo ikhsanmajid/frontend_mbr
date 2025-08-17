@@ -131,7 +131,7 @@ export default function JabatanTable({ session, onAdd, mutate }: { session: stri
                 }>Tambah Produk</button></>
             </div>
             <div className="card-body">
-                <FilterComponentProduct valueNamaProduk={(namaProduk: string) => setSearchProduct(namaProduk)} valueBagian={(idBagian: string) => setSearchBagian(idBagian) } statusProduct={(status: string) => setSearchStatus(status) } session={session}></FilterComponentProduct>
+                <FilterComponentProduct valueNamaProduk={(namaProduk: string) => setSearchProduct(namaProduk)} valueBagian={(idBagian: string) => setSearchBagian(idBagian) } statusProduct={(status: string) => setSearchStatus(status) }></FilterComponentProduct>
 
                 <div className="row">
 
@@ -205,8 +205,8 @@ export default function JabatanTable({ session, onAdd, mutate }: { session: stri
                 </div>
             </div>
 
-            <ModalEdit show={showModalEdit} session={session} onClose={() => { _setShowModalEdit(false); _setDataEdit(null) }} editData={dataEdit} mutate={mutateListProduk}></ModalEdit>
-            <ModalDelete show={showModalDelete} session={session} onClose={() => { _setShowModalDelete(false); _setDataDelete(null) }} deleteData={dataDelete} mutate={mutateListProduk}></ModalDelete>
+            <ModalEdit show={showModalEdit} onClose={() => { _setShowModalEdit(false); _setDataEdit(null) }} editData={dataEdit} mutate={mutateListProduk}></ModalEdit>
+            <ModalDelete show={showModalDelete} onClose={() => { _setShowModalDelete(false); _setDataDelete(null) }} deleteData={dataDelete} mutate={mutateListProduk}></ModalDelete>
         </div >
     )
 }

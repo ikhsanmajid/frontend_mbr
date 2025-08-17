@@ -169,9 +169,7 @@ export default function ListPengembalianUser({ session }: { session: string }) {
                 </div>
                 <div className="card-body">
                     <div className="row">
-                        <FilterComponentPengembalian
-                            session={session}
-                        />
+                        <FilterComponentPengembalian/>
                     </div>
 
                     <div className="row mb-2 mt-1 align-items-center">
@@ -262,20 +260,6 @@ export default function ListPengembalianUser({ session }: { session: string }) {
                         <PaginationComponent table={table} currentPage={currentPage} pageCount={pageCount} pageList={pageList}></PaginationComponent>
                     </div>
                 </div>
-
-                {/* {showModalLihat && <ModalLihat session={session} show={showModalLihat} data={dataLihatEdit} onClose={() => {
-                setShowModalLihat(false)
-                setDataLihatEdit(null)
-            }} onSave={mutateListPermintaan}></ModalLihat>}
-
-            {showEditModal && <ModalEdit session={session} show={showEditModal} data={dataLihatEdit} onClose={(message) => {
-                if (message) {
-                    toast.success(message)
-                }
-                mutateListPermintaan()
-                setShowEditModal(false)
-                setDataLihatEdit(null)
-            }}></ModalEdit>} */}
             </div>
             <ToastContainer/>
         </>

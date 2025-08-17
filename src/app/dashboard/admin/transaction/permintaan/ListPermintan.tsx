@@ -10,9 +10,7 @@ export default function ListPermintaan({ session }: { session: string }) {
 
     return (
         <>
-            <PermintaanTable
-                session={session}
-            />
+            <PermintaanTable />
         </>
     );
 }

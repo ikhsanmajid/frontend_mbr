@@ -23,14 +23,12 @@ export default function ListCategory({ session }: { session: string }) {
     return (
         <>
             <CategoryTable
-                session={session}
                 onAdd={(state) => setShowModalAdd(state)}
                 mutate={(mutate: VoidFunction) => setMutateBagian({ mutate: mutate })}
             />
 
             <ModalAdd
                 show={showModalAdd}
-                session={session}
                 onClose={() => {
                     setShowModalAdd(false)
                 }}

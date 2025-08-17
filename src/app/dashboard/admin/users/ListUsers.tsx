@@ -26,7 +26,6 @@ export default function ListUsers({ session }: { session: string }) {
     return (
         <>
             <UserTable
-                session={session}
                 mutateUsers={(mutate: VoidFunction) => setMutateUsers({ mutate: mutate })}
                 onAdd={(state) => setShowModalAdd(state)}
             >
@@ -35,7 +34,6 @@ export default function ListUsers({ session }: { session: string }) {
 
             <ModalAdd
                 show={showModalAdd}
-                session={session}
                 onClose={() => {
                     setShowModalAdd(false)
                 }}

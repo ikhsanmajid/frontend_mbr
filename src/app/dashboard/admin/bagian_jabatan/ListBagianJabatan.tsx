@@ -16,14 +16,12 @@ export function ListBagianJabatan({ session }: { session: string }) {
     return (
         <>
             <BagianJabatanTable
-                session={session}
                 onAdd={(state) => setShowModalAdd(state)}
                 mutate={(mutateFn: VoidFunction) => setMutateBagianJabatan({mutate: mutateFn})}                
             />
 
             <ModalAdd
                 show={showModalAdd}
-                session={session}
                 onClose={() => {
                     setShowModalAdd(false)
                 }}

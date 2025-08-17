@@ -75,11 +75,7 @@ export default function ModalLihat({ show, session, onClose, data }: { show: boo
                             </div>
                         </div>
                         <div className="row">
-                            <TableLihatNomor
-                                session={session}
-                                idData={data?.id}>
-
-                            </TableLihatNomor>
+                            <TableLihatNomor idData={data?.id}/>
                         </div>
 
                     </div>

@@ -5,7 +5,7 @@ import { useState, FormEvent } from "react"
 import { z, ZodIssue } from "zod"
 import axios, { AxiosError } from "axios"
 import { ToastContainer, toast } from 'react-toastify'
-import axiosInstance from "@/app/lib/admin/users/axios"
+import axiosInstance from "@/app/lib/axios"
 
 export default function ModalAdd({ show, session, onClose, mutate }: { show: boolean, session: string, onClose: () => void, mutate: null | VoidFunction }) {
     const [issues, setIssues] = useState<ZodIssue[] | null>(null)

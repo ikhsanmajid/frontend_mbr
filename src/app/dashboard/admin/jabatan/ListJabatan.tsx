@@ -23,14 +23,12 @@ export function ListJabatan({ session }: { session: string }) {
     return (
         <>
             <JabatanTable
-                session={session}
                 onAdd={(state) => setShowModalAdd(state)}
                 mutate={(mutate: VoidFunction) => setMutateJabatan({mutate: mutate})}
             />
 
             <ModalAdd
                 show={showModalAdd}
-                session={session}
                 onClose={() => {
                     setShowModalAdd(false)
                 }}

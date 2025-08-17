@@ -109,7 +109,6 @@ export default function ListPengembalianUser({ session, idProduk }: { session: s
 
 
                 <ModalLihat
-                    session={session}
                     show={showModalLihat}
                     data={dataLihat}
                     onClose={() => {
@@ -117,15 +116,6 @@ export default function ListPengembalianUser({ session, idProduk }: { session: s
                         mutateListPengembalian()
                     }}>
                 </ModalLihat>
-
-                {/* {showEditModal && <ModalEdit session={session} show={showEditModal} data={dataLihatEdit} onClose={(message) => {
-                if (message) {
-                    toast.success(message)
-                }
-                mutateListPermintaan()
-                setShowEditModal(false)
-                setDataLihatEdit(null)
-            }}></ModalEdit>} */}
             </div>
             <ToastContainer/>
         </>

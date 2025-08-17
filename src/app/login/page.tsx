@@ -7,9 +7,12 @@ import { useRouter, useSearchParams } from "next/navigation"
 
 export default function LoginPage() {
     const searchParams = useSearchParams()
-
     const router = useRouter()
+
     const expired = searchParams.get("expired")
+    const nextPath = searchParams.get("next") || ""
+    const host = process.env.NEXT_PUBLIC_ABSOLUTE_URL! as string
+
     const [isLoading, setIsLoading] = useState<boolean>(false)
 
     async function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -32,7 +35,13 @@ export default function LoginPage() {
             else toast.error(logIn.code)
         } else if (logIn?.ok) {
             setIsLoading(false)
-            router.push("/")
+            if (nextPath.length > 0) {
+                router.refresh()
+                router.push(`${host}/${nextPath}`)
+            } else {
+                router.refresh()
+                router.push("/")
+            }
         }
     }
 
@@ -46,7 +55,7 @@ export default function LoginPage() {
         <>
             <div style={{ height: "90vh" }} className="w-100 d-flex justify-content-center align-items-center">
                 <LoginForm handleSubmit={(e: any) => handleSubmit(e)} isLoading={isLoading}></LoginForm>
-                <ToastContainer position="top-center" autoClose={2000} theme="colored" pauseOnHover={false}/>
+                <ToastContainer position="top-center" autoClose={2000} theme="colored" pauseOnHover={false} />
             </div>
         </>
 

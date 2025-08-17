@@ -188,8 +188,8 @@ export default function BagianJabatanTable({ session, onAdd, mutate }: { session
                 </div>
             </div>
 
-            <ModalEdit show={showModalEdit} session={session} onClose={() => { _setShowModalEdit(false); _setDataEdit(null) }} editData={dataEdit} mutate={mutateBagianJabatan}></ModalEdit>
-            <ModalDelete show={showModalDelete} session={session} onClose={() => { _setShowModalDelete(false); _setDataDelete(null) }} deleteData={dataDelete} mutate={mutateBagianJabatan}></ModalDelete>
+            <ModalEdit show={showModalEdit} onClose={() => { _setShowModalEdit(false); _setDataEdit(null) }} editData={dataEdit} mutate={mutateBagianJabatan}></ModalEdit>
+            <ModalDelete show={showModalDelete} onClose={() => { _setShowModalDelete(false); _setDataDelete(null) }} deleteData={dataDelete} mutate={mutateBagianJabatan}></ModalDelete>
         </div>
     )
 }
