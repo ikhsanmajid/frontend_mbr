@@ -1,19 +1,19 @@
 import { deleteBagianJabatan } from "@/app/lib/admin/users/userAPIRequest";
 import { Modal, Button } from "react-bootstrap"
-import { ToastContainer, toast } from 'react-toastify'
+import { toast } from 'react-toastify'
 import { useState } from "react";
 import { IBagianJabatan } from "./BagianJabatanTable";
 
-export default function ModalDelete({ show, session, deleteData, onClose, mutate }: { show: boolean, session: string, deleteData: IBagianJabatan | null, onClose: () => void, mutate: () => void }) {
+export default function ModalDelete({ show, deleteData, onClose, mutate }: { show: boolean, deleteData: IBagianJabatan | null, onClose: () => void, mutate: () => void }) {
     const [isLoadingDelete, setIsLoadingDelete] = useState<boolean>(false);
 
     // Menangani fungsi delete data
     async function handleDelete() {
         setIsLoadingDelete(true);
-        const bagianJabatanDelete = await deleteBagianJabatan(deleteData, session);
+        const bagianJabatanDelete = await deleteBagianJabatan(deleteData);
         setIsLoadingDelete(false);
 
-        if (bagianJabatanDelete.ok) {
+        if (bagianJabatanDelete.data.data) {
             onClose()
             toast.success("Bagian vs Jabatan Berhasil Dihapus");
             mutate();
@@ -44,7 +44,6 @@ export default function ModalDelete({ show, session, deleteData, onClose, mutate
                     }
                 </Modal.Footer>
             </Modal>
-            <ToastContainer/>
         </>
     )
 }

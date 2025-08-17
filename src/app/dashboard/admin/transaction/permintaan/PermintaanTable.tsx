@@ -1,16 +1,16 @@
 "use client";
-import React from "react";
-import { flexRender, getCoreRowModel, useReactTable, createColumnHelper, PaginationState, getPaginationRowModel } from "@tanstack/react-table";
-import { useState, useMemo, useEffect, useRef } from "react";
-import { GetPermintaanRBAdmin } from "@/app/lib/admin/users/userAPIRequest";
-import PaginationComponent from "@/app/component/pagination/Pagination";
-import { useFilterState } from "./useFilterState";
-import { ToastContainer, toast } from 'react-toastify'
-import RowActions from "./RowActions";
-import ModalLihat from "./ModalLihat";
 import { faRefresh } from "@fortawesome/free-solid-svg-icons";
+import { flexRender, getCoreRowModel, useReactTable, createColumnHelper, PaginationState, getPaginationRowModel } from "@tanstack/react-table";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { GetPermintaanRBAdmin } from "@/app/lib/admin/users/userAPIRequest";
+import { toast } from 'react-toastify'
+import { useFilterState } from "./useFilterState";
+import { useState, useMemo, useEffect, useRef } from "react";
 import FilterComponentPermintaan from "./FilterComponent";
+import ModalLihat from "./ModalLihat";
+import PaginationComponent from "@/app/component/pagination/Pagination";
+import React from "react";
+import RowActions from "./RowActions";
 
 export interface IPermintaan {
     id: number;
@@ -26,7 +26,7 @@ export interface IPermintaan {
 
 const columnHelper = createColumnHelper<IPermintaan>()
 
-export default function PermintaanTable({ session }: { session: string }) {
+export default function PermintaanTable() {
     const [count, setCount] = useState<number>(0)
     const [pagination, setPagination] = useState<PaginationState>({
         pageIndex: 0,
@@ -48,7 +48,7 @@ export default function PermintaanTable({ session }: { session: string }) {
     const filterYear = useFilterState(state => state.filterYear)
 
 
-    const { listPermintaan, isLoadingListPermintaan, error: errorPermintaan, mutateListPermintaan } = GetPermintaanRBAdmin(session, pageSize, pageIndex * pageSize, { status: StatusKonfirmasi, used: StatusDipakai, keyword: NIKNama, idProduk: idProduk, idBagian: idBagian, year: filterYear })
+    const { listPermintaan, isLoadingListPermintaan, error: errorPermintaan, mutateListPermintaan } = GetPermintaanRBAdmin(pageSize, pageIndex * pageSize, { status: StatusKonfirmasi, used: StatusDipakai, keyword: NIKNama, idProduk: idProduk, idBagian: idBagian, year: filterYear })
 
     const columns = useMemo(() => [
         columnHelper.display({
@@ -97,7 +97,7 @@ export default function PermintaanTable({ session }: { session: string }) {
             </RowActions>,
         })
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    ], [])
+    ], [listPermintaan])
 
     const data = useMemo(() => usersData ?? [], [usersData])
 
@@ -236,7 +236,6 @@ export default function PermintaanTable({ session }: { session: string }) {
                 mutateListPermintaan()
                 toast.success("Berhasil Mengonfirmasi Permintaan")
             }}></ModalLihat>
-            <ToastContainer/>
         </div >
     )
 }

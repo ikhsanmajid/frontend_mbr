@@ -1,27 +1,22 @@
 "use client"
-import { ToastContainer, toast } from 'react-toastify'
-import FilterComponentPengembalian from "./FilterComponent";
-import { GetAllReturnRBByProductAndIdPermintaan } from "@/app/lib/admin/users/userAPIRequest";
-import { useState, useEffect } from "react";
-import { useSearchParams } from "next/navigation";
 import { Button } from "react-bootstrap";
-import ModalLihat from "./ModalLihat";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faRefresh } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { GetAllReturnRBByProductAndIdPermintaan } from "@/app/lib/admin/users/userAPIRequest";
 import { useFilterState } from "../useFilterState";
+import { useSearchParams } from "next/navigation";
+import { useState } from "react";
+import FilterComponentPengembalian from "./FilterComponent";
+import ModalLihat from "./ModalLihat";
 
-export default function ListPengembalianUser({ session, idProduk }: { session: string, idProduk: string }) {
+export default function ListPengembalianUser({ idProduk }: { idProduk: string }) {
     const searchParams = useSearchParams()
     const idPermintaan = searchParams.get("idPermintaan")
     const statusKembali = useFilterState(state => state.statusKembali)
     const [showModalLihat, setShowModalLihat] = useState(false)
     const [dataLihat, setDataLihat] = useState<any | null>(null)
 
-    const { listPengembalian, isLoadingListPengembalian, error, mutateListPengembalian } = GetAllReturnRBByProductAndIdPermintaan(session, idProduk, idPermintaan, undefined, undefined, { status: statusKembali })
-
-    useEffect(() => {
-        toast.dismiss()
-    }, [])
+    const { listPengembalian, isLoadingListPengembalian, error, mutateListPengembalian } = GetAllReturnRBByProductAndIdPermintaan(idProduk, idPermintaan, undefined, undefined, { status: statusKembali })
 
     function handleShowModalLihat(data: any) {
         setDataLihat(data)
@@ -106,7 +101,6 @@ export default function ListPengembalianUser({ session, idProduk }: { session: s
 
 
                 <ModalLihat
-                    session={session}
                     show={showModalLihat}
                     data={dataLihat}
                     onClose={() => {
@@ -115,16 +109,7 @@ export default function ListPengembalianUser({ session, idProduk }: { session: s
                     }}>
                 </ModalLihat>
 
-                {/* {showEditModal && <ModalEdit session={session} show={showEditModal} data={dataLihatEdit} onClose={(message) => {
-                if (message) {
-                    toast.success(message)
-                }
-                mutateListPermintaan()
-                setShowEditModal(false)
-                setDataLihatEdit(null)
-            }}></ModalEdit>} */}
             </div>
-            <ToastContainer/>
         </>
     )
 }

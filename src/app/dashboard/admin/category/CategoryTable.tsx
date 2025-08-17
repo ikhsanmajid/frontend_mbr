@@ -11,7 +11,7 @@ import PaginationComponent from "@/app/component/pagination/Pagination"
 const columnHelper = createColumnHelper<ICategory>()
 
 
-export default function CategoryTable({ session, onAdd, mutate }: { session: string, onAdd: (state: boolean) => void, mutate: (mutate: any) => void }) {
+export default function CategoryTable({ onAdd, mutate }: { onAdd: (state: boolean) => void, mutate: (mutate: any) => void }) {
     const [count, setCount] = useState<number>(0)
     const [pagination, setPagination] = useState<PaginationState>({
         pageIndex: 0,
@@ -31,7 +31,7 @@ export default function CategoryTable({ session, onAdd, mutate }: { session: str
     const [showModalDelete, setShowModalDelete] = useState<boolean>(false)
     const [dataDelete, setDataDelete] = useState<ICategory | null>(null)
 
-    const { detailKategori, isLoadingKategori, mutateListKategori } = FetchAllKategori(session, pageSize, pageIndex * pageSize, { search_kategori: searchData })
+    const { detailKategori, isLoadingKategori, mutateListKategori } = FetchAllKategori(pageSize, pageIndex * pageSize, { search_kategori: searchData })
 
     const columns = useMemo(() => [
         columnHelper.display({

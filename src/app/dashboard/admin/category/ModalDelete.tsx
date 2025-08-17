@@ -1,20 +1,20 @@
-import { ICategory } from "./ListCategory";
 import { deleteCategory } from "@/app/lib/admin/users/userAPIRequest";
+import { ICategory } from "./ListCategory";
 import { Modal, Button } from "react-bootstrap"
-import { ToastContainer, toast } from 'react-toastify'
+import { toast } from 'react-toastify'
 import { useState } from "react";
 import React from "react";
 
-export default function ModalDelete({ show, session, deleteData, onClose, kategoriMutate }: { show: boolean, session: string, deleteData: ICategory | null, onClose: () => void, kategoriMutate: () => void }) {
+export default function ModalDelete({ show, deleteData, onClose, kategoriMutate }: { show: boolean, deleteData: ICategory | null, onClose: () => void, kategoriMutate: () => void }) {
     const [isLoadingDelete, setIsLoadingDelete] = useState<boolean>(false);
 
     // Menangani fungsi delete data
     async function handleDelete() {
         setIsLoadingDelete(true);
-        const kategoriDelete = await deleteCategory(deleteData, session);
+        const kategoriDelete = await deleteCategory(deleteData);
         setIsLoadingDelete(false);
 
-        if (kategoriDelete.ok) {
+        if (kategoriDelete.data) {
             onClose()
             toast.success("Kategori Berhasil Dihapus");
             kategoriMutate();
@@ -45,7 +45,6 @@ export default function ModalDelete({ show, session, deleteData, onClose, katego
                     }
                 </Modal.Footer>
             </Modal>
-            <ToastContainer/>
         </>
     )
 }

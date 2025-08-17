@@ -1,11 +1,10 @@
 "use client";
 import { FetchAllProduk, addPermintaanNomor } from "@/app/lib/admin/users/userAPIRequest";
-import { useEffect, useState } from "react";
-import { ToastContainer, toast } from 'react-toastify';
-import { useRouter } from 'next/navigation';
 import { nanoid } from 'nanoid';
+import { toast } from 'react-toastify';
+import { useEffect, useState } from "react";
+import { useRouter } from 'next/navigation';
 import Select from 'react-select';
-import { set } from "zod";
 
 interface IProduk {
     id: number;
@@ -28,8 +27,8 @@ interface IPermintaan {
     }[];
 }
 
-export default function AddPermintaanRB({ session }: { session: string }) {
-    const { listProduk, isLoadingListProduk, error: isErrorListProduk } = FetchAllProduk(session);
+export default function AddPermintaanRB() {
+    const { listProduk, isLoadingListProduk, error: isErrorListProduk } = FetchAllProduk();
     // const [produkList, setProdukList] = useState<IProduk[] | null>(null);
     const [produkList, setProdukList] = useState<{ value: number, label: string }[]>([]);
     const [listPermintaan, setListPermintaan] = useState<IPermintaan[] | null>(null);
@@ -42,7 +41,6 @@ export default function AddPermintaanRB({ session }: { session: string }) {
 
     useEffect(() => {
         setIsMounted(true);
-        toast.dismiss();
     }, []);
 
     useEffect(() => {
@@ -208,7 +206,7 @@ export default function AddPermintaanRB({ session }: { session: string }) {
     }
 
     useEffect(() => {
-        if (listPermintaan?.length == 0 ) {
+        if (listPermintaan?.length == 0) {
             setListPermintaan(null);
         }
     }, [listPermintaan])
@@ -221,11 +219,11 @@ export default function AddPermintaanRB({ session }: { session: string }) {
         setIsSubmitting(true);
 
         try {
-            const response = await addPermintaanNomor(listPermintaan, session);
+            const response = await addPermintaanNomor(listPermintaan);
             if (response.status === "success") {
                 toast.success(response.message);
                 //console.log("Response Data:", response.data);
-                
+
                 setTimeout(() => {
                     router.push("/users/rb/permintaan/list");
                 }, 2000);
@@ -236,13 +234,12 @@ export default function AddPermintaanRB({ session }: { session: string }) {
         } catch (error) {
             toast.error("Terjadi kesalahan saat mengirim permintaan.");
             setIsSubmitting(false);
-            //console.error("Error:", error);
         }
     }
 
     return (
         <div className="card mt-3">
-            <div><ToastContainer theme="colored" pauseOnHover={false} /></div>
+
             <div className="card-header">
                 <span className="fw-bold">Form Permintaan RB</span>
             </div>

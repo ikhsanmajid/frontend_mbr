@@ -1,23 +1,16 @@
-import { apiURL } from "@/app/lib/admin/users/userAPIRequest"
+import { AxiosError } from "axios"
 import { Modal, Button } from "react-bootstrap"
-import { useSession } from "next-auth/react"
-import { useState, FormEvent } from "react"
+import { toast } from 'react-toastify'
+import { useState, FormEvent, useEffect } from "react"
 import { z, ZodIssue } from "zod"
-import axios, { AxiosError } from "axios"
-import { ToastContainer, toast } from 'react-toastify'
-import axiosInstance from "@/app/lib/axios"
+import api from "@/app/lib/axios"
 
-export default function ModalAdd({ show, session, onClose, mutate }: { show: boolean, session: string, onClose: () => void, mutate: null | VoidFunction }) {
+export default function ModalAdd({ show, onClose, mutate }: { show: boolean, onClose: () => void, mutate: null | VoidFunction }) {
     const [issues, setIssues] = useState<ZodIssue[] | null>(null)
     const [isLoadingAdd, setIsLoadingAdd] = useState(false)
 
     async function checkJabatan(jabatan: string) {
-        const jabatanCheck = await axios(apiURL + "/admin/employment/findFixedEmployment/?nama_jabatan=" + jabatan, {
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": "Bearer " + session
-            }
-        })
+        const jabatanCheck = await api.get("/admin/employment/findFixedEmployment/?nama_jabatan=" + jabatan)
 
         return jabatanCheck
     }
@@ -38,16 +31,11 @@ export default function ModalAdd({ show, session, onClose, mutate }: { show: boo
     })
 
     async function add_jabatan(data: any) {
-        const addProcess = axiosInstance.post(apiURL + "/admin/employment/addEmployment", {
+        const addProcess = await api.post("/admin/employment/addEmployment", {
             nama_jabatan: data.jabatan
-        }, {
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": "Bearer " + session
-            }
         })
 
-        return (await addProcess).data
+        return addProcess.data
     }
 
     async function handleSubmit(formData: FormEvent<HTMLFormElement>) {
@@ -58,9 +46,10 @@ export default function ModalAdd({ show, session, onClose, mutate }: { show: boo
 
         await Jabatan.parseAsync({
             jabatan: dataJabatan,
-        }).then(async (e) => {
+        }).then(async (data) => {
             setIssues([])
-            const postAddJabatan = await add_jabatan(e)
+            const postAddJabatan = await add_jabatan(data)
+            console.log("request: ", postAddJabatan)
             if (postAddJabatan.type !== "error") {
                 toast.success("Jabatan Berhasil Ditambahkan")
                 mutate!()
@@ -73,7 +62,7 @@ export default function ModalAdd({ show, session, onClose, mutate }: { show: boo
 
             if (e instanceof AxiosError) {
                 if (e.response?.status === 401) {
-                    window.location.href = '/login?expired=true'; // Redirect menggunakan App Router
+                    window.location.href = '/login?expired=true';
                 }
                 toast.error("Jabatan Gagal Ditambahkan")
             }
@@ -120,7 +109,6 @@ export default function ModalAdd({ show, session, onClose, mutate }: { show: boo
                 </Modal.Footer>
 
             </Modal>
-            <ToastContainer/>
         </>
     )
 }

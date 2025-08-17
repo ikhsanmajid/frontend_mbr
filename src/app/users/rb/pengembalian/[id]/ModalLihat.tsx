@@ -1,13 +1,9 @@
 import { Modal, Button } from "react-bootstrap"
-import { ToastContainer, toast } from 'react-toastify'
 import { useState } from "react"
 import TableLihatNomor from "./TableLihatNomor"
 
 
-export default function ModalLihat({ show, session, onClose, data }: { show: boolean, session: string, onClose: () => void, data: any | null }) {
-    const [isLoadingAdd, setIsLoadingAdd] = useState(false)
-
-
+export default function ModalLihat({ show, onClose, data }: { show: boolean, onClose: () => void, data: any | null }) {
     return (
         <>
             <Modal show={show} onHide={onClose} style={{ zIndex: 1050 }} backdrop="static" animation={true} keyboard={false} dialogClassName="modal-80w">
@@ -76,7 +72,6 @@ export default function ModalLihat({ show, session, onClose, data }: { show: boo
                         </div>
                         <div className="row">
                             <TableLihatNomor
-                                session={session}
                                 idData={data?.id}>
 
                             </TableLihatNomor>
@@ -92,7 +87,6 @@ export default function ModalLihat({ show, session, onClose, data }: { show: boo
                 </Modal.Footer>
 
             </Modal >
-            <ToastContainer/>
         </>
     )
 }

@@ -1,36 +1,3 @@
-// 'use client';
-// import axios from 'axios';
-
-// export const apiURL = process.env.NEXT_PUBLIC_APIENDPOINT_URL as string
-
-// const axiosInstance = axios.create({
-//   baseURL: apiURL,
-//   headers: {
-//     'Content-Type': 'application/json',
-//   },
-// });
-
-// // Tambahkan interceptor untuk request
-// axiosInstance.interceptors.request.use(
-//   (config) => {
-//     return config;
-//   },
-//   (error) => Promise.reject(error)
-// );
-
-// // Tambahkan interceptor untuk response
-// axiosInstance.interceptors.response.use(
-//   (response) => response,
-//   async (error) => {
-//     if (error.response?.status === 401) {
-//       window.location.href = '/login?expired=true'; // Redirect menggunakan App Router
-//     }
-//     return Promise.reject(error);
-//   }
-// );
-
-// export default axiosInstance;
-
 import axios, { AxiosError } from "axios"
 import { getSession, signOut } from "next-auth/react"
 
@@ -71,7 +38,11 @@ api.interceptors.response.use(
         });
       }
     } else if (error.code == "ERR_NETWORK") {
-      window.location.href = `/server-offline?next=${encodeURIComponent(window.location.pathname)}`;
+      const next = location.pathname + location.search;
+      const url = new URL('/server-offline', location.origin);
+      url.searchParams.set('next', next);
+      location.assign(url.toString());
+      // window.location.href = `/server-offline?next=${encodeURIComponent(window.location.pathname)}`;
     }
 
     return Promise.reject(error);

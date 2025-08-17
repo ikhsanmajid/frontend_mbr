@@ -1,5 +1,5 @@
 "use client"
-import { apiURL, GetDashboardDataUser } from "@/app/lib/admin/users/userAPIRequest";
+import { GetDashboardDataUser } from "@/app/lib/admin/users/userAPIRequest";
 import { useState, useEffect } from "react";
 
 interface IGetDashboardDataUser {
@@ -8,12 +8,12 @@ interface IGetDashboardDataUser {
     namaJenisBagian?: string;
 }
 
-export default function Dashboard({ session }: { session: string }) {
+export default function Dashboard() {
     const [dashboardData, setDashboardData] = useState<IGetDashboardDataUser[] | null>(null);
     const [dataRBDibuat, setDataRBDibuat] = useState<IGetDashboardDataUser[] | null>(null);
     const [time, setTime] = useState<string | null>(null);
 
-    const { listDashboardData, isLoadingListDashboardData, error, mutateListDashboardData } = GetDashboardDataUser(session);
+    const { listDashboardData, isLoadingListDashboardData, error, mutateListDashboardData } = GetDashboardDataUser();
 
     useEffect(() => {
         if (!isLoadingListDashboardData && listDashboardData) {

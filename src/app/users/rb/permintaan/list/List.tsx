@@ -3,15 +3,15 @@ import { faRefresh } from "@fortawesome/free-solid-svg-icons";
 import { flexRender, getCoreRowModel, useReactTable, createColumnHelper, PaginationState, getPaginationRowModel } from "@tanstack/react-table";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { GetPermintaanRB } from "@/app/lib/admin/users/userAPIRequest";
-import { useState, useMemo, useEffect } from "react";
+import { toast } from 'react-toastify'
 import { useFilterState } from "./useFilterState";
+import { useState, useMemo, useEffect } from "react";
+import FilterComponentPermintaan from "./FilterComponent";
+import ModalEdit from "./ModalEdit";
 import ModalLihat from "./ModalLihat";
 import PaginationComponent from "@/app/component/pagination/Pagination";
 import React from "react";
 import RowActions from "./RowActions";
-import { ToastContainer, toast } from 'react-toastify'
-import FilterComponentPermintaan from "./FilterComponent";
-import ModalEdit from "./ModalEdit";
 
 export interface IPermintaan {
     id: number | string;
@@ -31,7 +31,7 @@ export interface IPermintaan {
 
 const columnHelper = createColumnHelper<IPermintaan>()
 
-export default function ListMBR({ session }: { session: string }) {
+export default function ListMBR() {
     const [count, setCount] = useState<number>(0)
     const [pagination, setPagination] = useState<PaginationState>({
         pageIndex: 0,
@@ -54,7 +54,7 @@ export default function ListMBR({ session }: { session: string }) {
     const StatusDipakai = useFilterState((state) => state.StatusDipakai)
     const filterYear = useFilterState(state => state.filterYear)
 
-    const { listPermintaan, isLoadingListPermintaan, error: errorPermintaan, mutateListPermintaan } = GetPermintaanRB(session, pageSize, pageIndex * pageSize, { status: StatusKonfirmasi, used: StatusDipakai, keyword: NIKNama, idProduk: idProduk, year: filterYear })
+    const { listPermintaan, isLoadingListPermintaan, error: errorPermintaan, mutateListPermintaan } = GetPermintaanRB(pageSize, pageIndex * pageSize, { status: StatusKonfirmasi, used: StatusDipakai, keyword: NIKNama, idProduk: idProduk, year: filterYear })
 
 
     const columns = useMemo(() => [
@@ -160,14 +160,10 @@ export default function ListMBR({ session }: { session: string }) {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [pageCount])
 
-    useEffect(() => {
-        toast.dismiss()
-    }, [])
 
 
     return (
         <>
-            <div><ToastContainer/></div>
             <div className="card mt-3">
                 <div className="card-header d-flex justify-content-between">
                     <span className="fw-bold">Daftar Permintaan</span>
@@ -175,7 +171,7 @@ export default function ListMBR({ session }: { session: string }) {
                 </div>
                 <div className="card-body">
                     <div className="row">
-                        <FilterComponentPermintaan session={session} />
+                        <FilterComponentPermintaan />
                     </div>
 
                     <div className="row">
@@ -195,12 +191,12 @@ export default function ListMBR({ session }: { session: string }) {
                                 <tbody className="table-group-divider">
                                     {isLoadingListPermintaan &&
                                         <tr>
-                                            <td colSpan={7} className="text-center"> Loading ....</td>
+                                            <td colSpan={8} className="text-center"> Loading ....</td>
                                         </tr>}
 
                                     {(!isLoadingListPermintaan && listPermintaan != null && listPermintaan.count == 0) ?
                                         <tr>
-                                            <td colSpan={7} className="text-center"> Data Kosong </td>
+                                            <td colSpan={8} className="text-center"> Data Kosong </td>
                                         </tr> :
                                         !isLoadingListPermintaan && table.getRowModel().rows.map(row => (
                                             <tr key={row.id} style={{ height: `10px` }}>
@@ -247,12 +243,12 @@ export default function ListMBR({ session }: { session: string }) {
                     </div>
                 </div>
 
-                {showModalLihat && <ModalLihat session={session} show={showModalLihat} data={dataLihatEdit} onClose={() => {
+                {showModalLihat && <ModalLihat show={showModalLihat} data={dataLihatEdit} onClose={() => {
                     setShowModalLihat(false)
                     setDataLihatEdit(null)
                 }} onSave={mutateListPermintaan}></ModalLihat>}
 
-                {showEditModal && <ModalEdit session={session} show={showEditModal} data={dataLihatEdit} onClose={(message) => {
+                {showEditModal && <ModalEdit show={showEditModal} data={dataLihatEdit} onClose={(message) => {
                     if (message) {
                         toast.success(message)
                     }

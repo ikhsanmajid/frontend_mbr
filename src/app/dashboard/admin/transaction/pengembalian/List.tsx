@@ -3,13 +3,13 @@ import { faRefresh } from "@fortawesome/free-solid-svg-icons";
 import { flexRender, getCoreRowModel, useReactTable, createColumnHelper, PaginationState, getPaginationRowModel } from "@tanstack/react-table";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { GetAllReturnRBAdminByProduct } from "@/app/lib/admin/users/userAPIRequest";
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import { useEffect } from "react";
+import { useFilterState } from "./useFilterState";
 import { useMemo, useState } from "react";
 import FilterComponentPengembalian from "./FilterComponent";
 import Link from "next/link";
 import PaginationComponent from "@/app/component/pagination/Pagination";
-import { useFilterState } from "./useFilterState";
 
 
 interface IReturnRB {
@@ -26,7 +26,7 @@ interface IReturnRB {
 
 const columnHelper = createColumnHelper<IReturnRB>()
 
-export default function ListPengembalianUser({ session }: { session: string }) {
+export default function ListPengembalianUser() {
     const [count, setCount] = useState<number>(0)
     const [pagination, setPagination] = useState<PaginationState>({
         pageIndex: 0,
@@ -46,7 +46,7 @@ export default function ListPengembalianUser({ session }: { session: string }) {
     const startDate = useFilterState(state => state.startDate)
     const endDate = useFilterState(state => state.endDate)
 
-    const { listPengembalian, isLoadingListPengembalian, error, mutateListPengembalian } = GetAllReturnRBAdminByProduct(session, idProduk, pageSize, pageIndex * pageSize, { number: filterNomor, status: statusKembali, startDate: startDate, endDate: endDate, idBagian: idBagian })
+    const { listPengembalian, isLoadingListPengembalian, error, mutateListPengembalian } = GetAllReturnRBAdminByProduct(idProduk, pageSize, pageIndex * pageSize, { number: filterNomor, status: statusKembali, startDate: startDate, endDate: endDate, idBagian: idBagian })
 
     const columns = useMemo(() => [
         columnHelper.display({
@@ -115,10 +115,6 @@ export default function ListPengembalianUser({ session }: { session: string }) {
 
     const pageCount = table.getPageCount()
     const currentPage = table.getState().pagination.pageIndex
-
-    useEffect(() => {
-        toast.dismiss()
-    }, [])
 
     useEffect(() => {
         if (error) {
@@ -261,7 +257,6 @@ export default function ListPengembalianUser({ session }: { session: string }) {
                     </div>
                 </div>
             </div>
-            <ToastContainer/>
         </>
     )
 }

@@ -1,9 +1,8 @@
 "use client"
-import { ToastContainer, toast } from 'react-toastify'
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import ModalAdd from "@/app/dashboard/admin/users/ModalAdd";
-import UserTable from "@/app/dashboard/admin/users/UserTable";
 import React from "react";
+import UserTable from "@/app/dashboard/admin/users/UserTable";
 
 export interface IUser {
     id?: number;
@@ -14,14 +13,10 @@ export interface IUser {
     isAdmin?: boolean;
 }
 
-export default function ListUsers({ session }: { session: string }) {
+export default function ListUsers() {
     // Menampilkan Modal Tambah Data
     const [showModalAdd, setShowModalAdd] = useState(false);
     const [mutateUsers, setMutateUsers] = useState<{ mutate: null | VoidFunction }>({ mutate: null });
-
-    useEffect(() => {
-        toast.dismiss()
-    }, [])
 
     return (
         <>
@@ -40,7 +35,6 @@ export default function ListUsers({ session }: { session: string }) {
                 mutate={mutateUsers.mutate}
             />
 
-            <ToastContainer/>
         </>
     )
 

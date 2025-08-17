@@ -10,7 +10,7 @@ import { useFilterState } from "./useFilterState";
 import "react-datepicker/dist/react-datepicker.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-export default function FilterComponentLaporanRB({ session }: { session: string }) {
+export default function FilterComponentLaporanRB() {
     const [isMounted, setIsMounted] = useState<boolean>(false);
 
     const [bagianList, setBagianList] = useState<{ value: number; label: string }[]>([]);
@@ -26,7 +26,7 @@ export default function FilterComponentLaporanRB({ session }: { session: string 
     const date2 = useFilterState((state) => state.date2);
     const setDate2 = useFilterState((state) => state.setDate2);
 
-    const { detailBagian, isLoadingBagian } = useGetAllBagian(session, true);
+    const { detailBagian, isLoadingBagian } = useGetAllBagian(true);
 
     useEffect(() => {
         setIsMounted(true);

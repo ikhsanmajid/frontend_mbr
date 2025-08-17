@@ -1,19 +1,19 @@
-import { apiURL, useGetAllBagian, FetchAllKategori } from "@/app/lib/admin/users/userAPIRequest"
+import { AxiosError } from "axios"
 import { Modal, Button } from "react-bootstrap"
+import { toast } from 'react-toastify'
+import { useGetAllBagian, FetchAllKategori } from "@/app/lib/admin/users/userAPIRequest"
 import { useState, FormEvent, useEffect } from "react"
 import { z, ZodIssue } from "zod"
-import axios, { AxiosError } from "axios"
-import { ToastContainer, toast } from 'react-toastify'
-import axiosInstance from "@/app/lib/axios"
+import api from "@/app/lib/axios"
 
-export default function ModalAdd({ show, session, onClose, mutate }: { show: boolean, session: string, onClose: () => void, mutate: null | VoidFunction }) {
+export default function ModalAdd({ show, onClose, mutate }: { show: boolean, onClose: () => void, mutate: null | VoidFunction }) {
     const [issues, setIssues] = useState<ZodIssue[] | null>(null)
     const [isLoadingAdd, setIsLoadingAdd] = useState(false)
     const [listBagian, setListBagian] = useState<any>([])
     const [listKategori, setListKategori] = useState<any>([])
 
-    const { detailBagian, isLoadingBagian, error: errorBagian, mutateBagian } = useGetAllBagian(session, true, undefined, undefined, undefined)
-    const { detailKategori, isLoadingKategori, error: errorKategori, mutateListKategori } = FetchAllKategori(session)
+    const { detailBagian, isLoadingBagian, error: errorBagian, mutateBagian } = useGetAllBagian(true, undefined, undefined, undefined)
+    const { detailKategori, isLoadingKategori, error: errorKategori, mutateListKategori } = FetchAllKategori()
 
     useEffect(() => {
         if (!isLoadingBagian && detailBagian) {
@@ -30,12 +30,7 @@ export default function ModalAdd({ show, session, onClose, mutate }: { show: boo
     async function checkProduct(value: { namaProduk: string, id_bagian: string }) {
         const { namaProduk, id_bagian } = value
         const encodedNamaProduk = encodeURIComponent(namaProduk)
-        const productCheck = await axiosInstance.get(`${apiURL}/admin/product/checkProduct?nama_produk=${encodedNamaProduk}&id_bagian=${id_bagian}`, {
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": "Bearer " + session
-            }
-        })
+        const productCheck = await api.get(`/admin/product/checkProduct?nama_produk=${encodedNamaProduk}&id_bagian=${id_bagian}`)
 
         return productCheck
     }
@@ -58,18 +53,9 @@ export default function ModalAdd({ show, session, onClose, mutate }: { show: boo
     })
 
     async function add_product(data: any) {
-        const addProcess = axiosInstance.post(apiURL + "/admin/product/addProduct", {
-            nama_produk: data.nama_produk,
-            id_bagian: data.id_bagian,
-            id_kategori: data.id_kategori
-        }, {
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": "Bearer " + session
-            }
-        })
+        const addProcess = await api.post("/admin/product/addProduct")
 
-        return (await addProcess).data
+        return addProcess.data
     }
 
     async function handleSubmit(formData: FormEvent<HTMLFormElement>) {
@@ -185,7 +171,6 @@ export default function ModalAdd({ show, session, onClose, mutate }: { show: boo
                 </Modal.Footer>
 
             </Modal>
-            <ToastContainer/>
         </>
     )
 }

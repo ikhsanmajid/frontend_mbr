@@ -7,12 +7,11 @@ import ModalEdit from "./ModalEdit"
 import RowActions from "./RowActions"
 import ModalDelete from "./ModalDelete"
 import PaginationComponent from "@/app/component/pagination/Pagination"
-import { ToastContainer } from 'react-toastify'
 
 const columnHelper = createColumnHelper<IBagian>()
 
 
-export default function BagianTable({ session, onAdd, mutate }: { session: string, onAdd: (state: boolean) => void, mutate: (mutate: any) => void }) {
+export default function BagianTable({ onAdd, mutate }: { onAdd: (state: boolean) => void, mutate: (mutate: any) => void }) {
     const [count, setCount] = useState<number>(0)
     const [pagination, setPagination] = useState<PaginationState>({
         pageIndex: 0,
@@ -32,7 +31,7 @@ export default function BagianTable({ session, onAdd, mutate }: { session: strin
     const [showModalDelete, setShowModalDelete] = useState<boolean>(false)
     const [dataDelete, setDataDelete] = useState<IBagian | null>(null)
 
-    const { detailBagian, isLoadingBagian, error, mutateBagian } = useGetAllBagian(session, false, pageSize, pageIndex * pageSize, { search: searchData })
+    const { detailBagian, isLoadingBagian, error, mutateBagian } = useGetAllBagian(false, pageSize, pageIndex * pageSize, { search: searchData })
 
     const columns = useMemo(() => [
         columnHelper.display({
@@ -211,7 +210,6 @@ export default function BagianTable({ session, onAdd, mutate }: { session: strin
 
             <ModalEdit show={showModalEdit} onClose={() => { setShowModalEdit(false); setDataEdit(null) }} editData={dataEdit} bagianMutate={mutateBagian}></ModalEdit>
             <ModalDelete show={showModalDelete} onClose={() => { setShowModalDelete(false); setDataDelete(null) }} deleteData={dataDelete} bagianMutate={mutateBagian}></ModalDelete>
-            <ToastContainer/>
         </div >
     )
 }

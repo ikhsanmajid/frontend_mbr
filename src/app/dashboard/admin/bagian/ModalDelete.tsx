@@ -1,20 +1,20 @@
 import { IBagian } from "../bagian/ListBagian";
 import { deleteBagian } from "@/app/lib/admin/users/userAPIRequest";
 import { Modal, Button } from "react-bootstrap"
-import { ToastContainer, toast } from 'react-toastify'
+import { toast } from 'react-toastify'
 import { useState } from "react";
 import React from "react";
 
-export default function ModalDelete({ show, session, deleteData, onClose, bagianMutate }: { show: boolean, session: string, deleteData: IBagian | null, onClose: () => void, bagianMutate: () => void }) {
+export default function ModalDelete({ show, deleteData, onClose, bagianMutate }: { show: boolean, deleteData: IBagian | null, onClose: () => void, bagianMutate: () => void }) {
     const [isLoadingDelete, setIsLoadingDelete] = useState<boolean>(false);
 
     // Menangani fungsi delete data
     async function handleDelete() {
         setIsLoadingDelete(true);
-        const bagianDelete = await deleteBagian(deleteData, session);
+        const bagianDelete = await deleteBagian(deleteData);
         setIsLoadingDelete(false);
 
-        if (bagianDelete.ok) {
+        if (bagianDelete.data) {
             onClose()
             toast.success("Bagian Berhasil Dihapus");
             bagianMutate();
@@ -45,7 +45,6 @@ export default function ModalDelete({ show, session, deleteData, onClose, bagian
                     }
                 </Modal.Footer>
             </Modal>
-            <ToastContainer/>
         </>
     )
 }

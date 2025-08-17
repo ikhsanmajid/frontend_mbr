@@ -1,13 +1,11 @@
 "use client"
-import { ToastContainer, toast } from 'react-toastify';
-import FilterComponentLaporanRB from "./FilterComponent";
+import { toast } from 'react-toastify';
 import { useFilterState } from "./useFilterState";
-import { apiURL } from "@/app/lib/admin/users/userAPIRequest";
-import axios from "axios";
 import { useState } from "react";
-import axiosInstance from "@/app/lib/axios";
+import api from '@/app/lib/axios';
+import FilterComponentLaporanRB from "./FilterComponent";
 
-export default function DownloadRB({ session }: { session: string }) {
+export default function DownloadRB() {
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
     const startDate = useFilterState((state) => state.startDate);
@@ -27,12 +25,9 @@ export default function DownloadRB({ session }: { session: string }) {
 
         try {
             setIsLoading(true);
-            let query = `${apiURL}/users/rb/generateReportSerahTerima/?startDate=${startDate}&endDate=${endDate}`;
+            let query = `users/rb/generateReportSerahTerima/?startDate=${startDate}&endDate=${endDate}`;
 
-            const response = await axiosInstance.get(query, {
-                headers: {
-                    'Authorization': `Bearer ${session}`
-                },
+            const response = await api.get(query, {
                 responseType: "blob"
             });
 
@@ -74,9 +69,7 @@ export default function DownloadRB({ session }: { session: string }) {
             </div>
             <div className="card-body">
                 <div className="row">
-                    <FilterComponentLaporanRB
-                        session={session}
-                    />
+                    <FilterComponentLaporanRB />
                 </div>
 
                 <div className="row mb-2 mt-3">
@@ -89,7 +82,6 @@ export default function DownloadRB({ session }: { session: string }) {
                         </button>
                     </div>
                 </div>
-                <ToastContainer/>
             </div>
             <div className="card-footer d-flex justify-content-between px-4 pt-3">
             </div>

@@ -15,14 +15,10 @@ export interface IProduct {
     isActive: boolean;
 }
 
-export default function ListProduct({ session }: { session: string }) {
+export default function ListProduct() {
     // Add Data
     const [showModalAdd, setShowModalAdd] = useState<boolean>(false);
     const [mutateProduct, setMutateProduct] = useState<{mutate: null | VoidFunction}>({mutate: null});
-
-    useEffect(() => {
-        toast.dismiss()
-    }, [])
 
     return (
         <>
@@ -35,7 +31,6 @@ export default function ListProduct({ session }: { session: string }) {
                 show={showModalAdd}
                 onClose={() => {
                     setShowModalAdd(false)
-                    toast.dismiss()
                 }}
                 mutate={mutateProduct.mutate}
             />

@@ -1,16 +1,13 @@
 "use client";
 import { Accordion } from "react-bootstrap";
-import { useGetAllBagian } from "@/app/lib/admin/users/userAPIRequest";
-import { useState, useEffect } from "react";
 import DatePicker from "react-datepicker";
-import Select from "react-select";
 import { faCalendar } from "@fortawesome/free-solid-svg-icons";
 import { useFilterState } from "./useFilterState";
 
 import "react-datepicker/dist/react-datepicker.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-export default function FilterComponentLaporanRB({ session }: { session: string }) {
+export default function FilterComponentLaporanRB() {
 
     const setStartDate = useFilterState((state) => state.setStartDate);
     const setEndDate = useFilterState((state) => state.setEndDate);

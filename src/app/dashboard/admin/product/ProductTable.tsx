@@ -12,7 +12,7 @@ import RowActions from './RowActions'
 const columnHelper = createColumnHelper<IProduct>()
 
 
-export default function JabatanTable({ session, onAdd, mutate }: { session: string, onAdd: (state: boolean) => void, mutate: (mutate: VoidFunction) => void }) {
+export default function JabatanTable({ onAdd, mutate }: { onAdd: (state: boolean) => void, mutate: (mutate: VoidFunction) => void }) {
     const [count, setCount] = useState<number>(0)
     const [pagination, setPagination] = useState<PaginationState>({
         pageIndex: 0,
@@ -36,7 +36,7 @@ export default function JabatanTable({ session, onAdd, mutate }: { session: stri
 
     //console.log("data", searchProduct, searchBagian, searchStatus)
 
-    const { listProduk, isLoadingListProduk, error, mutateListProduk } = FetchAllProduk(session, pageSize, pageIndex * pageSize, { nama_produk: searchProduct, id_bagian: searchBagian, status: searchStatus });
+    const { listProduk, isLoadingListProduk, error, mutateListProduk } = FetchAllProduk(pageSize, pageIndex * pageSize, { nama_produk: searchProduct, id_bagian: searchBagian, status: searchStatus });
 
     const columns = useMemo(() => [
         columnHelper.display({

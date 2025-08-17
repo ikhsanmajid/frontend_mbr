@@ -1,19 +1,19 @@
 import { deleteProduk } from "@/app/lib/admin/users/userAPIRequest";
-import { Modal, Button } from "react-bootstrap"
-import { ToastContainer, toast } from 'react-toastify'
-import { useState } from "react";
 import { IProduct } from "./ListProduct";
+import { Modal, Button } from "react-bootstrap"
+import { toast } from 'react-toastify'
+import { useState } from "react";
 
-export default function ModalDelete({ show, session, deleteData, onClose, mutate }: { show: boolean, session: string, deleteData: IProduct | null, onClose: () => void, mutate: () => void }) {
+export default function ModalDelete({ show, deleteData, onClose, mutate }: { show: boolean, deleteData: IProduct | null, onClose: () => void, mutate: () => void }) {
     const [isLoadingDelete, setIsLoadingDelete] = useState<boolean>(false);
 
     // Menangani fungsi delete data
     async function handleDelete() {
         setIsLoadingDelete(true);
-        const bagianDelete = await deleteProduk(deleteData, session);
+        const bagianDelete = await deleteProduk(deleteData);
         setIsLoadingDelete(false);
 
-        if (bagianDelete.ok) {
+        if (bagianDelete.data) {
             onClose()
             toast.success("Produk Berhasil Dihapus");
             mutate()!;
@@ -44,7 +44,6 @@ export default function ModalDelete({ show, session, deleteData, onClose, mutate
                     }
                 </Modal.Footer>
             </Modal>
-            <ToastContainer/>
         </>
     )
 }

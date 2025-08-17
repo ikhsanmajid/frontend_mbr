@@ -1,10 +1,9 @@
+import { FetchAllProduk, GetDetailPermintaan, editPermintaanNomor } from "@/app/lib/admin/users/userAPIRequest";
 import { IPermintaan } from "./List";
 import { Modal, Button } from "react-bootstrap";
-import { ToastContainer, toast } from 'react-toastify';
-import { FetchAllProduk, addPermintaanNomor, GetDetailPermintaan, editPermintaanNomor } from "@/app/lib/admin/users/userAPIRequest";
-import { useEffect, useState } from "react";
-import { useRouter } from 'next/navigation';
 import { nanoid } from "nanoid";
+import { toast } from 'react-toastify';
+import { useEffect, useState } from "react";
 import Select from 'react-select';
 
 
@@ -31,18 +30,16 @@ interface IPermintaanEdit {
     }[];
 }
 
-export default function ModalEdit({ session, data, show, onClose }: { session: string, data: IPermintaan | null, show: boolean, onClose: (message?: string) => void }) {
-    const { listProduk, isLoadingListProduk, error: isErrorListProduk } = FetchAllProduk(session);
-    const { detailPermintaan, isLoadingPermintaan, error, mutateListPermintaan } = data?.status !== "DITERIMA" ? GetDetailPermintaan(session, data ? Number(data.id) : null) : { detailPermintaan: null, isLoadingPermintaan: false, error: null, mutateListPermintaan: null }
-    const [produkList2, setProdukList2] = useState<{ value: number, label: string }[]>([]);
+export default function ModalEdit({ data, show, onClose }: { data: IPermintaan | null, show: boolean, onClose: (message?: string) => void }) {
     const [isMounted, setIsMounted] = useState<boolean>(false);
-    const [listPermintaan, setListPermintaan] = useState<IPermintaanEdit[] | null>(null);
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-    const router = useRouter();
+    const [listPermintaan, setListPermintaan] = useState<IPermintaanEdit[] | null>(null);
+    const [produkList2, setProdukList2] = useState<{ value: number, label: string }[]>([]);
+    const { detailPermintaan, isLoadingPermintaan, error, mutateListPermintaan } = data?.status !== "DITERIMA" ? GetDetailPermintaan(data ? Number(data.id) : null) : { detailPermintaan: null, isLoadingPermintaan: false, error: null, mutateListPermintaan: null }
+    const { listProduk, isLoadingListProduk, error: isErrorListProduk } = FetchAllProduk();
 
     useEffect(() => {
         setIsMounted(true);
-        toast.dismiss();
     }, []);
 
     useEffect(() => {
@@ -230,7 +227,7 @@ export default function ModalEdit({ session, data, show, onClose }: { session: s
         setIsSubmitting(true);
 
         try {
-            const response = await editPermintaanNomor(Number(data?.id), listPermintaan, session);
+            const response = await editPermintaanNomor(Number(data?.id), listPermintaan);
             if (response.status === "success") {
                 setIsSubmitting(false);
                 onClose("Berhasil mengirim ulang RB.");
@@ -313,30 +310,6 @@ export default function ModalEdit({ session, data, show, onClose }: { session: s
                                     </div>
                                     <div className="col-3">
                                         {isMounted ? <Select className="mb-2" onChange={(e) => handleChangeProduk(data.uuid, e!.value, e!.label)} options={produkList2} isLoading={isLoadingListProduk} defaultValue={produkList2[produkList2.findIndex(p => p.value == data.idProduk)]} /> : null}
-                                        {/* <select
-                                        onChange={(e) => handleChangeProduk(data.uuid, e.target.value)}
-                                        className="form-select mb-2"
-                                        aria-label="Default select example"
-                                        value={data.idProduk}
-                                        disabled={isSubmitting}
-                                    >
-                                        <option value="0">--- Pilih Produk ---</option>
-                                        { produkList?.filter(data => data.isActive).map((data, index) => (
-                                            <option key={index} value={data.id}>{data.namaProduk}</option>
-                                        ))}
-                                    </select> */}
-                                        {/* <select
-                                            onChange={(e) => handleChangeProduk(data.uuid, e.target.value, e.target.selectedOptions[0].getAttribute('data-product-name')!)}
-                                            className="form-select mb-2"
-                                            aria-label="Default select example"
-                                            value={data.idProduk}
-                                            disabled={isSubmitting}
-                                        >
-                                            <option value="0">--- Pilih Produk ---</option>
-                                            {produkList?.filter(data => data.isActive).map((data, index) => (
-                                                <option key={index} value={data.id} data-product-name={data.namaProduk}>{data.namaProduk}</option>
-                                            ))}
-                                        </select> */}
                                         <button onClick={() => deleteProduk(data.uuid)} className="btn btn-sm btn-danger mb-3" disabled={isSubmitting}>Delete Produk</button>
                                     </div>
 
@@ -411,7 +384,6 @@ export default function ModalEdit({ session, data, show, onClose }: { session: s
                     </Button>
                 </Modal.Footer>
             </Modal>
-            <ToastContainer/>
         </>
     )
 }

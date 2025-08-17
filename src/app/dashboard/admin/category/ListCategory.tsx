@@ -1,6 +1,5 @@
 "use client";
-import { ToastContainer, toast } from 'react-toastify'
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import CategoryTable from "./CategoryTable";
 import ModalAdd from "./ModalAdd";
 import React from "react";
@@ -11,14 +10,10 @@ export interface ICategory {
     startingNumber?: string;
 }
 
-export default function ListCategory({ session }: { session: string }) {
+export default function ListCategory() {
     // Menampilkan Modal Tambah Data
     const [showModalAdd, setShowModalAdd] = useState(false);
     const [mutateBagian, setMutateBagian] = useState<{ mutate: null | VoidFunction }>({ mutate: null });
-
-    useEffect(() => {
-        toast.dismiss()
-    }, [])
 
     return (
         <>
@@ -35,7 +30,6 @@ export default function ListCategory({ session }: { session: string }) {
                 mutate={mutateBagian.mutate}
             />
 
-            <ToastContainer/>
         </>
     );
 }

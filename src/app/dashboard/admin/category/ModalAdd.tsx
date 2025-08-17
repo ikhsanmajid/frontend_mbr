@@ -1,12 +1,12 @@
-import { add_kategori, apiURL, checkCategory } from "@/app/lib/admin/users/userAPIRequest"
+import { add_kategori, checkCategory } from "@/app/lib/admin/users/userAPIRequest"
+import { AxiosError } from "axios"
 import { Modal, Button } from "react-bootstrap"
+import { toast } from 'react-toastify'
 import { useState, FormEvent } from "react"
 import { z, ZodIssue } from "zod"
-import { AxiosError } from "axios"
-import { toast } from 'react-toastify'
 import React from "react"
 
-export default function ModalAdd({ show, session, onClose, mutate }: { show: boolean, session: string, onClose: () => void, mutate: null | VoidFunction }) {
+export default function ModalAdd({ show, onClose, mutate }: { show: boolean, onClose: () => void, mutate: null | VoidFunction }) {
     const [issues, setIssues] = useState<ZodIssue[]>([])
     const [isLoadingAdd, setIsLoadingAdd] = useState(false)
 
@@ -22,7 +22,7 @@ export default function ModalAdd({ show, session, onClose, mutate }: { show: boo
             })
         }
 
-        const categoryExist = await checkCategory(namaKategori, session)
+        const categoryExist = await checkCategory(namaKategori)
 
         if (categoryExist.data.message == "exist") {
             ctx.addIssue({
@@ -46,7 +46,7 @@ export default function ModalAdd({ show, session, onClose, mutate }: { show: boo
             startingNumber: dataStartingNumber
         }).then(async (data) => {
             setIssues([])
-            const postAddCategory = await add_kategori(data, session)
+            const postAddCategory = await add_kategori(data)
             if (postAddCategory.type !== "error") {
                 toast.success("Kategori Berhasil Ditambahkan")
                 mutate!()

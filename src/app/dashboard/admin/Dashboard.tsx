@@ -8,11 +8,11 @@ interface IGetDashboardDataAdmin {
     namaJenisBagian?: string;
 }
 
-export default function Dashboard({ session }: { session: string }) {
+export default function Dashboard() {
     const [dashboardData, setDashboardData] = useState<IGetDashboardDataAdmin[] | null>(null);
     const [dataRBDibuat, setDataRBDibuat] = useState<IGetDashboardDataAdmin[] | null>(null);
 
-    const { listDashboardData, isLoadingListDashboardData, error, mutateListDashboardData } = GetDashboardDataAdmin(session);
+    const { listDashboardData, isLoadingListDashboardData, error, mutateListDashboardData } = GetDashboardDataAdmin();
 
     useEffect(() => {
         if (!isLoadingListDashboardData && listDashboardData) {

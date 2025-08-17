@@ -8,7 +8,7 @@ import { useState, useEffect } from "react";
 import DatePicker from "react-datepicker";
 import Select from "react-select";
 
-export default function FilterComponentPermintaan({ session }: { session: string }) {
+export default function FilterComponentPermintaan() {
     const [isMounted, setIsMounted] = useState<boolean>(false);
     const [keyword, setKeyword] = useState<string>("")
 
@@ -29,8 +29,8 @@ export default function FilterComponentPermintaan({ session }: { session: string
 
     const shouldFetch = idBagianChoosen !== null
 
-    const { listProduk, isLoadingListProduk } = FetchAllProduk(session, undefined, undefined, { id_bagian: idBagianChoosen?.toString() }, shouldFetch);
-    const { detailBagian: listBagian, isLoadingBagian } = useGetAllBagian(session, true)
+    const { listProduk, isLoadingListProduk } = FetchAllProduk(undefined, undefined, { id_bagian: idBagianChoosen?.toString() }, shouldFetch);
+    const { detailBagian: listBagian, isLoadingBagian } = useGetAllBagian(true)
 
     useEffect(() => {
         setIsMounted(true);

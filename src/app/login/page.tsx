@@ -1,9 +1,9 @@
 "use client"
 import { FormEvent, useState, useEffect } from "react"
 import { signIn } from "next-auth/react"
-import LoginForm from "./LoginForm"
-import { ToastContainer, toast } from 'react-toastify'
+import { toast } from 'react-toastify'
 import { useRouter, useSearchParams } from "next/navigation"
+import LoginForm from "./LoginForm"
 
 export default function LoginPage() {
     const searchParams = useSearchParams()
@@ -14,6 +14,14 @@ export default function LoginPage() {
     const host = process.env.NEXT_PUBLIC_ABSOLUTE_URL! as string
 
     const [isLoading, setIsLoading] = useState<boolean>(false)
+
+    function topCenterToastError(message: string | undefined){
+        toast.error(message, {
+            position: "top-center",
+            autoClose: 1500,
+            theme: "colored"
+        })
+    }
 
     async function handleSubmit(event: FormEvent<HTMLFormElement>) {
         event.preventDefault()
@@ -31,8 +39,8 @@ export default function LoginPage() {
 
         if (logIn.error) {
             setIsLoading(false)
-            if (logIn.code == "Empty Field") toast.error("Username atau Password kosong")
-            else toast.error(logIn.code)
+            if (logIn.code == "Empty Field") topCenterToastError("Username atau Password kosong")
+            else topCenterToastError(logIn.code)
         } else if (logIn?.ok) {
             setIsLoading(false)
             if (nextPath.length > 0) {
@@ -47,7 +55,7 @@ export default function LoginPage() {
 
     useEffect(() => {
         if (expired) {
-            toast.error("Session Telah Berakhir. Login Kembali")
+            topCenterToastError("Session Telah Berakhir. Login Kembali")
         }
     }, [expired])
 
@@ -55,7 +63,6 @@ export default function LoginPage() {
         <>
             <div style={{ height: "90vh" }} className="w-100 d-flex justify-content-center align-items-center">
                 <LoginForm handleSubmit={(e: any) => handleSubmit(e)} isLoading={isLoading}></LoginForm>
-                <ToastContainer position="top-center" autoClose={2000} theme="colored" pauseOnHover={false} />
             </div>
         </>
 

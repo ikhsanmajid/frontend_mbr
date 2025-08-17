@@ -7,7 +7,7 @@ import api from "@/app/lib/axios"
 import axios from "axios"
 import React from "react"
 
-export default function ModalAdd({ show, session, onClose, mutate }: { show: boolean, session: string, onClose: () => void, mutate: null | VoidFunction }) {
+export default function ModalAdd({ show, onClose, mutate }: { show: boolean, onClose: () => void, mutate: null | VoidFunction }) {
     const [issues, setIssues] = useState<ZodIssue[]>([])
     const [isLoadingAdd, setIsLoadingAdd] = useState(false)
 
@@ -41,7 +41,7 @@ export default function ModalAdd({ show, session, onClose, mutate }: { show: boo
         password: z.string().min(8, { message: "Password harus lebih dari 8 karakter" }),
         repeatedPassword: z.string()
     }).superRefine(async ({ password, repeatedPassword, email, nik }, ctx) => {
-        const emailExist = await checkEmail(email, session)
+        const emailExist = await checkEmail(email)
         const NIKExist = await checkNIK(nik)
 
         if (emailExist.data.message == "exist") {
@@ -231,7 +231,6 @@ export default function ModalAdd({ show, session, onClose, mutate }: { show: boo
                 </Modal.Footer>
 
             </Modal>
-
         </>
     )
 }

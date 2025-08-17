@@ -16,7 +16,7 @@ export type Jabatan = {
 const columnHelper = createColumnHelper<Jabatan>()
 
 
-export default function JabatanTable({ session, onAdd, mutate }: { session: string, onAdd: (state: boolean) => void, mutate: (mutate: VoidFunction) => void }) {
+export default function JabatanTable({ onAdd, mutate }: { onAdd: (state: boolean) => void, mutate: (mutate: VoidFunction) => void }) {
     const [count, setCount] = useState<number>(0)
     const [pagination, setPagination] = useState<PaginationState>({
         pageIndex: 0,
@@ -33,7 +33,7 @@ export default function JabatanTable({ session, onAdd, mutate }: { session: stri
     const [showModalDelete, _setShowModalDelete] = useState<boolean>(false)
     const [dataDelete, _setDataDelete] = useState<Jabatan | null>(null)
 
-    const { detailJabatan, isLoadingJabatan, error, mutateJabatan } = useGetAllJabatan(session, pageSize, pageIndex * pageSize);
+    const { detailJabatan, isLoadingJabatan, error, mutateJabatan } = useGetAllJabatan(pageSize, pageIndex * pageSize);
 
     const columns = useMemo(() => [
         columnHelper.display({
