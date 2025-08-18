@@ -1,7 +1,7 @@
 import "@/app/custom.css"
 import { Collapse } from "react-bootstrap";
 import { useMemo, useState, useEffect } from "react"
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useSession } from "next-auth/react";
 import Link from "next/link"
 

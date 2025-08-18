@@ -38,7 +38,7 @@ export default function NavigationNav() {
                                     localStorage.removeItem('idBagianChoosen');
                                     await signOut({
                                         redirect: true,
-                                        callbackUrl: "/login"
+                                        callbackUrl: "/mbr/login"
                                     });
                                 }}
                             >

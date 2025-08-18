@@ -38,7 +38,7 @@ export default function UserTable({ mutateUsers, onAdd }: { mutateUsers: (mutate
         if (data == null) {
             return toast.error("Data ID Kosong")
         }
-        return router.push(`users/edit/${data}`)
+        return router.push(`edit/${data}`)
     }
 
     const handleDelete = (data: IUser) => {

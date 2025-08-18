@@ -136,10 +136,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             return session;
         },
         async redirect({ url, baseUrl }) {
-            return url.startsWith(baseUrl) ? url : baseUrl + '/login';
+            return url.startsWith(baseUrl) ? url : baseUrl + '/mbr/login';
         },
     },
     pages: {
-        signIn: "/login",
+        signIn: "/mbr/login",
     }
 })

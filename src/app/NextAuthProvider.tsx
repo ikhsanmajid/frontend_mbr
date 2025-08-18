@@ -7,5 +7,5 @@ export default function NextAuthProvider({
 }:{
     children: ReactNode
 }){
-    return <SessionProvider>{children}</SessionProvider>
+    return <SessionProvider basePath="/mbr/api/auth">{children}</SessionProvider>
 }
