@@ -7,11 +7,12 @@ import { faTrashCan, faPenToSquare, faFloppyDisk } from '@fortawesome/free-regul
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { FormEvent, useCallback, useEffect, useRef, useState } from 'react'
 import { IBagian } from '../../../bagian/ListBagian'
-import { Image } from "react-bootstrap"
+//import { Image } from "react-bootstrap"
 import { Modal, Button } from 'react-bootstrap'
 import { useRouter } from 'next/navigation'
 import { z, ZodIssue } from "zod"
 import api from '@/app/lib/axios'
+import Image from 'next/image'
 
 type JabatanType = {
     id: number
@@ -378,7 +379,7 @@ export function EditUser({ id }: { id: number }) {
                         <div className="w-100  row align-items-start">
                             {/* Profile Photo */}
                             <div className="col-3 d-flex justify-content-center">
-                                <Image src="/users-profile/default-profile.jpg" width={80} height={120} alt="profilephoto"></Image>
+                                <Image src="/mbr/users-profile/default-profile.jpg" width={80} height={120} alt="profilephoto"></Image>
                             </div>
 
                             {/* Form Edit */}

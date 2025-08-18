@@ -33,14 +33,14 @@ import axios, { AxiosError } from 'axios'
 
 export default auth((req) => {
     const session = req.auth ?? null
-    const isLogin = req.nextUrl.pathname === "/login"
+    const isLogin = req.nextUrl.pathname === "/mbr/login"
 
-    if (!req.auth && !isLogin) {
+    // if (!req.auth && !isLogin) {
 
-        const loginUrl = new URL(`/login?next=${encodeURIComponent(req.nextUrl.pathname)}`, req.nextUrl.origin)
+    //     const loginUrl = new URL(`/mbr/login?next=${encodeURIComponent(req.nextUrl.pathname)}`, req.nextUrl.origin)
 
-        return NextResponse.redirect(loginUrl)
-    }
+    //     return NextResponse.redirect(loginUrl)
+    // }
 
     if (isLogin && session){
         return NextResponse.redirect(new URL(`/`, req.nextUrl.origin))
