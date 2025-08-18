@@ -43,7 +43,7 @@ api.interceptors.response.use(
           //redirect(`/login?code=session_expired&next=${encodeURIComponent(window.location.pathname)}`)
         });
       }
-    } else if (error.code == "ERR_NETWORK") {
+    } else if (error.code == "ERR_NETWORK" || error.response?.status === 503) {
       const next = location.pathname + location.search;
       const url = new URL('/mbr/server-offline', location.origin);
       url.searchParams.set('next', next.substring(4));
