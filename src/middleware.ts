@@ -37,7 +37,7 @@ export default auth((req) => {
 
     if (!session && !isLogin) {
 
-        //console.log("Pathname: ", req.nextUrl.pathname, session)
+        console.log("Pathname: ", req.nextUrl.pathname, session)
 
         const loginUrl = new URL(`/mbr/login?code=session_expired&next=${encodeURIComponent(req.nextUrl.pathname.substring(4))}`, req.nextUrl.origin)
 

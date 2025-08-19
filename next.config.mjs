@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    trailingSlash: true,
+    trailingSlash: false,
     basePath: '/mbr',
     assetPrefix: '/mbr',
     images: { path: '/mbr/_next/image', unoptimized: true },
