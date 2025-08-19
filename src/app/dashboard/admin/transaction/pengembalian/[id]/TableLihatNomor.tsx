@@ -65,7 +65,7 @@ export default function TableLihatNomor({ idData }: { idData: string | number })
         } catch (err) {
             if (err instanceof AxiosError) {
                 if (error.response?.status === 401) {
-                    window.location.href = '/login?expired=true';
+                    window.location.href = '/mbr/login?code=session_expired';
                 }
             }
             toast.error("Data gagal dikonfirmasi, Backend Error")
@@ -113,7 +113,7 @@ export default function TableLihatNomor({ idData }: { idData: string | number })
         } catch (err) {
             if (err instanceof AxiosError) {
                 if (error.response?.status === 401) {
-                    window.location.href = '/login?expired=true';
+                    window.location.href = '/mbr/login?code=session_expired';
                 }
             }
             console.log(err)

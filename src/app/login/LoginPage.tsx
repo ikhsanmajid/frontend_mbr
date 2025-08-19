@@ -45,7 +45,8 @@ export default function LoginPage() {
             setIsLoading(false)
             if (nextPath.length > 0) {
                 router.refresh()
-                router.push(`${host}/${nextPath}`)
+                console.log("Host: ", host)
+                router.push(`${nextPath}`)
             } else {
                 router.refresh()
                 router.push("/")
