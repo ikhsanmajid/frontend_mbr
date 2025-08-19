@@ -6,6 +6,18 @@ import ImportBootstrap from './BootstrapJS';
 import { SpeedInsights } from "@vercel/speed-insights/next"
 import { ToastContainer } from 'react-toastify';
 
+export const metadata = {
+  title: "Monitoring MBR",
+  description: "Aplikasi monitoring MBR PT Konimex",
+  robots: {
+    index: false,
+    follow: false,
+    nocache: true,
+  },
+  icons: {
+    icon: "/mbr/konimex.ico"
+  },
+};
 
 export default async function RootLayout({
   children,
@@ -16,12 +28,12 @@ export default async function RootLayout({
   return (
     <html lang="en" style={{ height: "100%" }}>
       <body style={{ height: "100%" }}>
-        <SpeedInsights/>
+        <SpeedInsights />
         <NextAuthProvider>
           <Navbar></Navbar>
           <div className="container-fluid h-100">
             {children}
-            <ToastContainer theme='colored'/>
+            <ToastContainer theme='colored' />
           </div>
         </NextAuthProvider>
         <ImportBootstrap />
