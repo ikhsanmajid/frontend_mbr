@@ -5,7 +5,7 @@ export default async function Home() {
   const session = await auth()
 
   if (session == null) {
-    redirect(`/login?next=${encodeURIComponent("/")}`)
+    redirect(`/login?next=${encodeURIComponent("/mbr")}`)
   } else {
     if (session.user?.is_admin == true) {
       redirect("/dashboard/admin/")

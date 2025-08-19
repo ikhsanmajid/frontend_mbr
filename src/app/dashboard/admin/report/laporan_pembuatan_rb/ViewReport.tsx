@@ -34,7 +34,7 @@ export default function DownloadRB() {
         } catch (error) {
             if (error instanceof AxiosError){
                 if (error.response?.status === 401) {
-                    window.location.href = '/login?expired=true'; 
+                    window.location.href = '/mbr/login?code=session_expired'; 
                 }
             }
             toast.error("Gagal Me-request Data");
