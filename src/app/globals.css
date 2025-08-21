@@ -100,6 +100,9 @@ a {
   text-decoration: none;
 }
 
+/* Import table responsive styles */
+@import './component/table/table-responsive.css';
+
 @media (prefers-color-scheme: dark) {
   html {
     color-scheme: dark;

@@ -102,7 +102,7 @@ export function EditUser({ id }: { id: number }) {
     //console.log("data jabatan ", (defaultBagian))
 
     async function checkNIK(nik: string) {
-        const NIKCheck = await api.get( + "/admin/users/checkNIK/?nik=" + nik)
+        const NIKCheck = await api.get( "/admin/users/checkNIK/?nik=" + nik)
 
         return NIKCheck
     }
@@ -303,7 +303,7 @@ export function EditUser({ id }: { id: number }) {
                 setIssues(e.issues)
             }
             if (e instanceof AxiosError) {
-                toast.error("Bagian Gagal Ditambahkan")
+                toast.error("Update Data User Gagal")
             }
         }).finally(() => {
             setIsLoadingAdd(false)
@@ -359,10 +359,10 @@ export function EditUser({ id }: { id: number }) {
     }
 
     return (
-        <div>
-            <div className='row mb-1'>
-                <div className='col-1'>
-                    <button className="btn btn-sm btn-warning text-white" onClick={(e) => {
+        <div className="container-fluid px-2 px-md-3">
+            <div className='row mb-2 mb-md-3'>
+                <div className='col-12 col-md-2'>
+                    <button className="btn btn-sm btn-warning text-white w-100 w-md-auto" onClick={(e) => {
                         e.preventDefault()
                         router.back()
                     }}><FontAwesomeIcon icon={faCaretLeft} /> &nbsp; Back</button>
@@ -372,28 +372,48 @@ export function EditUser({ id }: { id: number }) {
             {/* Card Section */}
             <div className='card'>
                 <div className='card-header'>
-                    Edit User <b>{(!detailUserLoading && user !== undefined) && `${user.data.nik} - ${user.data.nama}`}</b>
+                    <div className="d-flex flex-column flex-md-row align-items-start align-items-md-center">
+                        <span className="fs-6 fs-md-5">Edit User</span>
+                        {(!detailUserLoading && user !== undefined) && (
+                            <b className="ms-0 ms-md-2 mt-1 mt-md-0 text-break">
+                                {user.data.nik} - {user.data.nama}
+                            </b>
+                        )}
+                    </div>
                 </div>
-                <div className='card-body p-3'>
+                <div className='card-body p-2 p-md-3'>
                     <div className="d-flex justify-content-center align-items-start">
-                        <div className="w-100  row align-items-start">
+                        <div className="w-100 row align-items-start g-2 g-md-3">
                             {/* Profile Photo */}
-                            <div className="col-3 d-flex justify-content-center">
-                                <Image src="/mbr/users-profile/default-profile.jpg" width={80} height={120} alt="profilephoto"></Image>
+                            <div className="col-12 col-md-3 d-flex justify-content-center mb-3 mb-md-0">
+                                <Image 
+                                    src="/mbr/users-profile/default-profile.jpg" 
+                                    width={60} 
+                                    height={90} 
+                                    className="d-block d-md-none"
+                                    alt="profilephoto"
+                                />
+                                <Image 
+                                    src="/mbr/users-profile/default-profile.jpg" 
+                                    width={80} 
+                                    height={120} 
+                                    className="d-none d-md-block"
+                                    alt="profilephoto"
+                                />
                             </div>
 
                             {/* Form Edit */}
-                            <div className="col-9">
-                                <div className="ps-3 pt-4">
+                            <div className="col-12 col-md-9">
+                                <div className="ps-0 ps-md-3 pt-0 pt-md-4">
                                     {detailUserLoading && <>Loading...</>}
                                     {(!detailUserLoading && user !== undefined) ?
                                         <form onSubmit={handleSaveChanges}>
                                             {/* NIK User */}
-                                            <div className="mb-3 row">
-                                                <label className="col-sm-4 col-form-label">NIK</label>
-                                                <div className="col-sm-8">
+                                            <div className="mb-3 row g-2">
+                                                <label className="col-12 col-sm-4 col-form-label fw-bold">NIK</label>
+                                                <div className="col-12 col-sm-8">
                                                     <input type="text" name="nik" maxLength={5} className="form-control" defaultValue={user.data.nik} />
-                                                    <ul>
+                                                    <ul className="list-unstyled mb-0">
                                                         {issues && issues.map((item: any, index: number) => (
                                                             item.path[0] == "nik" &&
                                                             <li key={index}>
@@ -405,11 +425,11 @@ export function EditUser({ id }: { id: number }) {
                                             </div>
 
                                             {/* Nama User */}
-                                            <div className="mb-3 row">
-                                                <label className="col-sm-4 col-form-label">Nama</label>
-                                                <div className="col-sm-8">
+                                            <div className="mb-3 row g-2">
+                                                <label className="col-12 col-sm-4 col-form-label fw-bold">Nama</label>
+                                                <div className="col-12 col-sm-8">
                                                     <input type="text" name="nama" className="form-control" defaultValue={user.data.nama} />
-                                                    <ul>
+                                                    <ul className="list-unstyled mb-0">
                                                         {issues && issues.map((item: any, index: number) => (
                                                             item.path[0] == "nama" &&
                                                             <li key={index}>
@@ -421,11 +441,11 @@ export function EditUser({ id }: { id: number }) {
                                             </div>
 
                                             {/* Email User */}
-                                            <div className="mb-3 row">
-                                                <label className="col-sm-4 col-form-label">Email</label>
-                                                <div className="col-sm-8">
+                                            <div className="mb-3 row g-2">
+                                                <label className="col-12 col-sm-4 col-form-label fw-bold">Email</label>
+                                                <div className="col-12 col-sm-8">
                                                     <input type="email" className="form-control" name="email" defaultValue={user.data.email} />
-                                                    <ul>
+                                                    <ul className="list-unstyled mb-0">
                                                         {issues && issues.map((item: any, index: number) => (
                                                             item.path[0] == "email" &&
                                                             <li key={index}>
@@ -437,11 +457,11 @@ export function EditUser({ id }: { id: number }) {
                                             </div>
 
                                             {/* Password User */}
-                                            <div className="mb-3 row">
-                                                <label htmlFor="inputPassword" className="col-sm-4 col-form-label">Password</label>
-                                                <div className="col-sm-8">
+                                            <div className="mb-3 row g-2">
+                                                <label htmlFor="inputPassword" className="col-12 col-sm-4 col-form-label fw-bold">Password</label>
+                                                <div className="col-12 col-sm-8">
                                                     <input type="password" className="form-control" name="newPassword" id="inputPassword" defaultValue="default" />
-                                                    <ul>
+                                                    <ul className="list-unstyled mb-0">
                                                         {issues && issues.map((item: any, index: number) => (
                                                             item.path[0] == "password" &&
                                                             <li key={index}>
@@ -453,9 +473,9 @@ export function EditUser({ id }: { id: number }) {
                                             </div>
 
                                             {/* is Admin User */}
-                                            <div className="mb-3 row">
-                                                <div className="col-sm-4 col-form-label">Status Admininstator</div>
-                                                <div className="col-sm-8">
+                                            <div className="mb-3 row g-2">
+                                                <div className="col-12 col-sm-4 col-form-label fw-bold">Status Administrator</div>
+                                                <div className="col-12 col-sm-8">
                                                     <select defaultValue={user.data.isAdmin === true ? "1" : "0"} name="isAdmin" className="form-select">
                                                         <option value="0">No</option>
                                                         <option value="1">Yes</option>
@@ -464,9 +484,9 @@ export function EditUser({ id }: { id: number }) {
                                             </div>
 
                                             {/* is Active User */}
-                                            <div className="mb-3 row">
-                                                <div className="col-sm-4 col-form-label">Status Active</div>
-                                                <div className="col-sm-8">
+                                            <div className="mb-3 row g-2">
+                                                <div className="col-12 col-sm-4 col-form-label fw-bold">Status Active</div>
+                                                <div className="col-12 col-sm-8">
                                                     <select defaultValue={user.data.isActive === true ? "1" : "0"} name="isActive" className="form-select">
                                                         <option value="0">No</option>
                                                         <option value="1">Yes</option>
@@ -477,14 +497,14 @@ export function EditUser({ id }: { id: number }) {
 
                                             {defaultValueBagian === "" && addMode == false &&
                                                 <>
-                                                    <div className="mb-3 row">
-                                                        <div className="col-sm-4"></div>
-                                                        <div className="col-sm-8">
+                                                    <div className="mb-3 row g-2">
+                                                        <div className="col-12 col-sm-4"></div>
+                                                        <div className="col-12 col-sm-8">
                                                             <button onClick={(e) => {
                                                                 e.preventDefault()
                                                                 setAddMode(true)
                                                                 setDisabledBagianJabatanEditMode(false)
-                                                            }} className='btn btn-sm btn-success'><FontAwesomeIcon icon={faPlus} /> Tambah Bagian Jabatan</button>
+                                                            }} className='btn btn-sm btn-success w-100 w-sm-auto'><FontAwesomeIcon icon={faPlus} /> Tambah Bagian Jabatan</button>
                                                         </div>
                                                     </div>
                                                 </>}
@@ -492,9 +512,9 @@ export function EditUser({ id }: { id: number }) {
                                             {(addMode == true || defaultValueBagian !== "") &&
                                                 <>
                                                     {/* // Bagian */}
-                                                    <div className="mb-3 row">
-                                                        <div className="col-sm-4 col-form-label">Bagian</div>
-                                                        <div className="col-sm-8">
+                                                    <div className="mb-3 row g-2">
+                                                        <div className="col-12 col-sm-4 col-form-label fw-bold">Bagian</div>
+                                                        <div className="col-12 col-sm-8">
                                                             <select value={defaultValueBagian} onChange={(e) => {
                                                                 const bagianId = e.target.value
                                                                 setDefaultValueBagian(bagianId)
@@ -510,9 +530,9 @@ export function EditUser({ id }: { id: number }) {
                                                     </div>
 
                                                     {/* // Jabatan */}
-                                                    <div className="mb-3 row">
-                                                        <div className="col-sm-4 col-form-label">Jabatan</div>
-                                                        <div className="col-sm-8">
+                                                    <div className="mb-3 row g-2">
+                                                        <div className="col-12 col-sm-4 col-form-label fw-bold">Jabatan</div>
+                                                        <div className="col-12 col-sm-8">
                                                             {listJabatan !== null &&
                                                                 <select ref={jabatanRef} value={defaultValueJabatan} onChange={(e) => {
                                                                     const jabatanId = e.target.value
@@ -530,75 +550,95 @@ export function EditUser({ id }: { id: number }) {
                                                         </div>
                                                     </div>
 
-                                                    <div className="mb-3 row">
-                                                        <div className="col-sm-4"></div>
-                                                        <div className="col-sm-8">
-                                                            {(disabledBagianJabatanEditMode && user.data.bagianjabatan[0] !== undefined) ?
-                                                                // Tombol Edit jika disable edit mode true
-                                                                <>
-                                                                    {/* Aktif Edit Mode */}
-                                                                    <button onClick={(e) => {
-                                                                        e.preventDefault()
-                                                                        setDisabledBagianJabatanEditMode(false)
-                                                                    }} className='btn btn-sm btn-warning text-white me-2' disabled={isLoadingAdd}><FontAwesomeIcon icon={faPenToSquare} /> Edit Bagian Jabatan</button>
+                                                    <div className="mb-3 row g-2">
+                                                        <div className="col-12 col-sm-4"></div>
+                                                        <div className="col-12 col-sm-8">
+                                                            <div className="d-flex flex-column flex-sm-row gap-2">
+                                                                {(disabledBagianJabatanEditMode && user.data.bagianjabatan[0] !== undefined) ?
+                                                                    // Tombol Edit jika disable edit mode true
+                                                                    <>
+                                                                        {/* Aktif Edit Mode */}
+                                                                        <button onClick={(e) => {
+                                                                            e.preventDefault()
+                                                                            setDisabledBagianJabatanEditMode(false)
+                                                                        }} className='btn btn-sm btn-warning text-white flex-fill flex-sm-shrink-0' disabled={isLoadingAdd}>
+                                                                            <FontAwesomeIcon icon={faPenToSquare} /> 
+                                                                            <span className="d-none d-sm-inline"> Edit</span> Bagian Jabatan
+                                                                        </button>
 
-                                                                    {/* Hapus Button */}
-                                                                    <button onClick={(e) => {
-                                                                        e.preventDefault()
-                                                                        setDeleteModalShow(true)
-                                                                    }} className='btn btn-sm btn-danger text-white'><FontAwesomeIcon icon={faTrashCan} /> Hapus Bagian Jabatan</button>
+                                                                        {/* Hapus Button */}
+                                                                        <button onClick={(e) => {
+                                                                            e.preventDefault()
+                                                                            setDeleteModalShow(true)
+                                                                        }} className='btn btn-sm btn-danger text-white flex-fill flex-sm-shrink-0'>
+                                                                            <FontAwesomeIcon icon={faTrashCan} /> 
+                                                                            <span className="d-none d-sm-inline"> Hapus</span> Bagian Jabatan
+                                                                        </button>
 
-                                                                    {/* Modal Delete Confirmation */}
-                                                                    <Modal show={deleteModalShow} onHide={handleCloseDeleteModal}>
-                                                                        <Modal.Header closeButton>
-                                                                            <Modal.Title>Delete Confirmation</Modal.Title>
-                                                                        </Modal.Header>
-                                                                        <Modal.Body>Apakah anda yakin akan menghapus jabatan {user.data.bagianjabatan[0].bagianJabatan.jabatan.namaJabatan}?</Modal.Body>
-                                                                        <Modal.Footer>
-                                                                            <Button variant="secondary" onClick={handleCloseDeleteModal}>
-                                                                                Batal
-                                                                            </Button>
-                                                                            <Button variant="danger" onClick={() => {
-                                                                                handleDeleteJabatanUser(user.data.bagianjabatan[0].idBagianJabatan.toString())
-                                                                            }} disabled={isLoadingDelete}>
-                                                                                Hapus Jabatan
-                                                                            </Button>
-                                                                        </Modal.Footer>
-                                                                    </Modal>
-                                                                </> :
-                                                                <>
+                                                                        {/* Modal Delete Confirmation */}
+                                                                        <Modal show={deleteModalShow} onHide={handleCloseDeleteModal}>
+                                                                            <Modal.Header closeButton>
+                                                                                <Modal.Title>Delete Confirmation</Modal.Title>
+                                                                            </Modal.Header>
+                                                                            <Modal.Body>
+                                                                                <p className="text-break">
+                                                                                    Apakah anda yakin akan menghapus jabatan {user.data.bagianjabatan[0].bagianJabatan.jabatan.namaJabatan}?
+                                                                                </p>
+                                                                            </Modal.Body>
+                                                                            <Modal.Footer>
+                                                                                <Button variant="secondary" onClick={handleCloseDeleteModal}>
+                                                                                    Batal
+                                                                                </Button>
+                                                                                <Button variant="danger" onClick={() => {
+                                                                                    handleDeleteJabatanUser(user.data.bagianjabatan[0].idBagianJabatan.toString())
+                                                                                }} disabled={isLoadingDelete}>
+                                                                                    Hapus Jabatan
+                                                                                </Button>
+                                                                            </Modal.Footer>
+                                                                        </Modal>
+                                                                    </> :
+                                                                    <>
+                                                                        {/* // Tombol Batal Edit */}
+                                                                        <button onClick={(e) => {
+                                                                            e.preventDefault()
+                                                                            handleBatal()
+                                                                        }} className='btn btn-sm btn-danger text-white flex-fill flex-sm-shrink-0' disabled={isLoadingAdd}>
+                                                                            <FontAwesomeIcon icon={faBan} /> Batal
+                                                                        </button>
 
-                                                                    {/* // Tombol Batal Edit */}
-                                                                    <button onClick={(e) => {
-                                                                        e.preventDefault()
-                                                                        handleBatal()
-                                                                    }} className='btn btn-sm btn-danger text-white me-2' disabled={isLoadingAdd}><FontAwesomeIcon icon={faBan} /> Batal</button>
-
-                                                                    {/* // Tombol Save Bagian Jabatan */}
-                                                                    <button onClick={(e) => {
-                                                                        e.preventDefault()
-                                                                        //handleBatal()
-                                                                        const currentIdBagianJabatanKey = user.data.bagianjabatan[0] == undefined ? "" : user.data.bagianjabatan[0].idBagianJabatan.toString()
-                                                                        const userId = user.data.id.toString()
-                                                                        const newIdBagianJabatan = jabatanRef.current!.value
-                                                                        setDefaultValueJabatan(newIdBagianJabatan)
-                                                                        handleSaveBagianJabatan(currentIdBagianJabatanKey, newIdBagianJabatan, userId)
-                                                                    }} className='btn btn-sm btn-success text-white' disabled={isLoadingAdd}><FontAwesomeIcon icon={faFloppyDisk} /> Simpan Bagian Jabatan</button>
-                                                                </>
-                                                            }
+                                                                        {/* // Tombol Save Bagian Jabatan */}
+                                                                        <button onClick={(e) => {
+                                                                            e.preventDefault()
+                                                                            //handleBatal()
+                                                                            const currentIdBagianJabatanKey = user.data.bagianjabatan[0] == undefined ? "" : user.data.bagianjabatan[0].idBagianJabatan.toString()
+                                                                            const userId = user.data.id.toString()
+                                                                            const newIdBagianJabatan = jabatanRef.current!.value
+                                                                            setDefaultValueJabatan(newIdBagianJabatan)
+                                                                            handleSaveBagianJabatan(currentIdBagianJabatanKey, newIdBagianJabatan, userId)
+                                                                        }} className='btn btn-sm btn-success text-white flex-fill flex-sm-shrink-0' disabled={isLoadingAdd}>
+                                                                            <FontAwesomeIcon icon={faFloppyDisk} /> 
+                                                                            <span className="d-none d-sm-inline"> Simpan</span> Bagian Jabatan
+                                                                        </button>
+                                                                    </>
+                                                                }
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </>}
 
-                                            <div className="mb-3 row">
-                                                <div className="col-sm-12 d-flex justify-content-end col-form-label">
-                                                    <button className='btn btn-sm btn-success' type="submit" disabled={isLoadingAdd}>
+                                            <div className="mb-3 row g-2">
+                                                <div className="col-12 col-sm-12 d-flex justify-content-center justify-content-sm-end">
+                                                    <button className='btn btn-sm btn-success w-100 w-sm-auto' type="submit" disabled={isLoadingAdd}>
                                                         <FontAwesomeIcon icon={faFloppyDisk} /> &nbsp; Simpan Perubahan
                                                     </button>
                                                 </div>
                                             </div>
                                         </form>
-                                        : !detailUserLoading && <>Failed To Fetch Data</>}
+                                        : !detailUserLoading && <>
+                                            <div className="alert alert-danger text-center">
+                                                Failed To Fetch Data
+                                            </div>
+                                        </>}
                                 </div>
                             </div>
                         </div>

@@ -24,13 +24,13 @@ export default function FilterComponentLaporanRB() {
                 </Accordion.Header>
                 <Accordion.Body>
                     <div className="row w-100">
-                        <div className="row mb-2 align-items-center">
-                            <div className="col col-3">
+                        <div className="row mb-3 align-items-center">
+                            <div className="col-12 col-md-3 mb-2 mb-md-0">
                                 <span>Periode Input Pengembalian RB: </span>
                             </div>
-                            <div className="col col-auto">
-                                <div className="row row-cols-auto align-items-center">
-                                    <div className="col">
+                            <div className="col-12 col-md-auto">
+                                <div className="row g-2 align-items-center">
+                                    <div className="col-12 col-sm-auto">
                                         <DatePicker
                                             className="form-control"
                                             selected={date1}
@@ -57,8 +57,10 @@ export default function FilterComponentLaporanRB() {
                                             dateFormat="dd MMMM yyyy HH:mm"
                                         />
                                     </div>
-                                    <span> s.d. </span>
-                                    <div className="col">
+                                    <div className="col-auto d-none d-sm-block">
+                                        <span> s.d. </span>
+                                    </div>
+                                    <div className="col-12 col-sm-auto">
                                         <DatePicker
                                             className="form-control"
                                             selected={date2}
@@ -84,8 +86,10 @@ export default function FilterComponentLaporanRB() {
                                         />
                                     </div>
                                 </div>
-                                <div className="row">
-                                    <div className="form-text" id="basic-addon4">Tanggal dan Waktu Wajib Diisi</div>
+                                <div className="row mt-2">
+                                    <div className="col-12">
+                                        <div className="form-text" id="basic-addon4">Tanggal dan Waktu Wajib Diisi</div>
+                                    </div>
                                 </div>
                             </div>
                         </div>

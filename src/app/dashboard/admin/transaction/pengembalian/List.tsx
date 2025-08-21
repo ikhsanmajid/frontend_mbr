@@ -170,92 +170,129 @@ export default function ListPengembalianUser() {
                         <FilterComponentPengembalian/>
                     </div>
 
-                    <div className="row mb-2 mt-1 align-items-center">
-                        <div className="col col-1">
-                            <span>Cari Nomor: </span>
-                        </div>
-                        <div className="col col-3">
-                            <input type="text" className="form-control" placeholder="Masukkan Nomor" onKeyDown={(e) => {
-                                if (e.key === "Enter") {
-                                    setFilterNomor(e.currentTarget.value)
-                                    //console.log("value ", e.currentTarget.value)
-                                }
-                            }} value={tempFilterNomor ?? ""}
-                                onChange={(e) => {
-                                    setTempFilterNomor(e.currentTarget.value)
-                                }} />
+                    <div className="row mb-3 mt-2">
+                        <div className="col-12">
+                            <div className="row g-2 align-items-center">
+                                <div className="col-12 col-md-2">
+                                    <label className="form-label fw-medium mb-0">Cari Nomor:</label>
+                                </div>
+                                <div className="col-12 col-md-6 col-lg-4">
+                                    <div className="input-group">
+                                        <input 
+                                            type="text" 
+                                            className="form-control" 
+                                            placeholder="Masukkan Nomor" 
+                                            onKeyDown={(e) => {
+                                                if (e.key === "Enter") {
+                                                    setFilterNomor(e.currentTarget.value)
+                                                    //console.log("value ", e.currentTarget.value)
+                                                }
+                                            }} 
+                                            value={tempFilterNomor ?? ""}
+                                            onChange={(e) => {
+                                                setTempFilterNomor(e.currentTarget.value)
+                                            }} 
+                                        />
+                                        <button 
+                                            className="btn btn-primary" 
+                                            type="button"
+                                            onClick={() => {
+                                                setFilterNomor(tempFilterNomor)
+                                            }}
+                                        >
+                                            <i className="fas fa-search"></i>
+                                            <span className="d-none d-sm-inline ms-1">Cari</span>
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                            </div>
                         </div>
                     </div>
 
                     <div className="row">
-                        <div className="table-responsive">
-                            <table className="table table-sm table-striped table-bordered align-middle text-center">
-                                <thead>
-                                    {table.getHeaderGroups().map(headerGroup => (
-                                        <tr key={headerGroup.id}>
-                                            {headerGroup.headers.map(header => (
-                                                <th key={header.id} scope="col" style={{ width: `${header.getSize()} px` }}>
-                                                    {flexRender(header.column.columnDef.header, header.getContext())}
-                                                </th>
-                                            ))}
-                                        </tr>
-                                    ))}
-                                </thead>
-                                <tbody className="table-group-divider">
-                                    {isLoadingListPengembalian &&
-                                        <tr>
-                                            <td colSpan={8} className="text-center"> Loading ....</td>
-                                        </tr>}
-
-                                    {!isLoadingListPengembalian && pengembalianData?.length == 0 &&
-                                        <tr>
-                                            <td colSpan={8} className="text-center"> Data Kosong </td>
-                                        </tr>
-                                    }
-
-                                    {!isLoadingListPengembalian && pengembalianData?.length !== 0 &&
-                                        table.getRowModel().rows.map(row => (
-                                            <tr key={row.id} style={{ height: `10px` }}>
-                                                {row.getVisibleCells().map((cell) => (
-                                                    <td key={cell.id} className={cell.column.columnDef.meta?.className ?? ""} style={{ width: `${cell.column.getSize()}px` }}>
-                                                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                                                    </td>
+                        <div className="col-12">
+                            <div className="table-responsive">
+                                <table className="table table-sm table-striped table-hover table-bordered align-middle text-center">
+                                    <thead className="table-dark">
+                                        {table.getHeaderGroups().map(headerGroup => (
+                                            <tr key={headerGroup.id}>
+                                                {headerGroup.headers.map(header => (
+                                                    <th key={header.id} scope="col" className="text-white fw-semibold" style={{ minWidth: `${header.getSize()}px` }}>
+                                                        {flexRender(header.column.columnDef.header, header.getContext())}
+                                                    </th>
                                                 ))}
                                             </tr>
                                         ))}
-                                </tbody>
-                            </table>
+                                    </thead>
+                                    <tbody className="table-group-divider">
+                                        {isLoadingListPengembalian &&
+                                            <tr>
+                                                <td colSpan={8} className="text-center py-4 text-muted fst-italic">
+                                                    <div className="spinner-border spinner-border-sm me-2" role="status">
+                                                        <span className="visually-hidden">Loading...</span>
+                                                    </div>
+                                                    Loading ...
+                                                </td>
+                                            </tr>}
+
+                                        {!isLoadingListPengembalian && pengembalianData?.length == 0 &&
+                                            <tr>
+                                                <td colSpan={8} className="text-center py-4 text-muted fst-italic">
+                                                    <i className="fas fa-inbox me-2"></i>
+                                                    Data Kosong
+                                                </td>
+                                            </tr>
+                                        }
+
+                                        {!isLoadingListPengembalian && pengembalianData?.length !== 0 &&
+                                            table.getRowModel().rows.map(row => (
+                                                <tr key={row.id} className="table-row-hover">
+                                                    {row.getVisibleCells().map((cell) => (
+                                                        <td key={cell.id} className={`text-nowrap ${cell.column.columnDef.meta?.className ?? ""}`} style={{ minWidth: `${cell.column.getSize()}px` }}>
+                                                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                                                        </td>
+                                                    ))}
+                                                </tr>
+                                            ))}
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <div className="card-footer d-flex justify-content-between px-4 pt-3">
-                    <div className="col">
-                        <div className="row g-3 align-items-center">
-                            <div className="col-auto">
-                                <label className="col-form-label">Data ditampilkan: </label>
-                            </div>
-                            <div className="col-auto">
-                                <select className="form-select"
-                                    value={table.getState().pagination.pageSize}
-                                    onChange={e => {
-                                        table.setPageSize(Number(e.target.value))
-                                    }}
-                                >
-                                    {[5, 10, 20, 30].map(pageSize => (
-                                        <option key={pageSize} value={pageSize}>
-                                            {pageSize}
-                                        </option>
-                                    ))}
-                                </select>
-                            </div>
-                            <div className="col-auto">
-                                <label className="col-form-label">Total Data: {listPengembalian && listPengembalian.count} </label>
+                <div className="card-footer">
+                    <div className="row g-3 align-items-center">
+                        <div className="col-12 col-lg-6">
+                            <div className="row g-2 align-items-center justify-content-center justify-content-lg-start">
+                                <div className="col-auto">
+                                    <small className="text-muted fw-medium">Data per halaman:</small>
+                                </div>
+                                <div className="col-auto">
+                                    <select className="form-select form-select-sm"
+                                        value={table.getState().pagination.pageSize}
+                                        onChange={e => {
+                                            table.setPageSize(Number(e.target.value))
+                                        }}
+                                    >
+                                        {[5, 10, 20, 30].map(pageSize => (
+                                            <option key={pageSize} value={pageSize}>
+                                                {pageSize}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+                                <div className="col-auto">
+                                    <small className="text-muted fw-medium">
+                                        Total: <span className="text-primary fw-semibold">{listPengembalian && listPengembalian.count}</span>
+                                    </small>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div className="col d-flex justify-content-end align-items-center">
-                        <PaginationComponent table={table} currentPage={currentPage} pageCount={pageCount} pageList={pageList}></PaginationComponent>
+                        <div className="col-12 col-lg-6 d-flex justify-content-center justify-content-lg-end align-items-center">
+                            <PaginationComponent table={table} currentPage={currentPage} pageCount={pageCount} pageList={pageList}></PaginationComponent>
+                        </div>
                     </div>
                 </div>
             </div>

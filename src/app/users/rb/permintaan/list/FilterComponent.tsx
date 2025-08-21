@@ -71,135 +71,137 @@ export default function FilterComponentPermintaan() {
                 <Accordion.Header><span className="fw-bold">Filter</span></Accordion.Header>
                 <Accordion.Body>
                     <div className="row w-100">
-                        <div className="row mb-2 row mb-2 align-items-center">
-                            <div className="col col-2">
-                                <span>NIK/Nama: </span>
-                            </div>
-                            <div className="col col-3">
-                                <div className="input-group">
-                                    <input onChange={(e) => {
-                                        setKeyword(e.target.value)
-                                    }} type="text" autoComplete="off" className="form-control" id="inputSearchBagian" />
+                        <div className="col-12 col-lg-6">
+                            <div className="row mb-3 align-items-center">
+                                <div className="col-12 col-md-3 mb-2 mb-md-0">
+                                    <span>NIK/Nama: </span>
                                 </div>
-                            </div>
-                        </div>
-
-                        <div className="row mb-2 align-items-center">
-                            <div className="col col-2">
-                                <span>Nama Produk: </span>
-                            </div>
-                            <div className="col col-3">
-                                {isMounted && (productList.length !== 0) && <Select options={productList} onChange={(e) => {
-                                    setIdProdukChoosen(e!.value)
-                                }} isSearchable isLoading={isLoadingListProduk} defaultValue={productList.find(item => { return item.value == idProdukChoosen })} />}
-                            </div>
-                        </div>
-
-                        <div className="row mb-2 align-items-center">
-                            <div className="col col-2">
-                                <span>Tahun Permintaan: </span>
-                            </div>
-                            <div className="col col-3">
-                                <div className="row row-cols-auto align-items-center">
-                                    <div className="col">
-                                        <DatePicker
-                                            className="form-control"
-                                            selected={date1}
-                                            onChange={(date) => {
-                                                setDate1(date)
-                                            }}
-                                            isClearable
-                                            dateFormat="yyyy"
-                                            showIcon={true}
-                                            icon={<FontAwesomeIcon icon={faCalendar}></FontAwesomeIcon>}
-                                            showYearPicker
-                                        ></DatePicker>
-                                    </div>
-                                </div>
-
-                            </div>
-                        </div>
-
-
-                        <div className="row mb-2 row mb-2 align-items-center">
-                            <div className="col col-2">
-                                <span>Status Konfirmasi: </span>
-                            </div>
-                            <div className="col col-auto">
-                                <div className="row">
-                                    <div className="col col-auto">
-                                        <div className="form-check form-check-inline">
-                                            <input className="form-check-input" type="radio" name="confirmed" id="inlineRadio1" value="onlyConfirmed" onChange={(e) => {
-                                                setStatusConfirmed(e.target.value as "onlyConfirmed" | "onlyPending" | "onlyRejected" | "all")
-                                            }} checked={statusConfirmed == "onlyConfirmed"}></input>
-                                            <label className="form-check-label" htmlFor="inlineRadio1">Dikonfirmasi</label>
-                                        </div>
-                                    </div>
-                                    <div className="col col-auto">
-                                        <div className="form-check form-check-inline">
-                                            <input className="form-check-input" type="radio" name="confirmed" id="inlineRadio2" value="onlyPending" onChange={(e) => {
-                                                setStatusConfirmed(e.target.value as "onlyConfirmed" | "onlyPending" | "onlyRejected" | "all")
-                                            }} checked={statusConfirmed == "onlyPending"}></input>
-                                            <label className="form-check-label" htmlFor="inlineRadio2">Pending</label>
-                                        </div>
-                                    </div>
-                                    <div className="col col-auto">
-                                        <div className="form-check form-check-inline">
-                                            <input className="form-check-input" type="radio" name="confirmed" id="inlineRadio4" value="onlyRejected" onChange={(e) => {
-                                                setStatusConfirmed(e.target.value as "onlyConfirmed" | "onlyPending" | "onlyRejected" | "all")
-                                            }} checked={statusConfirmed == "onlyRejected"}></input>
-                                            <label className="form-check-label" htmlFor="inlineRadio4">Ditolak</label>
-                                        </div>
-                                    </div>
-                                    <div className="col col-auto">
-                                        <div className="form-check form-check-inline">
-                                            <input className="form-check-input" type="radio" name="confirmed" id="inlineRadio3" value="all" onChange={(e) => {
-                                                setStatusConfirmed(e.target.value as "onlyConfirmed" | "onlyPending" | "onlyRejected" | "all")
-                                            }} checked={statusConfirmed == "all"}></input>
-                                            <label className="form-check-label" htmlFor="inlineRadio3">Semua</label>
-                                        </div>
+                                <div className="col-12 col-md-9">
+                                    <div className="input-group">
+                                        <input onChange={(e) => {
+                                            setKeyword(e.target.value)
+                                        }} type="text" autoComplete="off" className="form-control" id="inputSearchBagian" />
                                     </div>
                                 </div>
                             </div>
-                        </div>
 
-                        {(statusConfirmed !== "onlyPending" && statusConfirmed !== "onlyRejected") && <div className="row mb-2 row mb-2 align-items-center">
-                            <div className="col col-2">
-                                <span>Status Dipakai: </span>
+                            <div className="row mb-3 align-items-center">
+                                <div className="col-12 col-md-3 mb-2 mb-md-0">
+                                    <span>Nama Produk: </span>
+                                </div>
+                                <div className="col-12 col-md-9">
+                                    {isMounted && (productList.length !== 0) && <Select options={productList} onChange={(e) => {
+                                        setIdProdukChoosen(e!.value)
+                                    }} isSearchable isLoading={isLoadingListProduk} defaultValue={productList.find(item => { return item.value == idProdukChoosen })} />}
+                                </div>
                             </div>
-                            <div className="col col-auto">
-                                <div className="row">
-                                    <div className="col col-auto">
-                                        <div className="form-check form-check-inline">
-                                            <input className="form-check-input" type="radio" name="used" id="inlineRadio7" value="onlyUsed" onChange={(e) => {
-                                                setStatusUsed(e.target.value as "onlyUsed" | "onlyAvailable" | "all")
-                                            }} checked={statusUsed == "onlyUsed"}></input>
-                                            <label className="form-check-label" htmlFor="inlineRadio7">Sudah Dipakai</label>
+
+                            <div className="row mb-3 align-items-center">
+                                <div className="col-12 col-md-3 mb-2 mb-md-0">
+                                    <span>Tahun Permintaan: </span>
+                                </div>
+                                <div className="col-12 col-md-9">
+                                    <div className="row g-2 align-items-center">
+                                        <div className="col-12 col-sm-auto">
+                                            <DatePicker
+                                                className="form-control"
+                                                selected={date1}
+                                                onChange={(date) => {
+                                                    setDate1(date)
+                                                }}
+                                                isClearable
+                                                dateFormat="yyyy"
+                                                showIcon={true}
+                                                icon={<FontAwesomeIcon icon={faCalendar}></FontAwesomeIcon>}
+                                                showYearPicker
+                                            ></DatePicker>
                                         </div>
                                     </div>
-                                    <div className="col col-auto">
-                                        <div className="form-check form-check-inline">
-                                            <input className="form-check-input" type="radio" name="used" id="inlineRadio5" value="onlyAvailable" onChange={(e) => {
-                                                setStatusUsed(e.target.value as "onlyUsed" | "onlyAvailable" | "all")
-                                            }} checked={statusUsed == "onlyAvailable"}></input>
-                                            <label className="form-check-label" htmlFor="inlineRadio5">Belum Dipakai</label>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div className="col-12 col-lg-6">
+                            <div className="row mb-3 align-items-center">
+                                <div className="col-12 mb-2">
+                                    <span className="fw-semibold">Status Konfirmasi: </span>
+                                </div>
+                                <div className="col-12">
+                                    <div className="row g-2">
+                                        <div className="col-12 col-sm-6 col-md-auto">
+                                            <div className="form-check form-check-inline">
+                                                <input className="form-check-input" type="radio" name="confirmed" id="inlineRadio1" value="onlyConfirmed" onChange={(e) => {
+                                                    setStatusConfirmed(e.target.value as "onlyConfirmed" | "onlyPending" | "onlyRejected" | "all")
+                                                }} checked={statusConfirmed == "onlyConfirmed"}></input>
+                                                <label className="form-check-label" htmlFor="inlineRadio1">Dikonfirmasi</label>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div className="col col-auto">
-                                        <div className="form-check form-check-inline">
-                                            <input className="form-check-input" type="radio" name="used" id="inlineRadio6" value="all" onChange={(e) => {
-                                                setStatusUsed(e.target.value as "onlyUsed" | "onlyAvailable" | "all")
-                                            }} checked={statusUsed == "all"}></input>
-                                            <label className="form-check-label" htmlFor="inlineRadio6">Semua</label>
+                                        <div className="col-12 col-sm-6 col-md-auto">
+                                            <div className="form-check form-check-inline">
+                                                <input className="form-check-input" type="radio" name="confirmed" id="inlineRadio2" value="onlyPending" onChange={(e) => {
+                                                    setStatusConfirmed(e.target.value as "onlyConfirmed" | "onlyPending" | "onlyRejected" | "all")
+                                                }} checked={statusConfirmed == "onlyPending"}></input>
+                                                <label className="form-check-label" htmlFor="inlineRadio2">Pending</label>
+                                            </div>
+                                        </div>
+                                        <div className="col-12 col-sm-6 col-md-auto">
+                                            <div className="form-check form-check-inline">
+                                                <input className="form-check-input" type="radio" name="confirmed" id="inlineRadio4" value="onlyRejected" onChange={(e) => {
+                                                    setStatusConfirmed(e.target.value as "onlyConfirmed" | "onlyPending" | "onlyRejected" | "all")
+                                                }} checked={statusConfirmed == "onlyRejected"}></input>
+                                                <label className="form-check-label" htmlFor="inlineRadio4">Ditolak</label>
+                                            </div>
+                                        </div>
+                                        <div className="col-12 col-sm-6 col-md-auto">
+                                            <div className="form-check form-check-inline">
+                                                <input className="form-check-input" type="radio" name="confirmed" id="inlineRadio3" value="all" onChange={(e) => {
+                                                    setStatusConfirmed(e.target.value as "onlyConfirmed" | "onlyPending" | "onlyRejected" | "all")
+                                                }} checked={statusConfirmed == "all"}></input>
+                                                <label className="form-check-label" htmlFor="inlineRadio3">Semua</label>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>}
 
-                        <div className="row mb-1 mt-1">
-                            <div className="col col-auto">
-                                <button className="btn btn-primary" onClick={(e) => {
+                            {(statusConfirmed !== "onlyPending" && statusConfirmed !== "onlyRejected") && <div className="row mb-3 align-items-center">
+                                <div className="col-12 mb-2">
+                                    <span className="fw-semibold">Status Dipakai: </span>
+                                </div>
+                                <div className="col-12">
+                                    <div className="row g-2">
+                                        <div className="col-12 col-sm-6 col-md-auto">
+                                            <div className="form-check form-check-inline">
+                                                <input className="form-check-input" type="radio" name="used" id="inlineRadio7" value="onlyUsed" onChange={(e) => {
+                                                    setStatusUsed(e.target.value as "onlyUsed" | "onlyAvailable" | "all")
+                                                }} checked={statusUsed == "onlyUsed"}></input>
+                                                <label className="form-check-label" htmlFor="inlineRadio7">Sudah Dipakai</label>
+                                            </div>
+                                        </div>
+                                        <div className="col-12 col-sm-6 col-md-auto">
+                                            <div className="form-check form-check-inline">
+                                                <input className="form-check-input" type="radio" name="used" id="inlineRadio5" value="onlyAvailable" onChange={(e) => {
+                                                    setStatusUsed(e.target.value as "onlyUsed" | "onlyAvailable" | "all")
+                                                }} checked={statusUsed == "onlyAvailable"}></input>
+                                                <label className="form-check-label" htmlFor="inlineRadio5">Belum Dipakai</label>
+                                            </div>
+                                        </div>
+                                        <div className="col-12 col-sm-6 col-md-auto">
+                                            <div className="form-check form-check-inline">
+                                                <input className="form-check-input" type="radio" name="used" id="inlineRadio6" value="all" onChange={(e) => {
+                                                    setStatusUsed(e.target.value as "onlyUsed" | "onlyAvailable" | "all")
+                                                }} checked={statusUsed == "all"}></input>
+                                                <label className="form-check-label" htmlFor="inlineRadio6">Semua</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>}
+                        </div>
+
+                        <div className="row mb-1 mt-3">
+                            <div className="col-12 col-md-auto">
+                                <button className="btn btn-primary w-100 w-md-auto" onClick={(e) => {
                                     e.preventDefault()
                                     handleSubmit()
                                 }}>Cari</button>
