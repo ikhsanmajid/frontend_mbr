@@ -24,40 +24,48 @@ export default function FilterComponentUser({ valueBagian, statusUser }: { value
                 <Accordion.Header><span className="fw-bold">Filter</span></Accordion.Header>
                 <Accordion.Body>
                     <div className="row w-100">
-                        <div className="row mb-2">
-                            <div className="col col-2 d-flex align-items-center">
+                        <div className="row mb-3">
+                            <div className="col-12 col-md-2 d-flex align-items-center mb-2 mb-md-0">
                                 <span>Cari User: </span>
                             </div>
-                            <div className="col col-4">
+                            <div className="col-12 col-md-6">
                                 <div className="input-group">
                                     <input ref={inputSearchRef} type="text" autoComplete="off" placeholder="Ketik Nama / NIK / Email" className="form-control" id="inputSearchBagian" />
                                 </div>
                             </div>
                         </div>
 
-                        <div className="row mb-2">
-                            <div className="col col-2">
+                        <div className="row mb-3">
+                            <div className="col-12 col-md-2 mb-2 mb-md-0">
                                 <span>Status Aktif User: </span>
                             </div>
-                            <div className="col col-auto">
-                                <div className="form-check form-check-inline">
-                                    <input className="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="onlyActive" onChange={handleChange} checked={statusUserSelected == "onlyActive"}></input>
-                                    <label className="form-check-label" htmlFor="inlineRadio1">Aktif Saja</label>
-                                </div>
-                                <div className="form-check form-check-inline">
-                                    <input className="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="onlyInactive" onChange={handleChange} checked={statusUserSelected == "onlyInactive"}></input>
-                                    <label className="form-check-label" htmlFor="inlineRadio2">Tidak Aktif Saja</label>
-                                </div>
-                                <div className="form-check form-check-inline">
-                                    <input className="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio3" value="all" onChange={handleChange} checked={statusUserSelected == "all"}></input>
-                                    <label className="form-check-label" htmlFor="inlineRadio3">Semua</label>
+                            <div className="col-12 col-md-auto">
+                                <div className="row g-2">
+                                    <div className="col-12 col-sm-auto">
+                                        <div className="form-check form-check-inline">
+                                            <input className="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="onlyActive" onChange={handleChange} checked={statusUserSelected == "onlyActive"}></input>
+                                            <label className="form-check-label" htmlFor="inlineRadio1">Aktif Saja</label>
+                                        </div>
+                                    </div>
+                                    <div className="col-12 col-sm-auto">
+                                        <div className="form-check form-check-inline">
+                                            <input className="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="onlyInactive" onChange={handleChange} checked={statusUserSelected == "onlyInactive"}></input>
+                                            <label className="form-check-label" htmlFor="inlineRadio2">Tidak Aktif Saja</label>
+                                        </div>
+                                        </div>
+                                    <div className="col-12 col-sm-auto">
+                                        <div className="form-check form-check-inline">
+                                            <input className="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio3" value="all" onChange={handleChange} checked={statusUserSelected == "all"}></input>
+                                            <label className="form-check-label" htmlFor="inlineRadio3">Semua</label>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
                         <div className="row mb-1 mt-1">
-                            <div className="col col-auto">
-                                <button className="btn btn-primary" onClick={(e) => {
+                            <div className="col-12 col-md-auto">
+                                <button className="btn btn-primary w-100 w-md-auto" onClick={(e) => {
                                     e.preventDefault()
                                     handleSubmit()
                                 }}>Cari</button>

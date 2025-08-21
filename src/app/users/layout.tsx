@@ -13,10 +13,15 @@ export default async function RootLayout({
     return (
         <div className="row h-100">
             <Suspense fallback={<p>Loading...</p>}>
-                <div className="col-2 h-100 text-white p-0" style={{ backgroundColor: "#0463CB" }}>
+                {/* Mobile Menu Button - Sticky Top Left */}
+                <div className="d-lg-none position-fixed" style={{ top: '10px', left: '10px', zIndex: 1060 }}>
                     <Sidebar></Sidebar>
                 </div>
-                <div className="col-10 overflow-auto h-100 py-3 px-3">
+
+                <div className="col-lg-2 d-none d-lg-block h-100 text-white p-0" style={{ backgroundColor: "#0463CB" }}>
+                    <Sidebar></Sidebar>
+                </div>
+                <div className="col-12 col-lg-10 overflow-auto h-100 py-3 px-3">
                     {children}
                 </div>
             </Suspense>

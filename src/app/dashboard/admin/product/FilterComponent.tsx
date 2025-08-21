@@ -27,22 +27,22 @@ export default function FilterComponentProduct({ valueNamaProduk, valueBagian, s
                 <Accordion.Body>
                     <div className="row w-100">
 
-                        <div className="row mb-2">
-                            <div className="col col-2 d-flex align-items-center">
+                        <div className="row mb-3">
+                            <div className="col-12 col-md-2 d-flex align-items-center mb-2 mb-md-0">
                                 <span>Nama Produk: </span>
                             </div>
-                            <div className="col col-auto">
+                            <div className="col-12 col-md-auto">
                                 <div className="input-group">
                                     <input ref={inputSearchRef} type="text" autoComplete="off" className="form-control" id="inputSearchBagian" />
                                 </div>
                             </div>
                         </div>
 
-                        <div className="row mb-2">
-                            <div className="col col-2 d-flex align-items-center">
+                        <div className="row mb-3">
+                            <div className="col-12 col-md-2 d-flex align-items-center mb-2 mb-md-0">
                                 <span>Nama Bagian: </span>
                             </div>
-                            <div className="col col-auto">
+                            <div className="col-12 col-md-auto">
                                 <select ref={inputSelectRef} className="form-select" aria-label="Default select example" >
                                     <option value="">-- Pilih bagian --</option>
                                     {!isLoadingBagian && detailBagian != null && detailBagian.data.map((data: any, index: number) => (
@@ -52,25 +52,25 @@ export default function FilterComponentProduct({ valueNamaProduk, valueBagian, s
                             </div>
                         </div>
 
-                        <div className="row mb-2">
-                            <div className="col col-2">
+                        <div className="row mb-3">
+                            <div className="col-12 col-md-2 mb-2 mb-md-0">
                                 <span>Status Aktif: </span>
                             </div>
-                            <div className="col col-auto">
-                                <div className="row">
-                                    <div className="col col-auto">
+                            <div className="col-12 col-md-auto">
+                                <div className="row g-2">
+                                    <div className="col-12 col-sm-auto">
                                         <div className="form-check form-check-inline">
                                             <input className="form-check-input" type="radio" name="status" id="inlineRadio4" value="active" onChange={handleChangeUsed} checked={statusActive== "active"}></input>
                                             <label className="form-check-label" htmlFor="inlineRadio4">Aktif</label>
                                         </div>
                                     </div>
-                                    <div className="col col-auto">
+                                    <div className="col-12 col-sm-auto">
                                         <div className="form-check form-check-inline">
                                             <input className="form-check-input" type="radio" name="status" id="inlineRadio5" value="inactive" onChange={handleChangeUsed} checked={statusActive == "inactive"}></input>
                                             <label className="form-check-label" htmlFor="inlineRadio5">Tidak Aktif</label>
                                         </div>
                                     </div>
-                                    <div className="col col-auto">
+                                    <div className="col-12 col-sm-auto">
                                         <div className="form-check form-check-inline">
                                             <input className="form-check-input" type="radio" name="status" id="inlineRadio6" value="" onChange={handleChangeUsed} checked={statusActive == ""}></input>
                                             <label className="form-check-label" htmlFor="inlineRadio6">Semua</label>
@@ -81,8 +81,8 @@ export default function FilterComponentProduct({ valueNamaProduk, valueBagian, s
                         </div>
 
                         <div className="row mb-1 mt-1">
-                            <div className="col col-auto">
-                                <button className="btn btn-primary" onClick={(e) => {
+                            <div className="col-12 col-md-auto">
+                                <button className="btn btn-primary w-100 w-md-auto" onClick={(e) => {
                                     e.preventDefault()
                                     handleSubmit()
                                 }}>Cari</button>
