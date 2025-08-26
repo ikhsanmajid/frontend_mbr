@@ -21,28 +21,33 @@ export default function Profile({ userInfo }: { userInfo: any }) {
         e.preventDefault()
         if (password.length < 8 && confirmPassword.length < 8) {
             toast.error('Password Minimal 8 Karakter')
+            setIsLoading(false)
             return
         }
 
         if (password !== confirmPassword) {
             toast.error('Password Tidak Sama')
+            setIsLoading(false)
             return
         }
 
         if (!password.match(".*[0-9].*") && !confirmPassword.match(".*[0-9].*")) {
             toast.error('Password minimal terdapat 1 angka')
+            setIsLoading(false)
             return
         }
 
         // Jika password tidak terdapat simbol
         if (!password.match(".*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?].*") && !confirmPassword.match(".*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?].*")) {
             toast.error('Password minimal terdapat 1 simbol')
+            setIsLoading(false)
             return
         }
 
         // Jika password tidak terdapat huruf kapital
         if (!password.match(".*[A-Z].*") && !confirmPassword.match(".*[A-Z].*")) {
             toast.error('Password minimal terdapat 1 huruf kapital')
+            setIsLoading(false)
             return
         }
 
@@ -68,8 +73,11 @@ export default function Profile({ userInfo }: { userInfo: any }) {
                 toast.error('Gagal Mengubah Password')
             } finally {
                 setIsLoading(false)
+                
             }
         }
+
+        
     }
 
     useEffect(() => {

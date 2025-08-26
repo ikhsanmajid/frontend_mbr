@@ -14,12 +14,8 @@ export default async function RootLayout({
     return (
         <div className="row h-100">
             <Suspense fallback={<p>Loading...</p>}>
-                {/* Mobile Menu Button - Sticky Top Left */}
-                <div className="d-lg-none position-fixed" style={{ top: '10px', left: '10px', zIndex: 1060 }}>
-                    <Sidebar></Sidebar>
-                </div>
-                
-                <div className="col-lg-2 d-none d-lg-block h-100 text-white p-0" style={{ backgroundColor: "#0463CB" }}>
+                {/* Sidebar yang menangani mobile dan desktop */}
+                <div className="col-lg-2 p-0">
                     <Sidebar></Sidebar>
                 </div>
                 <div className="col-12 col-lg-10 overflow-auto h-100 py-3 px-3">

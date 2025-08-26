@@ -11,48 +11,54 @@ export default function NavigationNav() {
     return (
         <Navbar bg="primary" data-bs-theme="dark" sticky="top" className="border-bottom border-4 border-skyblue">
             <Container fluid className="mx-4">
-                <Navbar.Brand>
-                    <Link href="/" style={{ textDecoration: "none", color: "white" }} passHref>
-                        Monitoring MBR
-                    </Link>
-                </Navbar.Brand>
-                <Nav className="me-auto"></Nav>
-                <Nav className="me-5">
-                    {status === "loading" ? (
-                        <Nav.Link className="text-white">Loading...</Nav.Link>
-                    ) : status === "authenticated" ? (
-                        <NavDropdown
-                            id="nav-dropdown"
-                            title={session.user?.name || "User"}
-                            menuVariant="primary"
-                        >
-                            <Link href={`/dashboard/user/${session.user?.id}`} passHref legacyBehavior>
-                                <NavDropdown.Item as="a" style={{ textDecoration: "none", color: "white" }}>
-                                    Profile
-                                </NavDropdown.Item>
-                            </Link>
-                            <NavDropdown.Divider />
-                            <NavDropdown.Item
-                                onClick={async () => {
-                                    localStorage.removeItem('idProdukChoosen');
-                                    localStorage.removeItem('idBagianChoosen');
-                                    await signOut({
-                                        redirect: true,
-                                        callbackUrl: "/mbr/login",
-                                    });
-                                }}
-                            >
-                                Logout
-                            </NavDropdown.Item>
-                        </NavDropdown>
-                    ) : (
-                        <Link href="/login" passHref legacyBehavior>
-                            <Nav.Link as="a" className="text-white">
-                                Login
-                            </Nav.Link>
+                <div className="d-flex align-items-center">
+                    <div id="sidebar-toggle-placeholder" className="d-lg-none me-3"></div>
+                    <Navbar.Brand>
+                        <Link href="/" style={{ textDecoration: "none", color: "white" }} passHref>
+                            Monitoring MBR
                         </Link>
-                    )}
-                </Nav>
+                    </Navbar.Brand>
+                </div>
+                <Navbar.Toggle aria-controls="navbar-dark-example" />
+                <Navbar.Collapse id="navbar-dark-example">
+                    <Nav className="me-auto"></Nav>
+                    <Nav className="me-5">
+                        {status === "loading" ? (
+                            <Nav.Link className="text-white">Loading...</Nav.Link>
+                        ) : status === "authenticated" ? (
+                            <NavDropdown
+                                id="nav-dropdown"
+                                title={session.user?.name || "User"}
+                                menuVariant="primary"
+                            >
+                                <Link href={`/dashboard/user/${session.user?.id}`} passHref legacyBehavior>
+                                    <NavDropdown.Item as="a" style={{ textDecoration: "none", color: "white" }}>
+                                        Profile
+                                    </NavDropdown.Item>
+                                </Link>
+                                <NavDropdown.Divider />
+                                <NavDropdown.Item
+                                    onClick={async () => {
+                                        localStorage.removeItem('idProdukChoosen');
+                                        localStorage.removeItem('idBagianChoosen');
+                                        await signOut({
+                                            redirect: true,
+                                            callbackUrl: "/mbr/login",
+                                        });
+                                    }}
+                                >
+                                    Logout
+                                </NavDropdown.Item>
+                            </NavDropdown>
+                        ) : (
+                            <Link href="/login" passHref legacyBehavior>
+                                <Nav.Link as="a" className="text-white">
+                                    Login
+                                </Nav.Link>
+                            </Link>
+                        )}
+                    </Nav>
+                </Navbar.Collapse>
             </Container>
         </Navbar>
     );
