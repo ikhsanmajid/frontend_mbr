@@ -17,4 +17,19 @@
    transform: scale(1.05);
    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
  }
+
+/* Navbar sidebar toggle styling */
+#sidebar-toggle-placeholder button {
+    transition: all 0.2s ease;
+}
+
+#sidebar-toggle-placeholder button:hover {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    transform: scale(1.05);
+}
+
+/* Ensure proper spacing in navbar */
+.navbar-brand {
+    margin-left: 0 !important;
+}
  

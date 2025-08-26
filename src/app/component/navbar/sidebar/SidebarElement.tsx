@@ -2,6 +2,7 @@ import "@/app/custom.css"
 import "@/app/sidebar-enhanced.css"
 import { Collapse } from "react-bootstrap";
 import { useMemo, useState, useEffect } from "react"
+import { createPortal } from "react-dom"
 import { usePathname } from "next/navigation";
 import { useSession } from "next-auth/react";
 import Link from "next/link"
@@ -37,6 +38,7 @@ export function SidebarElement() {
     const [open, setOpen] = useState<{ name: string, open: boolean }[]>([]);
     const [isMobileOpen, setIsMobileOpen] = useState<boolean>(false)
     const [isMounted, setIsMounted] = useState<boolean>(false)
+    const [navbarPlaceholder, setNavbarPlaceholder] = useState<HTMLElement | null>(null)
 
     const sideBarMenuAdmin: MenuItem[] = useMemo(() => [
         {
@@ -194,6 +196,9 @@ export function SidebarElement() {
     // Effects
     useEffect(() => {
         setIsMounted(true)
+        // Cari placeholder di navbar untuk tombol toggle
+        const placeholder = document.getElementById('sidebar-toggle-placeholder')
+        setNavbarPlaceholder(placeholder)
     }, [])
 
     useEffect(() => {
@@ -338,7 +343,7 @@ export function SidebarElement() {
 
     if (!isMounted) {
         return (
-            <div className="sidebar-container">
+            <div className="d-none">
                 <div className="d-flex justify-content-center align-items-center p-4">
                     <div className="spinner-border text-light" role="status">
                         <span className="visually-hidden">Loading...</span>
@@ -350,7 +355,7 @@ export function SidebarElement() {
 
     if (!session.data?.user) {
         return (
-            <div className="sidebar-container">
+            <div className="d-none">
                 <div className="alert alert-warning m-3" role="alert">
                     <i className="fas fa-exclamation-triangle me-2"></i>
                     Sesi tidak ditemukan
@@ -362,25 +367,35 @@ export function SidebarElement() {
     const menuItems = session.data?.user?.is_admin ? sideBarMenuAdmin : sideBarMenuUser
 
     return (
-        <div className="sidebar-container">
-            {/* Mobile Toggle Button */}
-            <div className="d-lg-none">
+        <>
+            {navbarPlaceholder && createPortal(
                 <button 
-                    className="btn btn-primary d-flex align-items-center justify-content-center px-3 py-2"
+                    className="btn btn-outline-light d-flex align-items-center justify-content-center px-2 py-1"
                     onClick={handleMobileToggle}
                     aria-expanded={isMobileOpen}
                     aria-controls="sidebar-menu"
                     aria-label={isMobileOpen ? 'Tutup menu navigasi' : 'Buka menu navigasi'}
-                    style={{ width: 'auto', minWidth: '50px' }}
+                    style={{ border: 'none', background: 'transparent' }}
                 >
                     <FontAwesomeIcon 
                         icon={isMobileOpen ? faTimes : faBars} 
                         size="lg"
+                        className="text-white"
                     />
-                </button>
+                </button>,
+                navbarPlaceholder
+            )}
+
+            {/* Desktop Sidebar */}
+            <div className="d-none d-lg-block h-100 text-white" style={{ backgroundColor: "#0463CB" }}>
+                <div className="sidebar-content h-100">
+                    <nav className="sidebar-nav pt-3">
+                        {menuItems.map((item, index) => renderMenuItem(item, index))}
+                    </nav>
+                </div>
             </div>
 
-            {/* Mobile Backdrop */}
+            {/* Mobile */}
             {isMobileOpen && (
                 <div 
                     className="sidebar-backdrop d-lg-none"
@@ -388,10 +403,10 @@ export function SidebarElement() {
                 />
             )}
 
-            {/* Sidebar Menu */}
+            {/* Mobile Sidebar */}
             <div 
                 id="sidebar-menu"
-                className={`sidebar-menu ${isMobileOpen ? 'open' : ''}`}
+                className={`sidebar-menu d-lg-none ${isMobileOpen ? 'open' : ''}`}
             >
                 <div className="sidebar-content">
                     <div className="sidebar-header d-lg-none mb-3">
@@ -417,6 +432,6 @@ export function SidebarElement() {
                     </nav>
                 </div>
             </div>
-        </div>
+        </>
     )
 }
