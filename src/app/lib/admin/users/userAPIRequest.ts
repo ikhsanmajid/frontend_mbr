@@ -911,7 +911,7 @@ export function GetAllReturnRBByProductAndIdPermintaan(idProduk: any, idPerminta
 
 
 // ANCHOR - Pengembalian RB - ID Permintaan
-export function GetAllNomorReturnRBByIDDetailPermintaan(idDetailPermintaan: any, limit?: number, offset?: number, params?: { status?: string }) {
+export function GetAllNomorReturnRBByIDDetailPermintaan(idDetailPermintaan: any, limit?: number, offset?: number, params?: { status?: string, searchNumber?: string }) {
     const [listNomorPengembalian, setListNomorPengembalian] = useState<any>(null);
     const [isLoadingListNomorPengembalian, setIsLoadingListNomorPengembalian] = useState<boolean>(true);
     const [error, setError] = useState<any>(null);
@@ -952,7 +952,7 @@ export function GetAllNomorReturnRBByIDDetailPermintaan(idDetailPermintaan: any,
             setIsLoadingListNomorPengembalian(false)
         }
         //eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [idDetailPermintaan, limit, offset, params?.status])
+    }, [idDetailPermintaan, limit, offset, params?.status, params?.searchNumber])
 
     useEffect(() => {
         fetchData()
