@@ -24,6 +24,8 @@ import {
     faChevronRight
 } from '@fortawesome/free-solid-svg-icons'
 
+let isToggleButtonActive = false
+
 interface MenuItem {
     id?: string
     name: string
@@ -39,6 +41,7 @@ export function SidebarElement() {
     const [isMobileOpen, setIsMobileOpen] = useState<boolean>(false)
     const [isMounted, setIsMounted] = useState<boolean>(false)
     const [navbarPlaceholder, setNavbarPlaceholder] = useState<HTMLElement | null>(null)
+    const [instanceId] = useState(() => Math.random().toString(36).substr(2, 9))
 
     const sideBarMenuAdmin: MenuItem[] = useMemo(() => [
         {
@@ -193,23 +196,56 @@ export function SidebarElement() {
         },
     ], [])
 
-    // Effects
     useEffect(() => {
         setIsMounted(true)
-        // Cari placeholder di navbar untuk tombol toggle
+        
         const placeholder = document.getElementById('sidebar-toggle-placeholder')
+        if (isToggleButtonActive) {
+            return
+        }
+        
+        isToggleButtonActive = true
         setNavbarPlaceholder(placeholder)
-    }, [])
+        
+        return () => {
+            isToggleButtonActive = false
+            setNavbarPlaceholder(null)
+        }
+    }, [instanceId])
 
     useEffect(() => {
         const menuItems = session.data?.user?.is_admin ? sideBarMenuAdmin : sideBarMenuUser
-        const hasChildren = menuItems
-            .filter(item => item.children.length > 0)
-            .map(item => ({ name: item.name, open: true }))
-        setOpen(hasChildren)
+        const menuItemsWithChildren = menuItems.filter(item => item.children.length > 0)
+        
+        const savedState = localStorage.getItem('sidebarState')
+        
+        if (savedState) {
+            try {
+                const parsedState = JSON.parse(savedState)
+                const validatedState = menuItemsWithChildren.map(item => {
+                    const savedItem = parsedState.find((saved: any) => saved.name === item.name)
+                    return {
+                        name: item.name,
+                        open: savedItem ? savedItem.open : false
+                    }
+                })
+                setOpen(validatedState)
+            } catch (error) {
+                const defaultState = menuItemsWithChildren.map(item => ({ 
+                    name: item.name, 
+                    open: false 
+                }))
+                setOpen(defaultState)
+            }
+        } else {
+            const defaultState = menuItemsWithChildren.map(item => ({ 
+                name: item.name, 
+                open: false 
+            }))
+            setOpen(defaultState)
+        }
     }, [sideBarMenuAdmin, sideBarMenuUser, session])
 
-    // Keyboard navigation
     useEffect(() => {
         const handleKeyDown = (event: KeyboardEvent) => {
             if (event.key === 'Escape' && isMobileOpen) {
@@ -221,7 +257,6 @@ export function SidebarElement() {
         return () => document.removeEventListener('keydown', handleKeyDown)
     }, [isMobileOpen])
 
-    // Close mobile menu when clicking outside
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
             const sidebar = document.getElementById('sidebar-menu')
@@ -246,11 +281,16 @@ export function SidebarElement() {
 
     // Handlers
     const handleToggle = (name: string) => {
-        setOpen((prev) =>
-            prev.map(item =>
+        setOpen((prev) => {
+            const newState = prev.map(item =>
                 item.name === name ? { ...item, open: !item.open } : item
             )
-        )
+            
+            // Save to localStorage
+            localStorage.setItem('sidebarState', JSON.stringify(newState))
+            
+            return newState
+        })
     }
 
     const handleMobileToggle = () => {
@@ -368,7 +408,7 @@ export function SidebarElement() {
 
     return (
         <>
-            {navbarPlaceholder && createPortal(
+            {navbarPlaceholder && isMounted && createPortal(
                 <button 
                     className="btn btn-outline-light d-flex align-items-center justify-content-center px-2 py-1"
                     onClick={handleMobileToggle}
@@ -376,6 +416,7 @@ export function SidebarElement() {
                     aria-controls="sidebar-menu"
                     aria-label={isMobileOpen ? 'Tutup menu navigasi' : 'Buka menu navigasi'}
                     style={{ border: 'none', background: 'transparent' }}
+                    data-instance={instanceId}
                 >
                     <FontAwesomeIcon 
                         icon={isMobileOpen ? faTimes : faBars} 

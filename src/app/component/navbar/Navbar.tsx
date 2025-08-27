@@ -10,26 +10,33 @@ export default function NavigationNav() {
 
     return (
         <Navbar bg="primary" data-bs-theme="dark" sticky="top" className="border-bottom border-4 border-skyblue">
-            <Container fluid className="mx-4">
-                <div className="d-flex align-items-center">
-                    <div id="sidebar-toggle-placeholder" className="d-lg-none me-3"></div>
-                    <Navbar.Brand>
+            <Container fluid className="mx-2 mx-sm-4">
+                <div className="d-flex align-items-center flex-grow-1">
+                    <div id="sidebar-toggle-placeholder" className="d-lg-none me-2 me-sm-3"></div>
+                    <Navbar.Brand className="me-0">
                         <Link href="/" style={{ textDecoration: "none", color: "white" }} passHref>
                             Monitoring MBR
                         </Link>
                     </Navbar.Brand>
                 </div>
-                <Navbar.Toggle aria-controls="navbar-dark-example" />
+                <div className="d-flex flex-column flex-sm-row align-items-end align-items-sm-center">
+                    <Navbar.Toggle aria-controls="navbar-dark-example" className="mb-2 d-sm-none" />
+                </div>
                 <Navbar.Collapse id="navbar-dark-example">
-                    <Nav className="me-auto"></Nav>
-                    <Nav className="me-5">
+                    <Nav className="ms-auto">
                         {status === "loading" ? (
                             <Nav.Link className="text-white">Loading...</Nav.Link>
                         ) : status === "authenticated" ? (
                             <NavDropdown
                                 id="nav-dropdown"
-                                title={session.user?.name || "User"}
+                                title={
+                                    <span className="d-inline-block user-name-display" 
+                                          title={session.user?.name || "User"}>
+                                        {session.user?.name || "User"}
+                                    </span>
+                                }
                                 menuVariant="primary"
+                                className="user-dropdown"
                             >
                                 <Link href={`/dashboard/user/${session.user?.id}`} passHref legacyBehavior>
                                     <NavDropdown.Item as="a" style={{ textDecoration: "none", color: "white" }}>

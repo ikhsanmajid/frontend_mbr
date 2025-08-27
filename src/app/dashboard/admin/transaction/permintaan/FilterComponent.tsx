@@ -15,7 +15,7 @@ export default function FilterComponentPermintaan() {
     const [date1, setDate1] = useState<Date | null>(null)
     const [idBagianChoosen, setIdBagianChoosen] = useState<number | null>(useFilterState((state) => state.idBagian));
     const [statusUsed, setStatusUsed] = useState<"all" | "onlyUsed" | "onlyAvailable">(useFilterState((state) => state.StatusDipakai))
-    const [statusConfirmed, setStatusConfirmed] = useState<"all" | "onlyConfirmed" | "onlyPending" | "onlyRejected">(useFilterState((state) => state.StatusKonfirmasi))
+    const [statusConfirmed, setStatusConfirmed] = useState<"all" | "onlyConfirmed" | "onlyPending" | "onlyRejected">(useFilterState((state) => state.StatusKonfirmasi) || "onlyPending")
     const [idProdukChoosen, setIdProdukChoosen] = useState<number | null>(useFilterState((state) => state.idProduk));
     const [bagianList, setBagianList] = useState<{ value: number | null; label: string }[]>([]);
     const [productList, setProductList] = useState<{ value: number | null; label: string }[]>([]);
