@@ -61,10 +61,16 @@ export default function UserTable({ mutateUsers, onAdd }: { mutateUsers: (mutate
         columnHelper.accessor("nama", {
             header: "Nama",
             cell: info => info.getValue(),
+            meta: {
+                className: "text-start"
+            }
         }),
         columnHelper.accessor("email", {
             header: "Email",
             cell: info => info.getValue(),
+            meta: {
+                className: "text-start"
+            }
         }),
         columnHelper.accessor("isActive", {
             header: "Status Aktif",
@@ -197,7 +203,7 @@ export default function UserTable({ mutateUsers, onAdd }: { mutateUsers: (mutate
                                         !isLoadingUser && table.getRowModel().rows.map(row => (
                                             <tr key={row.id} className="table-row-hover">
                                                 {row.getVisibleCells().map((cell) => (
-                                                    <td key={cell.id} className="text-nowrap" style={{ minWidth: `${cell.column.getSize()}px` }}>
+                                                    <td key={cell.id} className={`text-nowrap ${cell.column.columnDef.meta?.className || 'text-center'}`} style={{ minWidth: `${cell.column.getSize()}px` }}>
                                                         {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                                     </td>
                                                 ))}

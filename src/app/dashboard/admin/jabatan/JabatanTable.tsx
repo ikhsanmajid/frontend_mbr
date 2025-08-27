@@ -46,6 +46,9 @@ export default function JabatanTable({ onAdd, mutate }: { onAdd: (state: boolean
         columnHelper.accessor("namaJabatan", {
             header: "Nama Jabatan",
             cell: info => info.getValue(),
+            meta: {
+                className: "text-start"
+            }
         }),
         columnHelper.accessor("isActive", {
             header: "Aktif",
@@ -149,7 +152,7 @@ export default function JabatanTable({ onAdd, mutate }: { onAdd: (state: boolean
                                     {table.getRowModel().rows.map(row => (
                                         <tr key={row.id} className="table-row-hover">
                                             {row.getVisibleCells().map((cell) => (
-                                                <td key={cell.id} className="text-nowrap" style={{ minWidth: `${cell.column.getSize()}px` }}>
+                                                <td key={cell.id} className={`text-nowrap ${cell.column.columnDef.meta?.className || 'text-center'}`} style={{ minWidth: `${cell.column.getSize()}px` }}>
                                                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                                 </td>
                                             ))}

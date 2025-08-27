@@ -20,7 +20,7 @@ export const useFilterState = create<FilterState>((set) => ({
     filterYear: null,
     idBagian: null,
     NIKNama: null,
-    StatusKonfirmasi: "all",
+    StatusKonfirmasi: "onlyPending",
     StatusDipakai: "all",
     setIdProduk: (idProduk) => set({ idProduk }),
     setFilterYear: (filterYear) => set({ filterYear }),

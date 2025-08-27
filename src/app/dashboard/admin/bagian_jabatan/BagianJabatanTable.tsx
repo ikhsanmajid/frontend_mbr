@@ -2,11 +2,12 @@
 import { Button } from "react-bootstrap"
 import { flexRender, getCoreRowModel, useReactTable, createColumnHelper, PaginationState, getPaginationRowModel } from '@tanstack/react-table'
 import { useEffect, useMemo, useState } from "react"
-import { useGetAllBagianJabatan } from "@/app/lib/admin/users/userAPIRequest"
+import { useGetAllBagianJabatan, useGetAllBagian } from "@/app/lib/admin/users/userAPIRequest"
 import ModalEdit from "./ModalEdit"
 import RowActions from "./RowActions"
 import ModalDelete from "./ModalDelete"
 import PaginationComponent from "@/app/component/pagination/Pagination"
+import FilterComponent from "./FilterComponent"
 
 export interface IBagianJabatan {
     id: number
@@ -32,6 +33,8 @@ export default function BagianJabatanTable({ onAdd, mutate }: { onAdd: (state: b
     const { pageIndex, pageSize } = pagination
     const [pageList, setPageList] = useState<Array<number>>([])
 
+    const [selectedBagian, setSelectedBagian] = useState<{value: number, label: string} | null>(null)
+
     const [jabatanData, _setBagianData] = useState<IBagianJabatan[] | null>(null)
 
     const [showModalEdit, _setShowModalEdit] = useState<boolean>(false)
@@ -40,7 +43,12 @@ export default function BagianJabatanTable({ onAdd, mutate }: { onAdd: (state: b
     const [showModalDelete, _setShowModalDelete] = useState<boolean>(false)
     const [dataDelete, _setDataDelete] = useState<IBagianJabatan | null>(null)
 
-    const { detailBagianJabatan, isLoadingBagianJabatan, error, mutateBagianJabatan } = useGetAllBagianJabatan(pageSize, pageIndex * pageSize, "asc");
+    const filterOptions = useMemo(() => {
+        return selectedBagian ? { bagian: selectedBagian.value.toString() } : {}
+    }, [selectedBagian])
+    
+    const { detailBagianJabatan, isLoadingBagianJabatan, error, mutateBagianJabatan } = useGetAllBagianJabatan(pageSize, pageIndex * pageSize, "asc", filterOptions);
+    const { detailBagian, isLoadingBagian, error: errorBagian, mutateBagian } = useGetAllBagian(false, 1000, 0)
 
     const columns = useMemo(() => [
         columnHelper.display({
@@ -53,10 +61,16 @@ export default function BagianJabatanTable({ onAdd, mutate }: { onAdd: (state: b
         columnHelper.accessor("idBagianFK.namaBagian", {
             header: "Nama Bagian",
             cell: info => info.getValue(),
+            meta: {
+                className: "text-start"
+            }
         }),
         columnHelper.accessor("idJabatanFK.namaJabatan", {
             header: "Nama Jabatan",
             cell: info => info.getValue(),
+            meta: {
+                className: "text-start"
+            }
         }),
         columnHelper.display({
             header: "Actions",
@@ -68,6 +82,15 @@ export default function BagianJabatanTable({ onAdd, mutate }: { onAdd: (state: b
 
 
     const data = useMemo(() => jabatanData ?? [], [jabatanData])
+
+    const bagianOptions = useMemo(() => {
+        if (!detailBagian?.data) return []
+        
+        return detailBagian.data.map((bagian: any) => ({
+            value: bagian.id,
+            label: bagian.namaBagian
+        }))
+    }, [detailBagian])
 
     const table = useReactTable({
         columns,
@@ -103,7 +126,15 @@ export default function BagianJabatanTable({ onAdd, mutate }: { onAdd: (state: b
         setPageList(pageListTemp)
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [isLoadingBagianJabatan, pageCount])
+    }, [isLoadingBagianJabatan, pageCount, filterOptions])
+
+    // Reset pagination ke halaman pertama ketika filter bagian berubah
+    useEffect(() => {
+        setPagination(prev => ({
+            ...prev,
+            pageIndex: 0
+        }))
+    }, [selectedBagian])
 
 
     const handleEdit = (data: IBagianJabatan) => {
@@ -125,6 +156,13 @@ export default function BagianJabatanTable({ onAdd, mutate }: { onAdd: (state: b
                 }>Tambah Bagian vs Jabatan</button></>
             </div>
             <div className="card-body">
+                <FilterComponent 
+                    selectedBagian={selectedBagian}
+                    bagianOptions={bagianOptions}
+                    isLoadingBagian={isLoadingBagian}
+                    onBagianChange={setSelectedBagian}
+                />
+                
                 <div className="row">
                     <div className="col-12">
                         <div className="table-responsive">
@@ -151,15 +189,24 @@ export default function BagianJabatanTable({ onAdd, mutate }: { onAdd: (state: b
                                             </td>
                                         </tr> : ""
                                     }
-                                    {table.getRowModel().rows.map(row => (
-                                        <tr key={row.id} className="table-row-hover">
-                                            {row.getVisibleCells().map((cell) => (
-                                                <td key={cell.id} className="text-nowrap" style={{ minWidth: `${cell.column.getSize()}px` }}>
-                                                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                                                </td>
-                                            ))}
-                                        </tr>
-                                    ))}
+
+                                    {(!isLoadingBagianJabatan && detailBagianJabatan.count == 0) ?
+                                        <tr>
+                                            <td colSpan={4} className="text-center py-4 text-muted fst-italic">
+                                                <i className="fas fa-inbox me-2"></i>
+                                                Data Kosong
+                                            </td>
+                                        </tr> :
+                                        table.getRowModel().rows.map(row => (
+                                            <tr key={row.id} className="table-row-hover">
+                                                {row.getVisibleCells().map((cell) => (
+                                                    <td key={cell.id} className={`text-nowrap ${cell.column.columnDef.meta?.className || 'text-center'}`} style={{ minWidth: `${cell.column.getSize()}px` }}>
+                                                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                                                    </td>
+                                                ))}
+                                            </tr>
+                                        ))
+                                    }
                                 </tbody>
                             </table>
                         </div>

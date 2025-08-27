@@ -436,8 +436,17 @@
 /* Extra tweaks for very specific resolutions */
 @media (width: 1280px) and (height: 1024px) {
     .sidebar-text {
-        font-size: 0.8rem;
+        font-size: 1rem;
         max-width: 160px;
+    }
+}
+
+/* Extra tweaks for very specific resolutions */
+@media (width: 1440px) and (height: 900px) {
+    .sidebar-text {
+        font-size: 1rem;
+        max-width: 160px;
+        text-wrap: wrap;
     }
 }
 

@@ -169,7 +169,7 @@ export function useGetAllBagian(onlyManufactur: boolean, limit?: number, offset?
         } finally {
             setIsLoading(false);
         }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [limit, offset, params?.search, onlyManufactur]);
 
     useEffect(() => {
@@ -302,7 +302,7 @@ export async function deleteJabatan(deleteData: any) {
 
 //SECTION - Bagian vs Jabatan API Endpoint
 //ANCHOR - Get All Bagian vs Jabatan Axios
-export function useGetAllBagianJabatan(limit?: number, offset?: number, sort?: "asc" | "desc") {
+export function useGetAllBagianJabatan(limit?: number, offset?: number, sort?: "asc" | "desc", params?: { bagian?: string }) {
     const [detailBagianJabatan, setDetailBagianJabatan] = useState<any>(null);
     const [isLoadingBagianJabatan, setIsLoading] = useState<boolean>(true);
     const [error, setError] = useState<any>(null);
@@ -319,6 +319,14 @@ export function useGetAllBagianJabatan(limit?: number, offset?: number, sort?: "
             if (offset) queryParams.append("offset", String(offset))
             if (sort) queryParams.append("sort", sort)
 
+            if (params !== undefined) {
+                for (const [key, value] of Object.entries(params)) {
+                    if (value != "") {
+                        queryParams.append(key, value)
+                    }
+                }
+            }
+
             const response = await api.get(endpoint, {
                 params: queryParams
             })
@@ -329,7 +337,8 @@ export function useGetAllBagianJabatan(limit?: number, offset?: number, sort?: "
         } finally {
             setIsLoading(false);
         }
-    }, [limit, offset, sort]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [limit, offset, sort, params?.bagian]);
 
     useEffect(() => {
         fetchData();
@@ -911,7 +920,7 @@ export function GetAllReturnRBByProductAndIdPermintaan(idProduk: any, idPerminta
 
 
 // ANCHOR - Pengembalian RB - ID Permintaan
-export function GetAllNomorReturnRBByIDDetailPermintaan(idDetailPermintaan: any, limit?: number, offset?: number, params?: { status?: string }) {
+export function GetAllNomorReturnRBByIDDetailPermintaan(idDetailPermintaan: any, limit?: number, offset?: number, params?: { status?: string, searchNumber?: string }) {
     const [listNomorPengembalian, setListNomorPengembalian] = useState<any>(null);
     const [isLoadingListNomorPengembalian, setIsLoadingListNomorPengembalian] = useState<boolean>(true);
     const [error, setError] = useState<any>(null);
@@ -952,7 +961,7 @@ export function GetAllNomorReturnRBByIDDetailPermintaan(idDetailPermintaan: any,
             setIsLoadingListNomorPengembalian(false)
         }
         //eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [idDetailPermintaan, limit, offset, params?.status])
+    }, [idDetailPermintaan, limit, offset, params?.status, params?.searchNumber])
 
     useEffect(() => {
         fetchData()

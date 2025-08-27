@@ -1,14 +1,21 @@
 import { Accordion } from "react-bootstrap";
 import { useRef, useState } from "react";
 import { useGetAllBagian } from "@/app/lib/admin/users/userAPIRequest";
+import Select from 'react-select';
 
 export default function FilterComponentProduct({ valueNamaProduk, valueBagian, statusProduct }: { valueNamaProduk: (value: string) => void, valueBagian: (value: string) => void, statusProduct: (value: string) => void }) {
-    const { detailBagian, isLoadingBagian, error, mutateBagian } = useGetAllBagian(true)
+    const { detailBagian, isLoadingBagian, error, mutateBagian } = useGetAllBagian(true, 1000, 0)
 
     const inputSearchRef = useRef<HTMLInputElement>(null)
-    const inputSelectRef = useRef<HTMLSelectElement>(null)
+    const [selectedBagian, setSelectedBagian] = useState<{value: string, label: string} | null>(null)
 
     const [statusActive, setStatusActive] = useState<string>("")
+
+    const bagianOptions = !isLoadingBagian && detailBagian?.data ? 
+        detailBagian.data.map((bagian: any) => ({
+            value: bagian.id.toString(),
+            label: bagian.namaBagian
+        })) : []
 
     function handleChangeUsed(e: React.ChangeEvent<HTMLInputElement>) {
         setStatusActive(e.target.value)
@@ -16,7 +23,7 @@ export default function FilterComponentProduct({ valueNamaProduk, valueBagian, s
 
     function handleSubmit() {
         valueNamaProduk(encodeURIComponent(inputSearchRef.current!.value.toString()))
-        valueBagian(inputSelectRef.current!.value.toString())
+        valueBagian(selectedBagian?.value || "")
         statusProduct(statusActive)
     }
 
@@ -31,9 +38,9 @@ export default function FilterComponentProduct({ valueNamaProduk, valueBagian, s
                             <div className="col-12 col-md-2 d-flex align-items-center mb-2 mb-md-0">
                                 <span>Nama Produk: </span>
                             </div>
-                            <div className="col-12 col-md-auto">
+                            <div className="col-12 col-md-6">
                                 <div className="input-group">
-                                    <input ref={inputSearchRef} type="text" autoComplete="off" className="form-control" id="inputSearchBagian" />
+                                    <input ref={inputSearchRef} type="text" autoComplete="off" className="form-control" id="inputSearchBagian" placeholder="Ketik nama produk..." />
                                 </div>
                             </div>
                         </div>
@@ -42,13 +49,21 @@ export default function FilterComponentProduct({ valueNamaProduk, valueBagian, s
                             <div className="col-12 col-md-2 d-flex align-items-center mb-2 mb-md-0">
                                 <span>Nama Bagian: </span>
                             </div>
-                            <div className="col-12 col-md-auto">
-                                <select ref={inputSelectRef} className="form-select" aria-label="Default select example" >
-                                    <option value="">-- Pilih bagian --</option>
-                                    {!isLoadingBagian && detailBagian != null && detailBagian.data.map((data: any, index: number) => (
-                                        <option key={index} value={data.id}>{data.namaBagian}</option>
-                                    ))}
-                                </select>
+                            <div className="col-12 col-md-6">
+                                <Select
+                                    id="selectBagian"
+                                    instanceId="selectBagian"
+                                    isClearable
+                                    isSearchable
+                                    placeholder="Pilih atau ketik nama bagian..."
+                                    noOptionsMessage={() => "Tidak ada bagian ditemukan"}
+                                    loadingMessage={() => "Memuat data bagian..."}
+                                    isLoading={isLoadingBagian}
+                                    options={bagianOptions}
+                                    value={selectedBagian}
+                                    onChange={(option) => setSelectedBagian(option)}
+                                    
+                                />
                             </div>
                         </div>
 
