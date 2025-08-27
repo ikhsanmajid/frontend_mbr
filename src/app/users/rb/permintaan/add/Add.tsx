@@ -386,7 +386,7 @@ export default function AddPermintaanRB() {
                             <div style={{marginLeft: 25}} className="col-2 fw-semibold ps-3 d-flex align-items-center">
                                 No Dokumen MBR
                             </div>
-                            <div style={{marginLeft: -40}} className="col-1 fw-semibold d-flex align-items-start justify-content-start">
+                            <div style={{marginLeft: 30}} className="col-1 fw-semibold d-flex align-items-start justify-content-start">
                                 Tipe MBR
                             </div>
                             <div className="col-1 fw-semibold d-flex align-items-start justify-content-start">
@@ -521,16 +521,16 @@ export default function AddPermintaanRB() {
                                             </div>
                                         </div>
 
-                                        <div className="col-5">
+                                        <div className="col-6">
                                             <table className="table table-borderless table-sm mb-0">
                                                 <tbody>
                                                     {data.mbr.map((mbr, mbrIndex) => (
                                                         <tr key={mbrIndex}>
-                                                            <td style={{width: '18.5%', paddingLeft: '0', paddingRight: '8px'}}>
+                                                            <td style={{width: '21.5%', paddingLeft: '0', paddingRight: '8px'}}>
                                                                 <input
                                                                     type="text"
                                                                     className={`form-control ${validationErrors[data.uuid]?.mbr?.[mbrIndex]?.no_mbr ? 'is-invalid' : ''}`}
-                                                                    placeholder="CC-00001-00-NL"
+                                                                    placeholder="No Dokumen MBR"
                                                                     value={mbr.no_mbr}
                                                                     onChange={(e) => handleChangeMBR(data.uuid, mbrIndex, 'no_mbr', e.target.value)}
                                                                     disabled={isSubmitting}
@@ -551,7 +551,7 @@ export default function AddPermintaanRB() {
                                                                     <option value="PS">PS</option>
                                                                 </select>
                                                             </td>
-                                                            <td style={{width: '15.5%', paddingLeft: '8px', paddingRight: '8px'}}>
+                                                            <td style={{width: '10.5%', paddingLeft: '8px', paddingRight: '8px'}}>
                                                                 <input
                                                                     type="number"
                                                                     className={`form-control text-center ${validationErrors[data.uuid]?.mbr?.[mbrIndex]?.jumlah ? 'is-invalid' : ''}`}
