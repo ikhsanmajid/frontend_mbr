@@ -76,7 +76,7 @@ export default function ModalEdit({ data, show, onClose }: { data: IPermintaan |
         if (isLoadingPermintaan) return;
         if (error) {
             toast.error("Gagal Memuat Data Permintaan");
-            console.log("Error:", error);
+            //console.log("Error:", error);
             return;
         }
 
@@ -505,7 +505,22 @@ export default function ModalEdit({ data, show, onClose }: { data: IPermintaan |
                                                 <div className={`${collapseStates[data.uuid] ? '' : 'd-none'}`}>
                                                     <div className="mb-3">
                                                         <label className="form-label fw-semibold">Nama Produk</label>
-                                                        {isMounted ? <Select className="mb-2" onChange={(e) => handleChangeProduk(data.uuid, e!.value, e!.label)} options={produkList2} isLoading={isLoadingListProduk} defaultValue={produkList2[produkList2.findIndex(p => p.value == data.idProduk)]} /> : null}
+                                                        {isMounted ? (
+                                                            <Select
+                                                                className="mb-2"
+                                                                // Gunakan value (controlled) agar sinkron saat data async & banyak baris
+                                                                value={produkList2.find(p => String(p.value) === String(data.idProduk)) || null}
+                                                                onChange={(e) => {
+                                                                    if (e) handleChangeProduk(data.uuid, e.value, e.label);
+                                                                }}
+                                                                options={produkList2}
+                                                                isLoading={isLoadingListProduk}
+                                                                // key membantu re-render benar saat uuid berubah
+                                                                key={data.uuid}
+                                                                placeholder="Pilih Produk"
+                                                                noOptionsMessage={() => 'Produk tidak ditemukan'}
+                                                            />
+                                                        ) : null}
                                                         {validationErrors[data.uuid]?.idProduk && (
                                                             <div className="text-danger small mb-2">{validationErrors[data.uuid].idProduk}</div>
                                                         )}
@@ -578,7 +593,20 @@ export default function ModalEdit({ data, show, onClose }: { data: IPermintaan |
                                                     </div>
                                                     <div className="col-3">
                                                         <div className="mb-2">
-                                                            {isMounted ? <Select className="mb-2" onChange={(e) => handleChangeProduk(data.uuid, e!.value, e!.label)} options={produkList2} isLoading={isLoadingListProduk} defaultValue={produkList2[produkList2.findIndex(p => p.value == data.idProduk)]} /> : null}
+                                                            {isMounted ? (
+                                                                <Select
+                                                                    className="mb-2"
+                                                                    value={produkList2.find(p => String(p.value) === String(data.idProduk)) || null}
+                                                                    onChange={(e) => {
+                                                                        if (e) handleChangeProduk(data.uuid, e.value, e.label);
+                                                                    }}
+                                                                    options={produkList2}
+                                                                    isLoading={isLoadingListProduk}
+                                                                    key={data.uuid}
+                                                                    placeholder="Pilih Produk"
+                                                                    noOptionsMessage={() => 'Produk tidak ditemukan'}
+                                                                />
+                                                            ) : null}
                                                             {validationErrors[data.uuid]?.idProduk && (
                                                                 <div className="text-danger small mb-2">{validationErrors[data.uuid].idProduk}</div>
                                                             )}

@@ -116,7 +116,7 @@ export default function TableLihatNomor({ idData }: { idData: string | number })
                     window.location.href = '/mbr/login?code=session_expired';
                 }
             }
-            console.log(err)
+            //console.log(err)
         } finally {
             setIsLoadingAdd(false)
         }

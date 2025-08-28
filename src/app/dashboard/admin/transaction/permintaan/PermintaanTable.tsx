@@ -1,5 +1,5 @@
 "use client";
-import { faRefresh } from "@fortawesome/free-solid-svg-icons";
+import { faRefresh, faSort, faSortDown, faSortUp } from "@fortawesome/free-solid-svg-icons";
 import { flexRender, getCoreRowModel, useReactTable, createColumnHelper, PaginationState, getPaginationRowModel } from "@tanstack/react-table";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { GetPermintaanRBAdmin } from "@/app/lib/admin/users/userAPIRequest";
@@ -11,6 +11,7 @@ import ModalLihat from "./ModalLihat";
 import PaginationComponent from "@/app/component/pagination/Pagination";
 import React from "react";
 import RowActions from "./RowActions";
+import { useSorting } from "@/app/lib/useSorting";
 
 export interface IPermintaan {
     id: number;
@@ -35,6 +36,8 @@ export default function PermintaanTable() {
     const { pageIndex, pageSize } = pagination
     const [pageList, setPageList] = useState<Array<number>>([])
 
+    const { sorting, onSortingChange, order, field } = useSorting("createdAt", "DESC")
+
     const [usersData, setUsersData] = useState<IPermintaan[] | null>(null)
 
     const [showModalLihat, setShowModalLihat] = useState<boolean>(false)
@@ -48,7 +51,7 @@ export default function PermintaanTable() {
     const filterYear = useFilterState(state => state.filterYear)
 
 
-    const { listPermintaan, isLoadingListPermintaan, error: errorPermintaan, mutateListPermintaan } = GetPermintaanRBAdmin(pageSize, pageIndex * pageSize, { status: StatusKonfirmasi, used: StatusDipakai, keyword: NIKNama, idProduk: idProduk, idBagian: idBagian, year: filterYear })
+    const { listPermintaan, isLoadingListPermintaan, error: errorPermintaan, mutateListPermintaan } = GetPermintaanRBAdmin(pageSize, pageIndex * pageSize, { status: StatusKonfirmasi, used: StatusDipakai, keyword: NIKNama, idProduk: idProduk, idBagian: idBagian, year: filterYear }, { field: field, order: order })
 
     const columns = useMemo(() => [
         columnHelper.display({
@@ -62,16 +65,17 @@ export default function PermintaanTable() {
             header: "ID Transaksi",
             cell: info => info.getValue(),
             size: 20,
-            enableSorting: false,
         }),
         columnHelper.accessor("createdNIK", {
             header: "NIK Pembuat",
             size: 40,
             cell: info => info.getValue(),
+            enableSorting: false,
         }),
         columnHelper.accessor("createdBy", {
             header: "Nama Pembuat",
             cell: info => info.getValue(),
+            enableSorting: false,
         }),
         columnHelper.accessor("createdByBagian", {
             header: "Nama Bagian Pembuat",
@@ -84,6 +88,7 @@ export default function PermintaanTable() {
         columnHelper.accessor("status", {
             header: "Status Konfirmasi",
             cell: info => info.getValue(),
+            enableSorting: false,
         }),
         columnHelper.display({
             header: "Actions",
@@ -95,6 +100,7 @@ export default function PermintaanTable() {
                     setDataLihat(data)
                 }}>
             </RowActions>,
+            enableSorting: false,
         })
         // eslint-disable-next-line react-hooks/exhaustive-deps
     ], [listPermintaan])
@@ -108,10 +114,13 @@ export default function PermintaanTable() {
         getPaginationRowModel: getPaginationRowModel(),
         onPaginationChange: setPagination,
         manualPagination: true,
+        manualSorting: true,
+        onSortingChange: onSortingChange,
         rowCount: count,
         autoResetPageIndex: false,
         state: {
             pagination,
+            sorting
         },
     })
 
@@ -151,7 +160,7 @@ export default function PermintaanTable() {
         <div className="card mt-3">
             <div className="card-header d-flex justify-content-between">
                 <span className="fw-bold">Daftar Permintaan</span>
-                <button className="btn btn-sm btn-primary" onClick={mutateListPermintaan}><FontAwesomeIcon icon={faRefresh}/>&nbsp; Refresh</button>
+                <button className="btn btn-sm btn-primary" onClick={mutateListPermintaan}><FontAwesomeIcon icon={faRefresh} />&nbsp; Refresh</button>
             </div>
             <div className="card-body">
                 <div className="row">
@@ -167,8 +176,10 @@ export default function PermintaanTable() {
                                     {table.getHeaderGroups().map(headerGroup => (
                                         <tr key={headerGroup.id}>
                                             {headerGroup.headers.map(header => (
-                                                <th key={header.id} scope="col" className="text-white fw-semibold" style={{ minWidth: `${header.getSize()}px` }}>
+                                                <th key={header.id} scope="col" className="text-white fw-semibold" style={{ minWidth: `${header.getSize()}px` }} {...(header.column.getCanSort() ? { onClick: header.column.getToggleSortingHandler() } : {})}>
                                                     {flexRender(header.column.columnDef.header, header.getContext())}
+
+                                                    {header.column.getIsSorted() === "asc" ? (<span> <FontAwesomeIcon className="ms-1" icon={faSortUp} /></span>) : header.column.getIsSorted() === "desc" ? (<span> <FontAwesomeIcon className="ms-1" icon={faSortDown} /></span>) : header.column.getCanSort() ? (<span> <FontAwesomeIcon className="ms-1" icon={faSort} /></span>) : ""}
                                                 </th>
                                             ))}
                                         </tr>
@@ -245,7 +256,7 @@ export default function PermintaanTable() {
             <ModalLihat data={dataLihat} show={showModalLihat} onClose={() => {
                 setShowModalLihat(false)
                 mutateListPermintaan()
-            }} onSave={() => {                
+            }} onSave={() => {
                 setShowModalLihat(false)
                 mutateListPermintaan()
                 toast.success("Berhasil Mengonfirmasi Permintaan")

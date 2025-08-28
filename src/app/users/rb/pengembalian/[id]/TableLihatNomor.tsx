@@ -84,7 +84,7 @@ export default function TableLihatNomor({ idData }: { idData: string | number })
                 }
             }
 
-            console.log(err)
+            //console.log(err)
         } finally {
             setIsLoadingAdd(false)
         }
@@ -119,9 +119,6 @@ export default function TableLihatNomor({ idData }: { idData: string | number })
                             } else {
                                 setEditData((prev) => { return { ...prev, status: e.target.value } as IListNomorRB })
                             }
-
-                            //setEditData({ ...editData, status: e.target.value } as IListNomorRB);
-                            //console.log(editData)
                         }} value={editData?.status}>
                             <option value="KEMBALI">Sudah Kembali</option>
                             <option value="ACTIVE">Belum Kembali</option>
