@@ -7,6 +7,8 @@ import { toast } from 'react-toastify';
 import { useEffect } from "react";
 import { useFilterState } from "./useFilterState";
 import { useMemo, useState } from "react";
+import ModalLihat from "./ModalLihat";
+import RowActions from "./RowActions";
 import FilterComponentPengembalian from "./FilterComponent";
 import Link from "next/link";
 import PaginationComponent from "@/app/component/pagination/Pagination";
@@ -36,15 +38,21 @@ export default function ListPengembalianUser() {
     const { pageIndex, pageSize } = pagination
     const [pageList, setPageList] = useState<Array<number>>([])
 
+    const [showModal, setShowModal] = useState<boolean>(false)
+    const [idDataLihat, setIdDataLihat] = useState<any | null>(null)
+
     const [pengembalianData, setPengembalianData] = useState<IReturnRB[] | null>(null)
 
     const [tempFilterNomor, setTempFilterNomor] = useState<string | null>(null)
     const [filterNomor, setFilterNomor] = useState<string | null>(null)
+    const setIdProduk = useFilterState((state) => state.setIdProduk);
     const idBagian = useFilterState(state => state.idBagian)
     const idProduk = useFilterState(state => state.idProduk)
     const statusKembali = useFilterState(state => state.statusKembali)
     const startDate = useFilterState(state => state.startDate)
     const endDate = useFilterState(state => state.endDate)
+
+    //console.log("data: ", idProduk)
 
     const { listPengembalian, isLoadingListPengembalian, error, mutateListPengembalian } = GetAllReturnRBAdminByProduct(idProduk, pageSize, pageIndex * pageSize, { number: filterNomor, status: statusKembali, startDate: startDate, endDate: endDate, idBagian: idBagian })
 
@@ -96,6 +104,20 @@ export default function ListPengembalianUser() {
             cell: info => info.getValue(),
             size: 80,
         })] : []),
+        columnHelper.display({
+            header: "Actions",
+            id: "actions",
+            cell: props => <RowActions
+                props={props}
+                handleShow={(data: IReturnRB) => {
+                    setShowModal(true)
+                    setIdDataLihat(data)
+                    if(statusKembali === "outstanding" && idBagian == null) setIdProduk(data.idProduk)
+                }}
+            >
+            </RowActions>,
+            enableSorting: false,
+        })
         //eslint-disable-next-line react-hooks/exhaustive-deps
     ].filter(Boolean), [idProduk, statusKembali])
 
@@ -167,7 +189,7 @@ export default function ListPengembalianUser() {
                 </div>
                 <div className="card-body">
                     <div className="row">
-                        <FilterComponentPengembalian/>
+                        <FilterComponentPengembalian />
                     </div>
 
                     <div className="row mb-3 mt-2">
@@ -178,23 +200,23 @@ export default function ListPengembalianUser() {
                                 </div>
                                 <div className="col-12 col-md-6 col-lg-4">
                                     <div className="input-group">
-                                        <input 
-                                            type="text" 
-                                            className="form-control" 
-                                            placeholder="Masukkan Nomor" 
+                                        <input
+                                            type="text"
+                                            className="form-control"
+                                            placeholder="Masukkan Nomor"
                                             onKeyDown={(e) => {
                                                 if (e.key === "Enter") {
                                                     setFilterNomor(e.currentTarget.value)
                                                     //console.log("value ", e.currentTarget.value)
                                                 }
-                                            }} 
+                                            }}
                                             value={tempFilterNomor ?? ""}
                                             onChange={(e) => {
                                                 setTempFilterNomor(e.currentTarget.value)
-                                            }} 
+                                            }}
                                         />
-                                        <button 
-                                            className="btn btn-primary" 
+                                        <button
+                                            className="btn btn-primary"
                                             type="button"
                                             onClick={() => {
                                                 setFilterNomor(tempFilterNomor)
@@ -205,7 +227,7 @@ export default function ListPengembalianUser() {
                                         </button>
                                     </div>
                                 </div>
-                                
+
                             </div>
                         </div>
                     </div>
@@ -295,6 +317,16 @@ export default function ListPengembalianUser() {
                         </div>
                     </div>
                 </div>
+
+                {idDataLihat !== null && <ModalLihat
+                    show={showModal}
+                    onClose={() => {
+                        setShowModal(false)
+                        setIdDataLihat(null)
+                    }}
+                    data={idDataLihat}>
+
+                </ModalLihat>}
             </div>
         </>
     )
