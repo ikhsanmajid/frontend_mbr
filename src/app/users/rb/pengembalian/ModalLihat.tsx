@@ -8,8 +8,7 @@ export default function ModalLihat({ show, onClose, data }: { show: boolean, onC
     const idProduk = useFilterState(state => state.idProduk)
 
     const { listPengembalian, isLoadingListPengembalian, error, mutateListPengembalian } = GetAllReturnRBByProductAndIdPermintaan(idProduk, data.id)
-
-    console.log("data: ", listPengembalian)
+    
     const [key, setKey] = useState<string>("0");
     return (
         <>

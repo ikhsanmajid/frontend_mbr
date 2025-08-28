@@ -39,7 +39,10 @@ export default function TableLihatNomor({ idData }: { idData: string | number })
 
     const [pengembalianNomorData, setPengembalianNomorData] = useState<IListNomorRB[] | null>(null)
 
-    const { listNomorPengembalian, isLoadingListNomorPengembalian, error, mutateListNomorPengembalian } = GetAllNomorReturnRBByIDDetailPermintaan(idData, pageSize, pageIndex * pageSize)
+    const [searchNumber, setSearchNumber] = useState<string>("")
+    const [tempSearchNumber, setTempSearchNumber] = useState<string>("")
+    
+    const { listNomorPengembalian, isLoadingListNomorPengembalian, error, mutateListNomorPengembalian } = GetAllNomorReturnRBByIDDetailPermintaan(idData, pageSize, pageIndex * pageSize, { searchNumber: searchNumber})
 
     const [show, setShow] = useState(false);
     const [idConfirm, setIdConfirm] = useState<number | null>(null)
@@ -279,6 +282,27 @@ export default function TableLihatNomor({ idData }: { idData: string | number })
     const pageCount = table.getPageCount()
     const currentPage = table.getState().pagination.pageIndex
 
+    // Debounce effect for search (500ms)
+    useEffect(() => {
+        const handler = setTimeout(() => {
+            setSearchNumber(tempSearchNumber)
+            // Reset to first page when searching
+            if (tempSearchNumber !== searchNumber) {
+                setPagination(prev => ({ ...prev, pageIndex: 0 }))
+            }
+        }, 500)
+
+        return () => {
+            clearTimeout(handler)
+        }
+    }, [tempSearchNumber, searchNumber])
+
+    // Reset search when idData changes
+    useEffect(() => {
+        setSearchNumber("")
+        setTempSearchNumber("")
+    }, [idData])
+
     useEffect(() => {
         if (error) {
             toast.error(error.message)
@@ -309,6 +333,58 @@ export default function TableLihatNomor({ idData }: { idData: string | number })
 
     return (
         <>
+            {/* Search Input Section */}
+            <div className="card border-0 shadow-sm mb-3">
+                <div className="card-body py-3">
+                    <div className="row align-items-center">
+                        <div className="col-12 col-md-3 col-lg-2">
+                            <label className="form-label text-muted fw-medium mb-0">
+                                Pencarian Nomor
+                            </label>
+                        </div>
+                        <div className="col-12 col-md-9 col-lg-6">
+                            <div className="position-relative">
+                                <input 
+                                    type="text" 
+                                    className="form-control border-primary border-opacity-25 ps-3 pe-3"
+                                    placeholder="Ketik nomor urut"
+                                    value={tempSearchNumber}
+                                    onChange={(e) => setTempSearchNumber(e.target.value)}
+                                    style={{
+                                        borderRadius: '8px',
+                                        fontSize: '0.95rem',
+                                        padding: '0.7rem 1rem',
+                                        transition: 'all 0.2s ease'
+                                    }}
+                                />
+                                {tempSearchNumber && tempSearchNumber !== searchNumber && (
+                                    <div className="position-absolute top-100 start-0 mt-1">
+                                        <small className="text-primary fst-italic">
+                                            <span className="spinner-border spinner-border-sm me-1" style={{ width: '0.7rem', height: '0.7rem' }}></span>
+                                            Mencari...
+                                        </small>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                        {searchNumber && (
+                            <div className="col-12 col-lg-4 mt-2 mt-lg-0">
+                                <button 
+                                    className="btn btn-outline-secondary btn-sm"
+                                    onClick={() => {
+                                        setTempSearchNumber("")
+                                        setSearchNumber("")
+                                    }}
+                                    style={{ borderRadius: '6px' }}
+                                >
+                                    ✕ Hapus Pencarian
+                                </button>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            </div>
+
             <div className="row">
                 <div className="col-12">
                     <div className="table-responsive">

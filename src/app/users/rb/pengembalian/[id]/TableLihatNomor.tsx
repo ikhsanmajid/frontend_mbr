@@ -249,7 +249,7 @@ export default function TableLihatNomor({ idData }: { idData: string | number })
             if (tempSearchNumber !== searchNumber) {
                 setPagination(prev => ({ ...prev, pageIndex: 0 }))
             }
-        }, 1500)
+        }, 500)
 
         return () => {
             clearTimeout(handler)
