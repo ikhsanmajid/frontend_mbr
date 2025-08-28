@@ -430,7 +430,7 @@ export function SidebarElement() {
             {/* Desktop Sidebar */}
             <div className="d-none d-lg-block h-100 text-white" style={{ backgroundColor: "#0463CB" }}>
                 <div className="sidebar-content h-100">
-                    <nav className="sidebar-nav pt-3">
+                    <nav className="sidebar-nav">
                         {menuItems.map((item, index) => renderMenuItem(item, index))}
                     </nav>
                 </div>

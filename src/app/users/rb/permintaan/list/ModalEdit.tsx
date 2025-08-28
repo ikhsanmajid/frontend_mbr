@@ -76,7 +76,7 @@ export default function ModalEdit({ data, show, onClose }: { data: IPermintaan |
         if (isLoadingPermintaan) return;
         if (error) {
             toast.error("Gagal Memuat Data Permintaan");
-            console.log("Error:", error);
+            //console.log("Error:", error);
             return;
         }
 

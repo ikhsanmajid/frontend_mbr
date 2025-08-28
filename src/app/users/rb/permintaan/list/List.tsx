@@ -1,5 +1,5 @@
 "use client";
-import { faRefresh } from "@fortawesome/free-solid-svg-icons";
+import { faRefresh, faSort, faSortDown, faSortUp } from "@fortawesome/free-solid-svg-icons";
 import { flexRender, getCoreRowModel, useReactTable, createColumnHelper, PaginationState, getPaginationRowModel } from "@tanstack/react-table";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { GetPermintaanRB } from "@/app/lib/admin/users/userAPIRequest";
@@ -12,6 +12,7 @@ import ModalLihat from "./ModalLihat";
 import PaginationComponent from "@/app/component/pagination/Pagination";
 import React from "react";
 import RowActions from "./RowActions";
+import { useSorting } from "@/app/lib/useSorting";
 
 export interface IPermintaan {
     id: number | string;
@@ -40,6 +41,8 @@ export default function ListMBR() {
     const { pageIndex, pageSize } = pagination
     const [pageList, setPageList] = useState<Array<number>>([])
 
+    const { sorting, onSortingChange, order, field } = useSorting("createdAt", "DESC")
+
     const [usersData, setUsersData] = useState<IPermintaan[] | null>(null)
 
     const [showEditModal, setShowEditModal] = useState<boolean>(false)
@@ -54,7 +57,7 @@ export default function ListMBR() {
     const StatusDipakai = useFilterState((state) => state.StatusDipakai)
     const filterYear = useFilterState(state => state.filterYear)
 
-    const { listPermintaan, isLoadingListPermintaan, error: errorPermintaan, mutateListPermintaan } = GetPermintaanRB(pageSize, pageIndex * pageSize, { status: StatusKonfirmasi, used: StatusDipakai, keyword: NIKNama, idProduk: idProduk, year: filterYear })
+    const { listPermintaan, isLoadingListPermintaan, error: errorPermintaan, mutateListPermintaan } = GetPermintaanRB(pageSize, pageIndex * pageSize, { status: StatusKonfirmasi, used: StatusDipakai, keyword: NIKNama, idProduk: idProduk, year: filterYear }, { field: field, order: order })
 
 
     const columns = useMemo(() => [
@@ -69,20 +72,22 @@ export default function ListMBR() {
             header: "ID Transaksi",
             cell: info => info.getValue(),
             size: 20,
-            enableSorting: false,
         }),
         columnHelper.accessor("nikCreated", {
             header: "NIK Pembuat",
             size: 40,
             cell: info => info.getValue(),
+            enableSorting: false,
         }),
         columnHelper.accessor("namaCreated", {
             header: "Nama Pembuat",
             cell: info => info.getValue(),
+            enableSorting: false,
         }),
         columnHelper.accessor("namaBagianCreated", {
             header: "Nama Bagian Pembuat",
             cell: info => info.getValue(),
+            enableSorting: false,
         }),
         columnHelper.accessor("timeCreated", {
             header: "Waktu Dibuat",
@@ -91,6 +96,7 @@ export default function ListMBR() {
         columnHelper.accessor("status", {
             header: "Status Konfirmasi",
             cell: info => info.getValue(),
+            enableSorting: false,
         }),
         columnHelper.display({
             header: "Actions",
@@ -109,6 +115,7 @@ export default function ListMBR() {
                 }
             >
             </RowActions>,
+            enableSorting: false,
         })
         // eslint-disable-next-line react-hooks/exhaustive-deps
     ], [])
@@ -122,10 +129,13 @@ export default function ListMBR() {
         getPaginationRowModel: getPaginationRowModel(),
         onPaginationChange: setPagination,
         manualPagination: true,
+        manualSorting: true,
+        onSortingChange: onSortingChange,
         rowCount: count,
         autoResetPageIndex: false,
         state: {
             pagination,
+            sorting
         },
     })
 
@@ -182,8 +192,10 @@ export default function ListMBR() {
                                         {table.getHeaderGroups().map(headerGroup => (
                                             <tr key={headerGroup.id}>
                                                 {headerGroup.headers.map(header => (
-                                                    <th key={header.id} scope="col" className="text-white fw-semibold" style={{ minWidth: `${header.getSize()}px` }}>
+                                                    <th key={header.id} scope="col" className="text-white fw-semibold" style={{ minWidth: `${header.getSize()}px` }} {...(header.column.getCanSort() ? { onClick: header.column.getToggleSortingHandler() } : {})}>
                                                         {flexRender(header.column.columnDef.header, header.getContext())}
+
+                                                        {header.column.getIsSorted() === "asc" ? (<span> <FontAwesomeIcon className="ms-1" icon={faSortUp} /></span>) : header.column.getIsSorted() === "desc" ? (<span> <FontAwesomeIcon className="ms-1" icon={faSortDown} /></span>) : header.column.getCanSort() ? (<span> <FontAwesomeIcon className="ms-1" icon={faSort} /></span>) : ""}
                                                     </th>
                                                 ))}
                                             </tr>
