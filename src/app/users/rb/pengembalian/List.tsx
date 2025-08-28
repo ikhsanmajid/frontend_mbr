@@ -10,9 +10,11 @@ import { useMemo, useState } from "react";
 import FilterComponentPengembalian from "./FilterComponent";
 import Link from "next/link";
 import PaginationComponent from "@/app/component/pagination/Pagination";
+import RowActions from "./RowActions";
+import ModalLihat from "./ModalLihat";
 
 
-interface IReturnRB {
+export interface IReturnRB {
     id: number;
     idProduk: number;
     namaProduk: string;
@@ -34,6 +36,9 @@ export default function ListPengembalianUser() {
 
     const { pageIndex, pageSize } = pagination
     const [pageList, setPageList] = useState<Array<number>>([])
+
+    const [showModal, setShowModal] = useState<boolean>(false)
+    const [idDataLihat, setIdDataLihat] = useState<any | null>(null)
 
     const [pengembalianData, setPengembalianData] = useState<IReturnRB[] | null>(null)
 
@@ -89,6 +94,19 @@ export default function ListPengembalianUser() {
             cell: info => info.getValue(),
             size: 80,
         }),
+        columnHelper.display({
+            header: "Actions",
+            id: "actions",
+            cell: props => <RowActions
+                props={props}
+                handleShow={(data: IReturnRB) => {
+                    setShowModal(true)
+                    setIdDataLihat(data)
+                }}
+            >
+            </RowActions>,
+            enableSorting: false,
+        })
     ], [idProduk])
 
     const data = useMemo(() => pengembalianData ?? [], [pengembalianData])
@@ -146,6 +164,7 @@ export default function ListPengembalianUser() {
 
     return (
         <>
+
             <div className="card mt-3">
                 <div className="card-header d-flex justify-content-between">
                     <span className="fw-bold">Pengembalian RB Bagian</span>
@@ -164,23 +183,23 @@ export default function ListPengembalianUser() {
                                 </div>
                                 <div className="col-12 col-md-6 col-lg-4">
                                     <div className="input-group">
-                                        <input 
-                                            type="text" 
-                                            className="form-control" 
-                                            placeholder="Masukkan Nomor" 
+                                        <input
+                                            type="text"
+                                            className="form-control"
+                                            placeholder="Masukkan Nomor"
                                             onKeyDown={(e) => {
                                                 if (e.key === "Enter") {
                                                     setFilterNomor(e.currentTarget.value)
                                                     //console.log("value ", e.currentTarget.value)
                                                 }
-                                            }} 
+                                            }}
                                             value={tempFilterNomor ?? ""}
                                             onChange={(e) => {
                                                 setTempFilterNomor(e.currentTarget.value)
-                                            }} 
+                                            }}
                                         />
-                                        <button 
-                                            className="btn btn-primary" 
+                                        <button
+                                            className="btn btn-primary"
                                             type="button"
                                             onClick={() => {
                                                 setFilterNomor(tempFilterNomor)
@@ -191,7 +210,7 @@ export default function ListPengembalianUser() {
                                         </button>
                                     </div>
                                 </div>
-                                
+
                             </div>
                         </div>
                     </div>
@@ -224,7 +243,7 @@ export default function ListPengembalianUser() {
 
                                         {!isLoadingListPengembalian && pengembalianData?.length == 0 &&
                                             <tr>
-                                                <td colSpan={7} className="text-center py-4 text-muted fst-italic">
+                                                <td colSpan={8} className="text-center py-4 text-muted fst-italic">
                                                     <i className="fas fa-inbox me-2"></i>
                                                     Data Kosong
                                                 </td>
@@ -281,6 +300,16 @@ export default function ListPengembalianUser() {
                         </div>
                     </div>
                 </div>
+
+                {idDataLihat !== null && <ModalLihat
+                    show={showModal}
+                    onClose={() => {
+                        setShowModal(false)
+                        setIdDataLihat(null)
+                    }}
+                    data={idDataLihat}>
+
+                </ModalLihat>}
             </div>
         </>
     )
