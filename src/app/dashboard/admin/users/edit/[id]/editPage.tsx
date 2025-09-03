@@ -102,7 +102,9 @@ export function EditUser({ id }: { id: number }) {
     //console.log("data jabatan ", (defaultBagian))
 
     async function checkNIK(nik: string) {
-        const NIKCheck = await api.get( "/admin/users/checkNIK/?nik=" + nik)
+        const NIKCheck = await api.get( "/admin/users/check-nik/?nik=" + nik, 
+            { apiVersion: "2" }
+        )
 
         return NIKCheck
     }

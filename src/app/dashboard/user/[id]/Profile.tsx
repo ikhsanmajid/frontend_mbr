@@ -53,16 +53,16 @@ export default function Profile({ userInfo }: { userInfo: any }) {
 
         if (password == confirmPassword) {
             try {
-                const request = await api.patch(`/admin/users/updatePassword/${userInfo.id}`, {
+                const request = await api.patch(`/admin/users/update-password/${userInfo.id}`, {
                     password: password,
                     confirm_password: confirmPassword
-                })
+                }, { apiVersion: "2" })
 
                 if (request.status === 200) {
                     toast.success('Berhasil Mengubah Password')
                     setPassword('')
                     setConfirmPassword('')
-                }               
+                }
 
             } catch (e) {
                 if (e instanceof AxiosError) {
@@ -73,11 +73,11 @@ export default function Profile({ userInfo }: { userInfo: any }) {
                 toast.error('Gagal Mengubah Password')
             } finally {
                 setIsLoading(false)
-                
+
             }
         }
 
-        
+
     }
 
     useEffect(() => {

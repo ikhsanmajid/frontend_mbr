@@ -27,14 +27,15 @@ export default function DownloadRB() {
 
         try {
             setIsLoading(true);
-            let query = `/admin/product_rb/generateReport?idBagian=${idBagian}&statusKembali=${statusKembali}`;
+            let query = `/admin/report/generate-report?idBagian=${idBagian}&statusKembali=${statusKembali}`;
 
             if (startDate !== null && endDate !== null) {
                 query += `&startDate=${startDate}&endDate=${endDate}`;
             }
 
             const response = await api.get(query, {
-                responseType: "blob"
+                responseType: "blob",
+                apiVersion: "2"
             });
 
             const contentType = response.headers["content-type"];

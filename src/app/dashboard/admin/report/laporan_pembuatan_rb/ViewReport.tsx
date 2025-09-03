@@ -22,9 +22,11 @@ export default function DownloadRB() {
 
         try {
             setIsLoading(true);
-            let query = `/admin/product_rb/generateReportPembuatanRB?tahun=${startDate}`;
+            let query = `/admin/report/generate-report-pembuatan-rb?tahun=${startDate}`;
 
-            const response = await api.get(query);
+            const response = await api.get(query, {
+                apiVersion: "2"
+            });
 
             if (response.status === 200) {
                 setData(response.data);
@@ -32,9 +34,9 @@ export default function DownloadRB() {
 
             setIsLoading(false);
         } catch (error) {
-            if (error instanceof AxiosError){
+            if (error instanceof AxiosError) {
                 if (error.response?.status === 401) {
-                    window.location.href = '/mbr/login?code=session_expired'; 
+                    window.location.href = '/mbr/login?code=session_expired';
                 }
             }
             toast.error("Gagal Me-request Data");
