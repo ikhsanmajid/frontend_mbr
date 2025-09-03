@@ -10,15 +10,17 @@ export default function ModalDelete({ show, deleteData, onClose, mutate }: { sho
     // Menangani fungsi delete data
     async function handleDelete() {
         setIsLoadingDelete(true);
-        const bagianDelete = await deleteProduk(deleteData);
-        setIsLoadingDelete(false);
-
-        if (bagianDelete.data) {
-            onClose()
-            toast.success("Produk Berhasil Dihapus");
-            mutate()!;
-        } else {
+        try {
+            const bagianDelete = await deleteProduk(deleteData);
+            if (bagianDelete.data) {
+                onClose()
+                toast.success("Produk Berhasil Dihapus");
+                mutate()!;
+            }
+        } catch (e) {
             toast.error("Produk Gagal Dihapus");
+        } finally {
+            setIsLoadingDelete(false);
         }
     }
 
@@ -26,7 +28,7 @@ export default function ModalDelete({ show, deleteData, onClose, mutate }: { sho
         <>
             <Modal show={show} onHide={onClose} style={{ zIndex: 1050 }} backdrop="static" keyboard={false}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Modal heading</Modal.Title>
+                    <Modal.Title>Hapus Produk - {deleteData?.namaProduk}</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>Apakah anda yakin ingin menghapus {deleteData?.namaProduk} ?</Modal.Body>
                 <Modal.Footer>
