@@ -12,7 +12,7 @@ import RowActions from './RowActions'
 const columnHelper = createColumnHelper<IProduct>()
 
 
-export default function JabatanTable({ onAdd, mutate }: { onAdd: (state: boolean) => void, mutate: (mutate: VoidFunction) => void }) {
+export default function JabatanTable({ onAdd, onAddCSV, mutate }: { onAdd: (state: boolean) => void, onAddCSV: (state: boolean) => void, mutate: (mutate: VoidFunction) => void }) {
     const [count, setCount] = useState<number>(0)
     const [pagination, setPagination] = useState<PaginationState>({
         pageIndex: 0,
@@ -134,13 +134,18 @@ export default function JabatanTable({ onAdd, mutate }: { onAdd: (state: boolean
     return (
         <div className="card mt-3">
             <div className="card-header d-flex justify-content-between">
-                <>Daftar Produk</>
-                <><button className="btn btn-sm btn-success" onClick={
-                    () => { onAdd(true) }
-                }>Tambah Produk</button></>
+                <div>Daftar Produk</div>
+                <div>
+                    <button className="btn btn-sm btn-success me-2" onClick={
+                        () => { onAddCSV(true) }
+                    }>Import Produk CSV</button>
+                    <button className="btn btn-sm btn-success" onClick={
+                        () => { onAdd(true) }
+                    }>Tambah Produk</button>
+                </div>
             </div>
             <div className="card-body">
-                <FilterComponentProduct valueNamaProduk={(namaProduk: string) => setSearchProduct(namaProduk)} valueBagian={(idBagian: string) => setSearchBagian(idBagian) } statusProduct={(status: string) => setSearchStatus(status) }></FilterComponentProduct>
+                <FilterComponentProduct valueNamaProduk={(namaProduk: string) => setSearchProduct(namaProduk)} valueBagian={(idBagian: string) => setSearchBagian(idBagian)} statusProduct={(status: string) => setSearchStatus(status)}></FilterComponentProduct>
 
                 <div className="row">
                     <div className="col-12">
@@ -167,7 +172,7 @@ export default function JabatanTable({ onAdd, mutate }: { onAdd: (state: boolean
                                             </td>
                                         </tr>
                                     }
-                                    {isLoadingListProduk ? 
+                                    {isLoadingListProduk ?
                                         <tr>
                                             <td colSpan={6} className="text-center py-4 text-muted fst-italic">
                                                 <div className="spinner-border spinner-border-sm me-2" role="status">
