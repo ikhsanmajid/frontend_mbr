@@ -10,7 +10,9 @@ export default function ModalAdd({ show, onClose, mutate }: { show: boolean, onC
     const [isLoadingAdd, setIsLoadingAdd] = useState(false)
 
     async function checkJabatan(jabatan: string) {
-        const jabatanCheck = await api.get("/admin/employment/findFixedEmployment/?nama_jabatan=" + jabatan)
+        const jabatanCheck = await api.get("/admin/employments/check-employment/?nama_jabatan=" + jabatan,
+            { apiVersion: "2" }
+        )
 
         return jabatanCheck
     }
@@ -31,9 +33,9 @@ export default function ModalAdd({ show, onClose, mutate }: { show: boolean, onC
     })
 
     async function add_jabatan(data: any) {
-        const addProcess = await api.post("/admin/employment/addEmployment", {
+        const addProcess = await api.post("/admin/employments/add-employment", {
             nama_jabatan: data.jabatan
-        })
+        }, { apiVersion: "2" })
 
         return addProcess.data
     }

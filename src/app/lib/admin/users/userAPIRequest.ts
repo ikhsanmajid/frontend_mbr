@@ -1,8 +1,7 @@
 "use client"
 import { useState, useEffect, useCallback } from "react";
-import axios from "axios";
 import useSWRImmutable from "swr/immutable";
-import api from "../../axios";
+import api from "@/app/lib/axios";
 
 export const fetcher = ([endpoint, options]: [string, object]) => api.get(endpoint, options).then(res => { return res.data })
 
@@ -18,7 +17,7 @@ export function FetchAllUser(limit?: number, offset?: number, params?: { search_
             setIsLoadingUser(true)
             setError(null)
 
-            let query: string = `/admin/users/findAll?`
+            let query: string = `/admin/users/find-all?`
 
             const queryParams = new URLSearchParams({
 
@@ -35,7 +34,7 @@ export function FetchAllUser(limit?: number, offset?: number, params?: { search_
                 }
             }
 
-            const response = await api.get(query, { params: queryParams });
+            const response = await api.get(query, { params: queryParams, apiVersion: "2" });
 
             setListUser(response.data);
 
@@ -64,40 +63,40 @@ export function FetchAllUser(limit?: number, offset?: number, params?: { search_
 
 //ANCHOR - Delete User by Id
 export async function deleteUser(deleteData: any) {
-    const processDelete = await api.delete(`/admin/users/deleteUser/${deleteData.id}`)
+    const processDelete = await api.delete(`/admin/users/delete-user/${deleteData.id}`, { apiVersion: "2" })
 
     return processDelete
 }
 
 //ANCHOR - Tambah Bagian Jabatan ke User
 export async function addBagianJabatan(data: any) {
-    const addProcess = await api.post("/admin/users/addUserJabatan", {
+    const addProcess = await api.post("/admin/users/add-user-department-employment", {
         "idBagianJabatan": data.idBagianJabatan,
         "idUser": data.idUser
-    })
+    }, { apiVersion: "2" })
     return addProcess
 }
 
 //ANCHOR - Update User
 export async function updateDataUser({ data }: { data: { [key: string]: string | number } }) {
-    const updateProcess = await api.patch(`/admin/users/updateUser/${data.id}`, {
+    const updateProcess = await api.patch(`/admin/users/update-user/${data.id}`, {
         email: data.email,
         nik: data.nik,
         nama: data.nama,
         password: data.password == "default" ? "" : data.password,
         is_admin: data.isAdmin,
         is_active: data.isActive,
-    })
+    }, { apiVersion: "2" })
 
     return updateProcess
 }
 
 //ANCHOR - Update User
 export async function updateDataUserBagianJabatan(data: { id: string, idBagianJabatan: string }) {
-    const updateProcess = await api.patch(`/admin/users/updateUserJabatan`, {
+    const updateProcess = await api.patch(`/admin/users/update-user-department-employment`, {
         id: data.id,
         idBagianJabatan: data.idBagianJabatan
-    })
+    }, { apiVersion: "2" })
 
     return updateProcess
 }
@@ -105,7 +104,7 @@ export async function updateDataUserBagianJabatan(data: { id: string, idBagianJa
 //ANCHOR - Get Detail User by Id
 export function GetDetailUserInfo(id: number) {
 
-    const { data: detailUser, isLoading, mutate } = useSWRImmutable(["/admin/users/detail/" + id.toString(), {}], fetcher)
+    const { data: detailUser, isLoading, mutate } = useSWRImmutable(["/admin/users/detail/" + id.toString(), { apiVersion: "2" }], fetcher)
 
     return {
         detailUser,
@@ -116,14 +115,14 @@ export function GetDetailUserInfo(id: number) {
 
 //ANCHOR - Delete Jabatan User By Id
 export async function deleteBagianJabatanUser(id: string) {
-    const processDelete = await api.delete("/admin/users/deleteJabatan/" + id)
+    const processDelete = await api.delete("/admin/users/delete-user-department-employment/" + id, { apiVersion: "2" })
 
     return processDelete
 }
 
 //ANCHOR - Check Email Exist
 export async function checkEmail(email: string) {
-    const emailCheck = await api.get("/admin/users/checkEmail/?email=" + email)
+    const emailCheck = await api.get("/admin/users/check-email/?email=" + email, { apiVersion: "2" })
     return emailCheck
 }
 
@@ -142,7 +141,7 @@ export function useGetAllBagian(onlyManufactur: boolean, limit?: number, offset?
         setError(null);
 
         try {
-            const endpoint = "/admin/department/findAll"
+            const endpoint = "/admin/departments/find-all"
 
             const queryParams = new URLSearchParams({
                 manufaktur: onlyManufactur ? "yes" : "no"
@@ -160,7 +159,8 @@ export function useGetAllBagian(onlyManufactur: boolean, limit?: number, offset?
             }
 
             const response = await api.get(endpoint, {
-                params: queryParams
+                params: queryParams,
+                apiVersion: "2"
             })
 
             setDetailBagian(response.data)
@@ -186,17 +186,17 @@ export function useGetAllBagian(onlyManufactur: boolean, limit?: number, offset?
 
 //ANCHOR - Tambah Bagian
 export async function add_bagian(data: any) {
-    const addProcess = await api.post("/admin/department/addDepartment", {
+    const addProcess = await api.post("/admin/departments/add-department", {
         nama_bagian: data.bagian,
         kategori: data.kategori
-    })
+    }, { apiVersion: "2" })
 
     return addProcess.data
 }
 
 //ANCHOR - Check Bagian by Name
 export async function checkBagian(bagian: string) {
-    const bagianCheck = await api.get("/admin/department/findFixedDepartment/?nama_bagian=" + bagian)
+    const bagianCheck = await api.get("/admin/departments/check-department/?nama_bagian=" + bagian, { apiVersion: "2" })
 
     return bagianCheck
 }
@@ -204,18 +204,18 @@ export async function checkBagian(bagian: string) {
 //ANCHOR - Update Bagian by Id
 export async function edit_bagian(id: number | undefined, data: { bagian: string, active: string, kategori: string }) {
 
-    const editProcess = await api.patch("/admin/department/updateDepartment/" + id, {
+    const editProcess = await api.patch("/admin/departments/update-department/" + id, {
         nama_bagian: data.bagian,
         is_active: data.active == "1" ? "true" : "false",
         kategori: data.kategori
-    })
+    }, { apiVersion: "2" })
 
     return editProcess.data
 }
 
 //ANCHOR - Delete Bagian by Id
 export async function deleteBagian(deleteData: any) {
-    const processDelete = await api.delete("/admin/department/deleteDepartment/" + deleteData.id)
+    const processDelete = await api.delete("/admin/departments/delete-department/" + deleteData.id, { apiVersion: "2" })
 
     return processDelete
 }
@@ -236,14 +236,15 @@ export function useGetAllJabatan(limit?: number, offset?: number) {
 
         try {
             // const query = `?limit=${limit}&offset=${offset}`;
-            const endpoint = "/admin/employment/findAll"
+            const endpoint = "/admin/employments/find-all"
             const queryParams = new URLSearchParams({})
 
             if (limit) queryParams.append("limit", String(limit))
             if (offset) queryParams.append("offset", String(offset))
 
             const response = await api.get(endpoint, {
-                params: queryParams
+                params: queryParams,
+                apiVersion: "2"
             })
 
             setDetailJabatan(response.data);
@@ -268,7 +269,7 @@ export function useGetAllJabatan(limit?: number, offset?: number) {
 
 //ANCHOR - Get List Jabatan by Id Bagian
 export async function GetJabatanByIDBagian(id: string) {
-    const listJabatan = await api.get("/admin/department_employment/findJabatan/" + id)
+    const listJabatan = await api.get("/admin/departments-employments/get-employment-by-department/" + id, { apiVersion: "2" })
 
     return listJabatan.data
 }
@@ -276,24 +277,24 @@ export async function GetJabatanByIDBagian(id: string) {
 //ANCHOR - Update Jabatan by Id
 export async function edit_jabatan(id: number | undefined, data: any) {
 
-    const editProcess = await api.patch("/admin/employment/updateEmployment/" + id, {
+    const editProcess = await api.patch("/admin/employments/update-employment/" + id, {
         nama_jabatan: data.jabatan,
         is_active: data.active == "1" ? "true" : "false"
-    })
+    }, { apiVersion: "2" })
 
     return editProcess.data
 }
 
 //ANCHOR - Check Bagian by Name
 export async function checkJabatan(jabatan: string) {
-    const jabatanCheck = await api.get("/admin/employment/findFixedEmployment/?nama_jabatan=" + jabatan)
+    const jabatanCheck = await api.get("/admin/employments/check-employment/?nama_jabatan=" + jabatan, { apiVersion: "2" })
 
     return jabatanCheck
 }
 
 //ANCHOR - Delete Jabatan by Id
 export async function deleteJabatan(deleteData: any) {
-    const processDelete = await api.delete("/admin/employment/deleteEmployment/" + deleteData.id)
+    const processDelete = await api.delete("/admin/employments/delete-employment/" + deleteData.id, { apiVersion: "2" })
 
     return processDelete
 }
@@ -312,7 +313,7 @@ export function useGetAllBagianJabatan(limit?: number, offset?: number, sort?: "
         setError(null);
 
         try {
-            const endpoint = "/admin/department_employment/findAll"
+            const endpoint = "/admin/departments-employments/find-all"
             const queryParams = new URLSearchParams({})
 
             if (limit) queryParams.append("limit", String(limit))
@@ -328,7 +329,8 @@ export function useGetAllBagianJabatan(limit?: number, offset?: number, sort?: "
             }
 
             const response = await api.get(endpoint, {
-                params: queryParams
+                params: queryParams,
+                apiVersion: "2"
             })
 
             setDetailBagianJabatan(response.data);
@@ -354,10 +356,10 @@ export function useGetAllBagianJabatan(limit?: number, offset?: number, sort?: "
 
 //ANCHOR - Tambah Bagian Jabatan
 export async function add_bagian_jabatan(data: any) {
-    const addProcess = await api.post("/admin/department_employment/addDepartmentEmployment", {
+    const addProcess = await api.post("/admin/departments-employments/add-department-employment", {
         id_bagian: data.bagian,
         id_jabatan: data.jabatan
-    })
+    }, { apiVersion: "2" })
 
     return addProcess.data
 }
@@ -365,10 +367,10 @@ export async function add_bagian_jabatan(data: any) {
 //ANCHOR - Update Bagian by Id
 export async function edit_bagian_jabatan(id: number | undefined, data: any) {
 
-    const editProcess = await api.patch("/admin/department_employment/updateDepartmentEmployment/" + id, {
+    const editProcess = await api.patch("/admin/departments-employments/update-department-employment/" + id, {
         id_bagian: data.bagian,
         id_jabatan: data.jabatan
-    })
+    }, { apiVersion: "2" })
 
     return editProcess.data
 }
@@ -381,8 +383,9 @@ export async function checkBagianJabatan(bagian: string, jabatan: string) {
     if (bagian) queryParams.append("id_bagian", bagian)
     if (jabatan) queryParams.append("id_jabatan", jabatan)
 
-    const bagianJabatanCheck = await api.get("/admin/department_employment/findFixedDepartmentEmployment/", {
-        params: queryParams
+    const bagianJabatanCheck = await api.get("/admin/departments-employments/check-department-employment/", {
+        params: queryParams,
+        apiVersion: "2"
     })
 
     return bagianJabatanCheck
@@ -390,7 +393,8 @@ export async function checkBagianJabatan(bagian: string, jabatan: string) {
 
 //ANCHOR - Delete Bagian Jabatan by Id
 export async function deleteBagianJabatan(deleteData: any) {
-    const processDelete = await api.delete("/admin/department_employment/deleteDepartmentEmployment/" + deleteData.id)
+    const processDelete = await api.delete("/admin/departments-employments/delete-department-employment/" + deleteData.id,
+        { apiVersion: "2" })
 
     return processDelete
 }
@@ -414,7 +418,7 @@ export function FetchAllProduk(limit?: number, offset?: number, params?: { nama_
             setIsLoadingListProduk(true)
             setError(null)
 
-            let endpoint = `/admin/product/getProduct`
+            let endpoint = `/admin/product/get-product`
 
             const queryParams = new URLSearchParams({})
 
@@ -430,7 +434,8 @@ export function FetchAllProduk(limit?: number, offset?: number, params?: { nama_
             }
 
             const response = await api.get(endpoint, {
-                params: queryParams
+                params: queryParams,
+                apiVersion: "2"
             })
 
             setListProduk(response.data);
@@ -460,19 +465,20 @@ export function FetchAllProduk(limit?: number, offset?: number, params?: { nama_
 
 //ANCHOR - Delete Produk
 export async function deleteProduk(deleteData: any) {
-    const processDelete = await api.delete("/admin/product/deleteProduct/" + deleteData.id)
+    const processDelete = await api.delete("/admin/product/delete-product/" + deleteData.id,
+        { apiVersion: "2" })
 
     return processDelete
 }
 
 //ANCHOR - Edit Produk
 export async function edit_produk(id: number | undefined, data: any) {
-    const editProcess = await api.put("/admin/product/editProduct/" + id, {
+    const editProcess = await api.put("/admin/product/update-product/" + id, {
         nama_produk: data.nama_produk,
         id_bagian: data.id_bagian,
         id_kategori: data.id_kategori,
         is_active: data.active
-    })
+    }, { apiVersion: "2" })
 
     return editProcess.data
 }
@@ -507,7 +513,7 @@ export async function usedPermintaanNomor(id: number) {
 }
 
 //ANCHOR - Get Permintaan RB User
-export function GetPermintaanRB(limit?: number, offset?: number, params?: { status?: string, used?: string | boolean, keyword?: string | null, idProduk?: number | null, year: number | null }, sort?: { field?: string, order?: string}) {
+export function GetPermintaanRB(limit?: number, offset?: number, params?: { status?: string, used?: string | boolean, keyword?: string | null, idProduk?: number | null, year: number | null }, sort?: { field?: string, order?: string }) {
     const [listPermintaan, setListPermintaan] = useState<any>(null);
     const [isLoadingListPermintaan, setIsLoadingListPermintaan] = useState<boolean>(true);
     const [error, setError] = useState<any>(null);
@@ -568,7 +574,7 @@ export function GetPermintaanRB(limit?: number, offset?: number, params?: { stat
 }
 
 //ANCHOR - Get Permintaan RB Admin
-export function GetPermintaanRBAdmin(limit?: number, offset?: number, params?: { status?: string, used?: string | boolean, keyword?: string | null, idProduk?: number | null, idBagian?: number | null, year?: number | null }, sort?: { field?: string, order?: string}) {
+export function GetPermintaanRBAdmin(limit?: number, offset?: number, params?: { status?: string, used?: string | boolean, keyword?: string | null, idProduk?: number | null, idBagian?: number | null, year?: number | null }, sort?: { field?: string, order?: string }) {
     const [listPermintaan, setListPermintaan] = useState<any>(null);
     const [isLoadingListPermintaan, setIsLoadingListPermintaan] = useState<boolean>(true);
     const [error, setError] = useState<any>(null);
@@ -578,7 +584,7 @@ export function GetPermintaanRBAdmin(limit?: number, offset?: number, params?: {
             setIsLoadingListPermintaan(true)
             setError(null)
 
-            const endpoint = `/admin/product_rb/listPermintaan`
+            const endpoint = `/admin/mbr/request/list-requests`
 
             const queryParams = new URLSearchParams({})
 
@@ -602,7 +608,8 @@ export function GetPermintaanRBAdmin(limit?: number, offset?: number, params?: {
             }
 
             const response = await api.get(endpoint, {
-                params: queryParams
+                params: queryParams,
+                apiVersion: "2"
             })
 
             setListPermintaan(response.data);
@@ -645,9 +652,9 @@ export function GetDetailPermintaan(id: number | null) {
                 throw new Error("ID is required")
             }
 
-            let query: string = `/admin/product_rb/listDetailPermintaan?id=${id}`
+            let query: string = `/admin/mbr/request/list-detail-request?id=${id}`
 
-            const response = await api.get(query);
+            const response = await api.get(query, { apiVersion: "2" });
 
             setDetailPermintaan(response.data);
 
@@ -689,9 +696,9 @@ export function GetDetailPermintaanNomor(id: number | null) {
                 throw new Error("ID is required")
             }
 
-            let query: string = `/admin/product_rb/listNomorUrutByIdPermintaan?id=${id}`
+            let query: string = `/admin/mbr/request/list-number-order-by-id-request?id=${id}`
 
-            const response = await api.get(query);
+            const response = await api.get(query, { apiVersion: "2" });
 
             setDetailPermintaan(response.data);
 
@@ -718,10 +725,10 @@ export function GetDetailPermintaanNomor(id: number | null) {
 
 //ANCHOR - Konfirmasi / Tolak Permintaan
 export async function confirmPermintaan(data: any, action: "confirm" | "reject", reason?: string) {
-    const confirmProcess = await api.post("/admin/product_rb/confirmPermintaan/" + data.id, {
+    const confirmProcess = await api.post("/admin/mbr/request/confirm-request/" + data.id, {
         action: action,
         reason: reason
-    })
+    }, { apiVersion: "2" })
 
     return confirmProcess
 }
@@ -739,7 +746,7 @@ export function FetchAllKategori(limit?: number, offset?: number, params?: { sea
             setIsLoadingKategori(true)
             setError(null)
 
-            const endpoint = `/admin/product/getKategori`
+            const endpoint = `/admin/category/get-category`
 
             const queryParams = new URLSearchParams({})
 
@@ -755,7 +762,8 @@ export function FetchAllKategori(limit?: number, offset?: number, params?: { sea
             }
 
             const response = await api.get(endpoint, {
-                params: queryParams
+                params: queryParams,
+                apiVersion: "2"
             })
 
             setDetailKategori(response.data);
@@ -783,7 +791,9 @@ export function FetchAllKategori(limit?: number, offset?: number, params?: { sea
 
 //ANCHOR - Check Bagian by Name
 export async function checkCategory(kategori: string) {
-    const bagianCheck = await api.get("/admin/product/checkKategori/?nama_kategori=" + kategori)
+    const bagianCheck = await api.get("/admin/category/check-category/?nama_kategori=" + kategori,
+        { apiVersion: "2" }
+    )
 
     return bagianCheck
 }
@@ -791,27 +801,28 @@ export async function checkCategory(kategori: string) {
 //ANCHOR - Update Kategori by Id
 export async function edit_kategori(id: string | number | undefined, data: any) {
 
-    const editProcess = await api.patch("/admin/product/updateCategory/" + id, {
+    const editProcess = await api.patch("/admin/category/update-category/" + id, {
         nama_kategori: data.namaKategori,
         starting_number: data.startingNumber,
-    })
+    }, { apiVersion: "2" })
 
     return editProcess.data
 }
 
 //ANCHOR - Delete Kategori by Id
 export async function deleteCategory(deleteData: any) {
-    const processDelete = await api.delete("/admin/product/deleteCategory/" + deleteData.id)
+    const processDelete = await api.delete("/admin/category/delete-category/" + deleteData.id,
+        { apiVersion: "2" })
 
     return processDelete.data
 }
 
 //ANCHOR - Tambah Bagian
 export async function add_kategori(data: any) {
-    const addProcess = await api.post("/admin/product/addCategory", {
+    const addProcess = await api.post("/admin/category/add-category", {
         nama_kategori: data.namaKategori,
         starting_number: data.startingNumber
-    })
+    }, { apiVersion: "2" })
 
     return addProcess.data
 }
@@ -1008,12 +1019,12 @@ export function GetAllReturnRBAdminByProduct(id: any, limit?: number, offset?: n
                 throw new Error("Pilih Produk Terlebih Dahulu")
             }
 
-            let endpoint = `/admin/product_rb/getRBReturnAdminByProduct/`
+            let endpoint = `/admin/mbr/return/get-returned-admin-by-product/`
 
             if (params?.status === "outstanding" && params?.idBagian !== null && id === null) {
-                endpoint = `/admin/product_rb/getRBReturnAdminByBagian?`
+                endpoint = `/admin/mbr/return/get-returned-admin-by-department?`
             } else if (params?.status === "outstanding" && params?.idBagian === null) {
-                endpoint = `/admin/product_rb/getRBReturnAdminByStatusOutstanding?`
+                endpoint = `/admin/mbr/return/get-returned-admin-by-status-outstanding?`
             } else {
                 endpoint += `${id}?`
             }
@@ -1032,7 +1043,8 @@ export function GetAllReturnRBAdminByProduct(id: any, limit?: number, offset?: n
             }
 
             const response = await api.get(endpoint, {
-                params: queryParams
+                params: queryParams,
+                apiVersion: "2"
             })
 
             setListPengembalian(response.data);
@@ -1077,7 +1089,7 @@ export function GetAllReturnRBAdminByProductAndIdPermintaan(idProduk: any, idPer
                 throw new Error("ID Permintaan Tidak Ada")
             }
 
-            const endpoint = `/admin/product_rb/getRBReturnAdminByProduct/${idProduk}/${idPermintaan}`
+            const endpoint = `/admin/mbr/return/get-returned-admin-by-product/${idProduk}/${idPermintaan}`
 
             const queryParams = new URLSearchParams({})
 
@@ -1093,7 +1105,8 @@ export function GetAllReturnRBAdminByProductAndIdPermintaan(idProduk: any, idPer
             }
 
             const response = await api.get(endpoint, {
-                params: queryParams
+                params: queryParams,
+                apiVersion: "2"
             })
 
             setListPengembalian(response.data);
@@ -1191,7 +1204,9 @@ export function GetDashboardDataAdmin() {
             setIsLoadingListDashboardData(true)
             setError(null)
 
-            const dashboardData = await api.get("/admin/product_rb/generateReportDashboadAdmin")
+            const dashboardData = await api.get("/admin/report/generate-report-dashboard-admin", {
+                apiVersion: "2"
+            })
 
             setListDashboardData(dashboardData.data)
 

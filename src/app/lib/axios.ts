@@ -1,19 +1,25 @@
 import axios, { AxiosError } from "axios"
 import { getSession, signOut } from "next-auth/react"
-import { redirect } from "next/navigation"
+
+declare module "axios" {
+  interface AxiosRequestConfig {
+    apiVersion?: string;
+  }
+}
+
+const DEFAULT_VERSION = 1;
 
 const api = axios.create({
-  baseURL: `${process.env.NEXT_PUBLIC_APIENDPOINT_URL as string}`,
+  baseURL: `${process.env.NEXT_PUBLIC_APIENDPOINT_URL as string + "/api"}`,
   headers: {
     "Content-Type": "application/json",
   },
-  // validateStatus: (status) => {
-  //   return status >= 200 && status < 500
-  // },
   withCredentials: true,
 })
 
 api.interceptors.request.use(async (config) => {
+  const version = config.apiVersion ?? DEFAULT_VERSION;
+  config.url = `/v${version}${config.url}`;
   const session = await getSession()
   if (session?.user?.access_token) {
     config.headers.Authorization = `Bearer ${session.user.access_token}`

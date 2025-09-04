@@ -2,7 +2,7 @@
 import { AxiosError } from "axios";
 import { flexRender, getCoreRowModel, useReactTable, createColumnHelper, PaginationState, getPaginationRowModel } from "@tanstack/react-table";
 import { GetAllNomorReturnRBByIDDetailPermintaan } from "@/app/lib/admin/users/userAPIRequest";
-import { toast  } from "react-toastify";
+import { toast } from "react-toastify";
 import { useEffect, useRef } from "react";
 import { useMemo, useState } from "react";
 import api from "@/app/lib/axios";
@@ -38,12 +38,12 @@ export default function TableLihatNomor({ idData }: { idData: string | number })
 
     const [searchNumber, setSearchNumber] = useState<string>("")
     const [tempSearchNumber, setTempSearchNumber] = useState<string>("")
-    
-    const { listNomorPengembalian, isLoadingListNomorPengembalian, error, mutateListNomorPengembalian } = GetAllNomorReturnRBByIDDetailPermintaan(idData, pageSize, pageIndex * pageSize, { searchNumber: searchNumber})
+
+    const { listNomorPengembalian, isLoadingListNomorPengembalian, error, mutateListNomorPengembalian } = GetAllNomorReturnRBByIDDetailPermintaan(idData, pageSize, pageIndex * pageSize, { searchNumber: searchNumber })
 
     async function handleSave() {
         setIsLoadingAdd(true)
-        const dateTime = await api.get(`time`)
+        const dateTime = await api.get(`/time`, { apiVersion: "2" })
         const dateUpload = new Date(dateTime.data.time)
         const dateShow = dateUpload.toLocaleString("id-ID", { timeZone: "Asia/Jakarta" })
 
@@ -303,8 +303,8 @@ export default function TableLihatNomor({ idData }: { idData: string | number })
                         </div>
                         <div className="col-12 col-md-9 col-lg-6">
                             <div className="position-relative">
-                                <input 
-                                    type="text" 
+                                <input
+                                    type="text"
                                     className="form-control border-primary border-opacity-25 ps-3 pe-3"
                                     placeholder="Ketik nomor urut"
                                     value={tempSearchNumber}
@@ -328,7 +328,7 @@ export default function TableLihatNomor({ idData }: { idData: string | number })
                         </div>
                         {searchNumber && (
                             <div className="col-12 col-lg-4 mt-2 mt-lg-0">
-                                <button 
+                                <button
                                     className="btn btn-outline-secondary btn-sm"
                                     onClick={() => {
                                         setTempSearchNumber("")

@@ -27,11 +27,12 @@ export default function ModalAddWithCSV({ show, onClose, mutate }: { show: boole
     async function uploadCSV(file: File) {
         const formData = new FormData()
         formData.append('csv_file', file)
-        
-        const uploadProcess = await api.post("/admin/product/uploadCSV", formData, {
+
+        const uploadProcess = await api.post("/admin/product/upload-csv", formData, {
             headers: {
                 'Content-Type': 'multipart/form-data'
-            }
+            },
+            apiVersion: "2"
         })
 
         return uploadProcess.data
@@ -116,11 +117,11 @@ export default function ModalAddWithCSV({ show, onClose, mutate }: { show: boole
                                     {issue.message}
                                 </div>
                             ))}
-                            
+
                             {selectedFile && (
                                 <div className="mt-2 p-2 bg-light rounded">
                                     <small className="text-muted">
-                                        <strong>File yang dipilih:</strong> {selectedFile.name} 
+                                        <strong>File yang dipilih:</strong> {selectedFile.name}
                                         <br />
                                         <strong>Ukuran:</strong> {(selectedFile.size / 1024 / 1024).toFixed(2)} MB
                                         <br />
@@ -128,7 +129,7 @@ export default function ModalAddWithCSV({ show, onClose, mutate }: { show: boole
                                     </small>
                                 </div>
                             )}
-                            
+
                             <div className="mt-2">
                                 <small className="text-muted">
                                     <strong>Format yang diizinkan:</strong> CSV (.csv)<br />
@@ -140,19 +141,19 @@ export default function ModalAddWithCSV({ show, onClose, mutate }: { show: boole
                     </form>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="danger" className="btn-sm" onClick={() => { 
-                        onClose(); 
+                    <Button variant="danger" className="btn-sm" onClick={() => {
+                        onClose();
                         setIssues(null);
                         setSelectedFile(null);
                     }}>
                         Batal
                     </Button>
 
-                    <button 
-                        type="submit" 
-                        disabled={isLoadingAdd || !selectedFile} 
-                        className="btn btn-sm btn-success" 
-                        form="addForm" 
+                    <button
+                        type="submit"
+                        disabled={isLoadingAdd || !selectedFile}
+                        className="btn btn-sm btn-success"
+                        form="addForm"
                         name="submit"
                     >
                         {isLoadingAdd ? "Mengupload..." : "Upload CSV"}

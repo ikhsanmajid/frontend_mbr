@@ -10,24 +10,26 @@ export default function ModalDelete({ show, deleteData, onClose, kategoriMutate 
 
     // Menangani fungsi delete data
     async function handleDelete() {
-        setIsLoadingDelete(true);
-        const kategoriDelete = await deleteCategory(deleteData);
-        setIsLoadingDelete(false);
-
-        if (kategoriDelete.type !== "error") {
-            onClose()
-            toast.success("Kategori Berhasil Dihapus");
-            kategoriMutate();
-        } else {
+        try {
+            setIsLoadingDelete(true);
+            const kategoriDelete = await deleteCategory(deleteData);
+            if (kategoriDelete.type !== "error") {
+                onClose()
+                toast.success("Kategori Berhasil Dihapus");
+                kategoriMutate();
+            }
+        } catch (e) {
             toast.error("Kategori Gagal Dihapus");
+        } finally {
+            setIsLoadingDelete(false);
         }
     }
-    
+
     return (
         <>
             <Modal show={show} onHide={onClose} style={{ zIndex: 1050 }} backdrop="static" keyboard={false}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Hapus Kategori</Modal.Title>
+                    <Modal.Title>Hapus Kategori - {deleteData && deleteData.namaKategori}</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>Apakah anda yakin ingin menghapus {deleteData && deleteData.namaKategori} ?</Modal.Body>
                 <Modal.Footer>
