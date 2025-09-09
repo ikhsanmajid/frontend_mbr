@@ -192,6 +192,13 @@ export function SidebarElement() {
                     icon: faFileDownload,
                     children: []
                 },
+                {
+                    id: "55",
+                    name: "Laporan RB Belum Kembali",
+                    link: "/users/report/rb_belum_kembali",
+                    icon: faFileDownload,
+                    children: []
+                },
             ]
         },
     ], [])
