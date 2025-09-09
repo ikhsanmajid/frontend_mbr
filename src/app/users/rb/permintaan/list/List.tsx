@@ -95,7 +95,8 @@ export default function ListMBR() {
         }),
         columnHelper.accessor("status", {
             header: "Status Konfirmasi",
-            cell: info => info.getValue(),
+            // cell: info => info.getValue(),
+            cell: info => (<span className={`badge fs-6 px-3 py-2 ${info.getValue() === "DITERIMA" ? 'bg-success': info.getValue() === "DITOLAK" ? 'bg-danger' : 'bg-warning'}`}>{info.getValue()}</span>),
             enableSorting: false,
         }),
         columnHelper.display({
