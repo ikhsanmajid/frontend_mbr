@@ -54,7 +54,7 @@ export default function TableLihatNomor({ idData }: { idData: string | number })
         }
 
         try {
-            const updateData = await api.put(`users/rb/updateNomorRBReturn/${idEdit}`, {
+            const updateData = await api.put(`/users/rb/updateNomorRBReturn/${idEdit}`, {
                 status: editData?.status,
                 nomor_batch: nomorBatchRef.current?.value ?? "",
                 tanggal_kembali: editData?.status === "KEMBALI" || editData?.status === "BATAL" ? dateTime.data.time : ""

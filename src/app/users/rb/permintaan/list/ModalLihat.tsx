@@ -1,14 +1,65 @@
-import {  toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import { GetDetailPermintaan, GetDetailPermintaanNomor, usedPermintaanNomor } from "@/app/lib/admin/users/userAPIRequest";
 import { IPermintaan } from "./List";
 import { Modal, Button } from "react-bootstrap";
 import { useState } from "react";
+import { faFileExcel } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import api from '@/app/lib/axios';
 
 export default function ModalLihat({ data, show, onClose, onSave }: { data: IPermintaan | null, show: boolean, onClose: () => void, onSave: () => void }) {
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [isLoadingExport, setIsLoadingExport] = useState<boolean>(false)
 
     const { detailPermintaan, isLoadingPermintaan, error, mutateListPermintaan } = data?.status !== "DITERIMA" ? GetDetailPermintaan(data ? Number(data.id) : null) : { detailPermintaan: null, isLoadingPermintaan: false, error: null, mutateListPermintaan: null }
     const { detailPermintaanNomor, isLoadingPermintaanNomor, errorNomor, mutateListPermintaanNomor } = data?.status == "DITERIMA" ? GetDetailPermintaanNomor(data ? Number(data.id) : null) : { detailPermintaanNomor: null, isLoadingPermintaanNomor: false, errorNomor: null, mutateListPermintaanNomor: null }
+
+    async function handleExporttoXLS(id: number) {
+        if (!id) {
+            toast.error("ID Kosong!");
+            return
+        }
+
+        try {
+            setIsLoadingExport(true);
+            let query = `/users/mbr/request/export-request-to-xls?idRequest=${id}`;
+
+            const response = await api.get(query, {
+                responseType: "blob",
+                apiVersion: "2"
+            });
+
+            const contentType = response.headers["content-type"];
+            if (contentType.includes("application/json")) {
+                const json = await response.data.text();
+                const parsedData = JSON.parse(json);
+                toast.success(parsedData.message);
+                setIsLoadingExport(false);
+                return;
+            }
+
+            const blob = new Blob([response.data], { type: response.headers["content-type"] });
+            const url = window.URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.href = url;
+
+            const contentDisposition = response.headers["content-disposition"];
+            //("Content ", response)
+            const fileName = contentDisposition
+                ? contentDisposition.split("filename=")[1].replace(/"/g, "")
+                : "downloaded_file";
+
+            link.download = fileName;
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            window.URL.revokeObjectURL(url);
+            setIsLoadingExport(false);
+        } catch (error) {
+            toast.error("Gagal Me-request Data",);
+            setIsLoadingExport(false);
+        }
+    }
 
     async function handleSudahDipakai() {
         setIsSubmitting(true);
@@ -89,11 +140,10 @@ export default function ModalLihat({ data, show, onClose, onSave }: { data: IPer
                                     <div className="border rounded p-3 h-100">
                                         <div className="d-flex flex-column">
                                             <small className="text-muted">Status</small>
-                                            <span className={`fw-semibold ${
-                                                data?.status === 'DITERIMA' ? 'text-success' : 
-                                                data?.status === 'DITOLAK' ? 'text-danger' : 
-                                                'text-warning'
-                                            }`}>
+                                            <span className={`fw-semibold ${data?.status === 'DITERIMA' ? 'text-success' :
+                                                data?.status === 'DITOLAK' ? 'text-danger' :
+                                                    'text-warning'
+                                                }`}>
                                                 {data?.status}
                                             </span>
                                         </div>
@@ -104,8 +154,11 @@ export default function ModalLihat({ data, show, onClose, onSave }: { data: IPer
                     </div>
                     {/* Table Detail MBR */}
                     <div className="card mb-4">
-                        <div className="card-header">
+                        <div className="d-flex card-header justify-content-between">
                             <h6 className="mb-0 fw-bold">Detail MBR</h6>
+                            {data?.status == "DITERIMA" && <button className="btn btn-sm btn-success me-2" onClick={
+                                () => { handleExporttoXLS(Number(data.id)) }
+                            }>Export to xls <FontAwesomeIcon icon={faFileExcel} /></button>}
                         </div>
                         <div className="card-body p-0">
                             <div className="table-responsive">
@@ -224,9 +277,8 @@ export default function ModalLihat({ data, show, onClose, onSave }: { data: IPer
                                         <span className="fw-semibold">Keputusan:</span>
                                     </div>
                                     <div className="col-12 col-lg-auto">
-                                        <span className={`badge fs-6 px-3 py-2 ${
-                                            data?.status === 'DITERIMA' ? 'bg-success' : 'bg-danger'
-                                        }`}>
+                                        <span className={`badge fs-6 px-3 py-2 ${data?.status === 'DITERIMA' ? 'bg-success' : 'bg-danger'
+                                            }`}>
                                             {data?.status}
                                         </span>
                                     </div>
@@ -257,7 +309,7 @@ export default function ModalLihat({ data, show, onClose, onSave }: { data: IPer
                 </Modal.Body>
                 <Modal.Footer className="d-flex justify-content-end">
                     <div>
-                        {data?.status === "DITERIMA" && Boolean(data.used) !== true && 
+                        {data?.status === "DITERIMA" && Boolean(data.used) !== true &&
                             <Button variant="success" onClick={() => {
                                 handleSudahDipakai()
                             }} disabled={isSubmitting} className="me-2">
