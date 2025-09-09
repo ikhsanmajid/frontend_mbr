@@ -158,7 +158,7 @@ export default function ModalLihat({ data, show, onClose, onSave }: { data: IPer
                             <h6 className="mb-0 fw-bold">Detail MBR</h6>
                             {data?.status == "DITERIMA" && <button className="btn btn-sm btn-success me-2" onClick={
                                 () => { handleExporttoXLS(Number(data.id)) }
-                            }>Export to xls <FontAwesomeIcon icon={faFileExcel} /></button>}
+                            } disabled={isLoadingExport}>Export to xls <FontAwesomeIcon icon={faFileExcel} /></button>}
                         </div>
                         <div className="card-body p-0">
                             <div className="table-responsive">

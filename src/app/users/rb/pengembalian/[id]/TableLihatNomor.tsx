@@ -74,13 +74,18 @@ export default function TableLihatNomor({ idData }: { idData: string | number })
                     }
                 })
                 setIdEdit(null)
-            } else {
-                toast.error("Data Gagal Diupdate, " + updateData.data.message)
             }
+            
         } catch (err) {
+
             if (err instanceof AxiosError) {
                 if (err.response?.status === 401) {
                     window.location.href = "/mbr/login?code=session_expired"
+                }
+                if (err.response?.status === 400) {
+                    toast.error(err.response.data.message, {
+                        className: "w-75"
+                    })
                 }
             }
 
