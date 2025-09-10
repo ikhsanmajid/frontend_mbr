@@ -5,7 +5,7 @@ import NextAuthProvider from './NextAuthProvider';
 import { ToastContainer } from 'react-toastify';
 
 export const metadata = {
-  title: "Monitoring MBR",
+  title: "Aplikasi e-RB",
   description: "Aplikasi monitoring MBR PT Konimex",
   robots: {
     index: false,
