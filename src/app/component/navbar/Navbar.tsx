@@ -15,7 +15,7 @@ export default function NavigationNav() {
                     <div id="sidebar-toggle-placeholder" className="d-lg-none me-2 me-sm-3"></div>
                     <Navbar.Brand className="me-0">
                         <Link href="/" style={{ textDecoration: "none", color: "white" }} passHref>
-                            Monitoring MBR
+                            Aplikasi e-RB
                         </Link>
                     </Navbar.Brand>
                 </div>
