@@ -51,13 +51,14 @@ export default function ListMBR() {
     const [dataLihatEdit, setDataLihatEdit] = useState<IPermintaan | null>(null)
 
     //Filter
+    const idTransaksi = useFilterState((state) => state.idTransaksi)
     const idProduk = useFilterState((state) => state.idProduk)
     const NIKNama = useFilterState((state) => state.NIKNama)
     const StatusKonfirmasi = useFilterState((state) => state.StatusKonfirmasi)
     const StatusDipakai = useFilterState((state) => state.StatusDipakai)
     const filterYear = useFilterState(state => state.filterYear)
 
-    const { listPermintaan, isLoadingListPermintaan, error: errorPermintaan, mutateListPermintaan } = GetPermintaanRB(pageSize, pageIndex * pageSize, { status: StatusKonfirmasi, used: StatusDipakai, keyword: NIKNama, idProduk: idProduk, year: filterYear }, { field: field, order: order })
+    const { listPermintaan, isLoadingListPermintaan, error: errorPermintaan, mutateListPermintaan } = GetPermintaanRB(pageSize, pageIndex * pageSize, { status: StatusKonfirmasi, used: StatusDipakai, keyword: NIKNama, idProduk: idProduk, year: filterYear, id: idTransaksi }, { field: field, order: order })
 
 
     const columns = useMemo(() => [

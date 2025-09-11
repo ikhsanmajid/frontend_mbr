@@ -513,7 +513,7 @@ export async function usedPermintaanNomor(id: number) {
 }
 
 //ANCHOR - Get Permintaan RB User
-export function GetPermintaanRB(limit?: number, offset?: number, params?: { status?: string, used?: string | boolean, keyword?: string | null, idProduk?: number | null, year: number | null }, sort?: { field?: string, order?: string }) {
+export function GetPermintaanRB(limit?: number, offset?: number, params?: { status?: string, used?: string | boolean, keyword?: string | null, idProduk?: number | null, year: number | null, id: number | null }, sort?: { field?: string, order?: string }) {
     const [listPermintaan, setListPermintaan] = useState<any>(null);
     const [isLoadingListPermintaan, setIsLoadingListPermintaan] = useState<boolean>(true);
     const [error, setError] = useState<any>(null);
@@ -558,7 +558,7 @@ export function GetPermintaanRB(limit?: number, offset?: number, params?: { stat
             setIsLoadingListPermintaan(false)
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [limit, offset, params?.status, params?.used, params?.keyword, params?.idProduk, params?.year, sort?.field, sort?.order])
+    }, [limit, offset, params?.status, params?.used, params?.keyword, params?.idProduk, params?.year, params?.id, sort?.field, sort?.order])
 
     useEffect(() => {
         fetchData()
@@ -574,7 +574,7 @@ export function GetPermintaanRB(limit?: number, offset?: number, params?: { stat
 }
 
 //ANCHOR - Get Permintaan RB Admin
-export function GetPermintaanRBAdmin(limit?: number, offset?: number, params?: { status?: string, used?: string | boolean, keyword?: string | null, idProduk?: number | null, idBagian?: number | null, year?: number | null }, sort?: { field?: string, order?: string }) {
+export function GetPermintaanRBAdmin(limit?: number, offset?: number, params?: { status?: string, used?: string | boolean, keyword?: string | null, idProduk?: number | null, idBagian?: number | null, year?: number | null, id: number | null }, sort?: { field?: string, order?: string }) {
     const [listPermintaan, setListPermintaan] = useState<any>(null);
     const [isLoadingListPermintaan, setIsLoadingListPermintaan] = useState<boolean>(true);
     const [error, setError] = useState<any>(null);
@@ -620,7 +620,7 @@ export function GetPermintaanRBAdmin(limit?: number, offset?: number, params?: {
             setIsLoadingListPermintaan(false)
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [limit, offset, params?.status, params?.used, params?.keyword, params?.idProduk, params?.idBagian, params?.year, sort?.field, sort?.order])
+    }, [limit, offset, params?.status, params?.used, params?.keyword, params?.idProduk, params?.idBagian, params?.year, params?.id, sort?.field, sort?.order])
 
     useEffect(() => {
         fetchData()
@@ -633,6 +633,14 @@ export function GetPermintaanRBAdmin(limit?: number, offset?: number, params?: {
     return {
         listPermintaan, isLoadingListPermintaan, error, mutateListPermintaan
     }
+}
+
+export async function deleteTransaksi(data: any) {
+    const deleteProcess = await api.delete(`/admin/mbr/request/delete-request/${data.id}`, {
+        apiVersion: "2"
+    });
+
+    return deleteProcess;
 }
 
 //ANCHOR - Get List Detail Permintaan By ID

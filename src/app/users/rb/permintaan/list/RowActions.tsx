@@ -1,4 +1,3 @@
-import { IPermintaan } from "./List"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faEye } from "@fortawesome/free-regular-svg-icons"
 import React from "react"

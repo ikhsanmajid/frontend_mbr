@@ -12,12 +12,15 @@ export default function FilterComponentPermintaan() {
     const [isMounted, setIsMounted] = useState<boolean>(false);
     const [keyword, setKeyword] = useState<string>("")
 
+    const [idTransaksiTemp, setIdTransaksiTemp] = useState<number | null>(null)
+
     const [date1, setDate1] = useState<Date | null>(null)
     const [statusUsed, setStatusUsed] = useState<"all" | "onlyUsed" | "onlyAvailable">(useFilterState((state) => state.StatusDipakai))
     const [statusConfirmed, setStatusConfirmed] = useState<"all" | "onlyConfirmed" | "onlyPending" | "onlyRejected">(useFilterState((state) => state.StatusKonfirmasi))
     const [idProdukChoosen, setIdProdukChoosen] = useState<number | null>(useFilterState((state) => state.idProduk));
     const [productList, setProductList] = useState<{ value: number | null; label: string }[]>([]);
 
+    const setIdTransaksi = useFilterState((state) => state.setIdTransaksi)
     const setFilterYear = useFilterState((state) => state.setFilterYear)
     const setIdProduk = useFilterState((state) => state.setIdProduk)
     const setNIKNama = useFilterState((state) => state.setNIKNama)
@@ -58,6 +61,7 @@ export default function FilterComponentPermintaan() {
     }, [isLoadingListProduk])
 
     function handleSubmit() {
+        setIdTransaksi(idTransaksiTemp)
         setNIKNama(keyword)
         setStatusKonfirmasi(statusConfirmed)
         setStatusDipakai(statusUsed)
@@ -72,6 +76,19 @@ export default function FilterComponentPermintaan() {
                 <Accordion.Body>
                     <div className="row w-100">
                         <div className="col-12 col-lg-6">
+                            <div className="row mb-3 align-items-center">
+                                <div className="col-12 col-md-3 mb-2 mb-md-0">
+                                    <span>ID Transaksi: </span>
+                                </div>
+                                <div className="col-12 col-md-9">
+                                    <div className="input-group">
+                                        <input onChange={(e) => {
+                                            setIdTransaksiTemp(Number(e.target.value))
+                                        }} type="text" autoComplete="off" className="form-control" id="inputSearchIDTrx" />
+                                    </div>
+                                </div>
+                            </div>
+
                             <div className="row mb-3 align-items-center">
                                 <div className="col-12 col-md-3 mb-2 mb-md-0">
                                     <span>NIK/Nama: </span>
