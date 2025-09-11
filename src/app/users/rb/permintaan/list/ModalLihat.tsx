@@ -1,18 +1,45 @@
-import { toast } from 'react-toastify';
+import { faFileExcel, faFilePdf } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { GetDetailPermintaan, GetDetailPermintaanNomor, usedPermintaanNomor } from "@/app/lib/admin/users/userAPIRequest";
 import { IPermintaan } from "./List";
-import { Modal, Button } from "react-bootstrap";
+import { Modal, Button, Dropdown, Card } from "react-bootstrap";
+import { toast } from 'react-toastify';
 import { useState } from "react";
-import { faFileExcel } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import api from '@/app/lib/axios';
+import jsPDF from 'jspdf';
 
-export default function ModalLihat({ data, show, onClose, onSave }: { data: IPermintaan | null, show: boolean, onClose: () => void, onSave: () => void }) {
+interface ModalLihatProps {
+    data: IPermintaan | null;
+    show: boolean;
+    onClose: () => void;
+    onSave: () => void;
+}
+
+export default function ModalLihat({ data, show, onClose, onSave }: ModalLihatProps) {
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [isLoadingExport, setIsLoadingExport] = useState<boolean>(false)
+    const [isLoadingExport, setIsLoadingExport] = useState<boolean>(false);
+    const [isLoadingPDF, setIsLoadingPDF] = useState<{ [key: string]: boolean }>({});
 
-    const { detailPermintaan, isLoadingPermintaan, error, mutateListPermintaan } = data?.status !== "DITERIMA" ? GetDetailPermintaan(data ? Number(data.id) : null) : { detailPermintaan: null, isLoadingPermintaan: false, error: null, mutateListPermintaan: null }
-    const { detailPermintaanNomor, isLoadingPermintaanNomor, errorNomor, mutateListPermintaanNomor } = data?.status == "DITERIMA" ? GetDetailPermintaanNomor(data ? Number(data.id) : null) : { detailPermintaanNomor: null, isLoadingPermintaanNomor: false, errorNomor: null, mutateListPermintaanNomor: null }
+    const isAccepted = data?.status === "DITERIMA";
+    const dataId = data ? Number(data.id) : null;
+
+    const { 
+        detailPermintaan, 
+        isLoadingPermintaan, 
+        error, 
+        mutateListPermintaan 
+    } = !isAccepted 
+        ? GetDetailPermintaan(dataId) 
+        : { detailPermintaan: null, isLoadingPermintaan: false, error: null, mutateListPermintaan: null };
+
+    const { 
+        detailPermintaanNomor, 
+        isLoadingPermintaanNomor, 
+        errorNomor, 
+        mutateListPermintaanNomor 
+    } = isAccepted 
+        ? GetDetailPermintaanNomor(dataId) 
+        : { detailPermintaanNomor: null, isLoadingPermintaanNomor: false, errorNomor: null, mutateListPermintaanNomor: null };
 
     async function handleExporttoXLS(id: number) {
         if (!id) {
@@ -61,6 +88,94 @@ export default function ModalLihat({ data, show, onClose, onSave }: { data: IPer
         }
     }
 
+    async function handleDownloadPDF(
+        produkIndex: number, 
+        itemIndex: number, 
+        nomorMBR: string, 
+        nomorAwal: string, 
+        nomorAkhir: string, 
+        orientation: 'portrait' | 'landscape' = 'portrait'
+    ) {
+        const loadingKey = `${produkIndex}-${itemIndex}`;
+        
+        if (!nomorAwal || !nomorAkhir) {
+            toast.error("Nomor awal atau akhir tidak tersedia!");
+            return;
+        }
+
+        try {
+            setIsLoadingPDF(prev => ({ ...prev, [loadingKey]: true }));
+            
+            await openPDFInNewTab({
+                nomorMBR,
+                nomorAwal,
+                nomorAkhir,
+                orientation
+            });
+            
+            toast.success("PDF berhasil dibuka di tab baru!");
+        } catch (error) {
+            toast.error("Gagal membuka PDF");
+            console.error("Open PDF error:", error);
+        } finally {
+            setIsLoadingPDF(prev => ({ ...prev, [loadingKey]: false }));
+        }
+    }
+
+    function openPDFInNewTab({
+        nomorMBR,
+        nomorAwal,
+        nomorAkhir,
+        orientation = 'portrait'
+    }: {
+        nomorMBR: string;
+        nomorAwal: string;
+        nomorAkhir: string;
+        orientation?: 'portrait' | 'landscape';
+    }) {
+        return new Promise<void>((resolve, reject) => {
+            try {
+                const doc = new jsPDF({ orientation, format: 'a4' });
+                
+                const startNum = parseInt(nomorAwal);
+                const endNum = parseInt(nomorAkhir);
+                
+                const xPosition = orientation === "portrait" ? 150 : 240; 
+                const yPosition = orientation === "portrait" ? 40 : 35; 
+                
+                for (let i = startNum; i <= endNum; i++) {
+                    if (i > startNum) {
+                        doc.addPage();
+                    }
+                    
+                    const currentNumber = i.toString().padStart(6, '0');
+                    
+                    doc.setFontSize(18);
+                    doc.setFont('helvetica', 'bold');
+                    doc.setTextColor('red')
+                    doc.text(currentNumber, xPosition, yPosition);
+                }
+
+                const pdfBlob = doc.output('blob');
+                const pdfUrl = URL.createObjectURL(pdfBlob);
+                
+                const newTab = window.open(pdfUrl, '_blank');
+                
+                if (!newTab) {
+                    throw new Error('Popup Blocked');
+                }
+                
+                setTimeout(() => {
+                    URL.revokeObjectURL(pdfUrl);
+                }, 1000);
+                
+                resolve();
+            } catch (error) {
+                reject(error);
+            }
+        });
+    }
+
     async function handleSudahDipakai() {
         setIsSubmitting(true);
         try {
@@ -82,6 +197,21 @@ export default function ModalLihat({ data, show, onClose, onSave }: { data: IPer
 
     return (
         <>
+            <style>{`
+                .table-responsive {
+                    overflow: visible !important;
+                }
+                .card-body {
+                    overflow: visible !important;
+                }
+                .dropdown-menu {
+                    z-index: 9999 !important;
+                    position: fixed !important;
+                }
+                .table td:last-child {
+                    overflow: visible !important;
+                }
+            `}</style>
             <Modal show={show} onHide={() => {
                 onClose()
             }} size="xl" style={{ zIndex: 1050 }} backdrop="static" keyboard={false}>
@@ -90,11 +220,11 @@ export default function ModalLihat({ data, show, onClose, onSave }: { data: IPer
                 </Modal.Header>
                 <Modal.Body>
                     {/* Header Information */}
-                    <div className="card mb-4">
-                        <div className="card-header">
+                    <Card className="mb-4">
+                        <Card.Header>
                             <h6 className="mb-0 fw-bold">Informasi Permintaan</h6>
-                        </div>
-                        <div className="card-body">
+                        </Card.Header>
+                        <Card.Body>
                             <div className="row g-3">
                                 <div className="col-12 col-md-6 col-lg-4">
                                     <div className="border rounded p-3 h-100">
@@ -150,17 +280,17 @@ export default function ModalLihat({ data, show, onClose, onSave }: { data: IPer
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
+                        </Card.Body>
+                    </Card>
                     {/* Table Detail MBR */}
-                    <div className="card mb-4">
-                        <div className="d-flex card-header justify-content-between">
+                    <Card className="mb-4">
+                        <Card.Header className="d-flex justify-content-between">
                             <h6 className="mb-0 fw-bold">Detail MBR</h6>
                             {data?.status == "DITERIMA" && <button className="btn btn-sm btn-success me-2" onClick={
                                 () => { handleExporttoXLS(Number(data.id)) }
                             } disabled={isLoadingExport}>Export to xls <FontAwesomeIcon icon={faFileExcel} /></button>}
-                        </div>
-                        <div className="card-body p-0">
+                        </Card.Header>
+                        <Card.Body className="p-0">
                             <div className="table-responsive">
                                 <table className="table table-sm table-striped table-bordered align-middle text-center mb-0">
                                     <thead className="table-dark">
@@ -174,6 +304,7 @@ export default function ModalLihat({ data, show, onClose, onSave }: { data: IPer
                                                 <>
                                                     <th scope="col">Nomor Awal</th>
                                                     <th scope="col">Nomor Akhir</th>
+                                                    <th scope="col">View PDF</th>
                                                 </>}
                                         </tr>
                                     </thead>
@@ -220,13 +351,73 @@ export default function ModalLihat({ data, show, onClose, onSave }: { data: IPer
                                                     <td className="fw-semibold">{produk.jumlah}</td>
                                                     <td className="fw-bold text-success">{produk.nomorAwal}</td>
                                                     <td className="fw-bold text-success">{produk.nomorAkhir}</td>
+                                                    <td>
+                                                        <Dropdown>
+                                                            <Dropdown.Toggle 
+                                                                variant="danger" 
+                                                                size="sm" 
+                                                                disabled={isLoadingPDF[`${produkIndex}-${index}`]}
+                                                            >
+                                                                {isLoadingPDF[`${produkIndex}-${index}`] ? (
+                                                                    <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                                                ) : (
+                                                                    <>
+                                                                        <FontAwesomeIcon icon={faFilePdf} className="me-1" />
+                                                                    </>
+                                                                )}
+                                                            </Dropdown.Toggle>
+
+                                                            <Dropdown.Menu 
+                                                                popperConfig={{
+                                                                    strategy: 'fixed',
+                                                                    modifiers: [
+                                                                        {
+                                                                            name: 'preventOverflow',
+                                                                            options: {
+                                                                                boundary: 'viewport',
+                                                                                altAxis: true,
+                                                                                padding: 8
+                                                                            }
+                                                                        }
+                                                                    ]
+                                                                }}
+                                                            >
+                                                                <Dropdown.Item
+                                                                    onClick={() => handleDownloadPDF(
+                                                                        produkIndex, 
+                                                                        index, 
+                                                                        produk.nomorMBR, 
+                                                                        produk.nomorAwal, 
+                                                                        produk.nomorAkhir,
+                                                                        'portrait'
+                                                                    )}
+                                                                    disabled={isLoadingPDF[`${produkIndex}-${index}`]}
+                                                                >
+                                                                    Portrait
+                                                                </Dropdown.Item>
+                                                                <Dropdown.Item
+                                                                    onClick={() => handleDownloadPDF(
+                                                                        produkIndex, 
+                                                                        index, 
+                                                                        produk.nomorMBR, 
+                                                                        produk.nomorAwal, 
+                                                                        produk.nomorAkhir,
+                                                                        'landscape'
+                                                                    )}
+                                                                    disabled={isLoadingPDF[`${produkIndex}-${index}`]}
+                                                                >
+                                                                    Landscape
+                                                                </Dropdown.Item>
+                                                            </Dropdown.Menu>
+                                                        </Dropdown>
+                                                    </td>
                                                 </tr>
                                             ))
                                         ))}
 
                                         {(isLoadingPermintaan || isLoadingPermintaanNomor) && error &&
                                             <tr>
-                                                <td colSpan={data?.status == "DITERIMA" ? 7 : 5} className="text-center py-4">
+                                                <td colSpan={data?.status == "DITERIMA" ? 8 : 5} className="text-center py-4">
                                                     <div className="spinner-border text-primary" role="status">
                                                         <span className="visually-hidden">Loading...</span>
                                                     </div>
@@ -236,7 +427,7 @@ export default function ModalLihat({ data, show, onClose, onSave }: { data: IPer
 
                                         {(!isLoadingPermintaan || !isLoadingPermintaanNomor) && error &&
                                             <tr>
-                                                <td colSpan={data?.status == "DITERIMA" ? 7 : 5} className="text-center text-danger py-4">
+                                                <td colSpan={data?.status == "DITERIMA" ? 8 : 5} className="text-center text-danger py-4">
                                                     {error.message}
                                                 </td>
                                             </tr>
@@ -244,68 +435,55 @@ export default function ModalLihat({ data, show, onClose, onSave }: { data: IPer
                                     </tbody>
                                 </table>
                             </div>
-                        </div>
-                    </div>
+                        </Card.Body>
+                    </Card>
 
                     {/* Status Information */}
-                    {data?.status == "PENDING" &&
-                        <div className="card mb-4">
-                            <div className="card-header">
-                                <h6 className="mb-0 fw-bold">Status Keputusan</h6>
-                            </div>
-                            <div className="card-body">
-                                <div className="row align-items-center">
-                                    <div className="col-12 col-md-auto">
-                                        <span className="fw-semibold">Keputusan:</span>
-                                    </div>
-                                    <div className="col-12 col-md-auto">
-                                        <span className="badge bg-warning text-dark fs-6 px-3 py-2">PENDING</span>
-                                    </div>
+                    <Card className="mb-4">
+                        <Card.Header>
+                            <h6 className="mb-0 fw-bold">Status Keputusan</h6>
+                        </Card.Header>
+                        <Card.Body>
+                            <div className="row g-3 align-items-center">
+                                <div className="col-12 col-lg-auto">
+                                    <span className="fw-semibold">Keputusan:</span>
                                 </div>
-                            </div>
-                        </div>
-                    }
-
-                    {(data?.status == "DITERIMA" || data?.status == "DITOLAK") &&
-                        <div className="card mb-4">
-                            <div className="card-header">
-                                <h6 className="mb-0 fw-bold">Status Keputusan</h6>
-                            </div>
-                            <div className="card-body">
-                                <div className="row g-3 align-items-center">
-                                    <div className="col-12 col-lg-auto">
-                                        <span className="fw-semibold">Keputusan:</span>
-                                    </div>
-                                    <div className="col-12 col-lg-auto">
-                                        <span className={`badge fs-6 px-3 py-2 ${data?.status === 'DITERIMA' ? 'bg-success' : 'bg-danger'
-                                            }`}>
-                                            {data?.status}
-                                        </span>
-                                    </div>
-
-                                    <div className="col-12 col-lg-auto">
-                                        <span className="fw-semibold">
-                                            {data?.status === 'DITOLAK' ? 'Ditolak Oleh:' : 'Dikonfirmasi Oleh:'}
-                                        </span>
-                                    </div>
-                                    <div className="col-12 col-lg-auto">
-                                        <span className="text-muted">{data?.namaConfirmed}</span>
-                                    </div>
+                                <div className="col-12 col-lg-auto">
+                                    <span className={`badge fs-6 px-3 py-2 ${
+                                        data?.status === 'DITERIMA' ? 'bg-success' : 
+                                        data?.status === 'DITOLAK' ? 'bg-danger' : 
+                                        'bg-warning text-dark'
+                                    }`}>
+                                        {data?.status}
+                                    </span>
                                 </div>
 
-                                {data?.status == "DITOLAK" &&
-                                    <div className="row mt-3">
-                                        <div className="col-12">
-                                            <div className="alert alert-danger">
-                                                <div className="fw-semibold mb-2">Alasan Penolakan:</div>
-                                                <div>{data?.reason}</div>
-                                            </div>
+                                {(data?.status === "DITERIMA" || data?.status === "DITOLAK") && (
+                                    <>
+                                        <div className="col-12 col-lg-auto">
+                                            <span className="fw-semibold">
+                                                {data?.status === 'DITOLAK' ? 'Ditolak Oleh:' : 'Dikonfirmasi Oleh:'}
+                                            </span>
+                                        </div>
+                                        <div className="col-12 col-lg-auto">
+                                            <span className="text-muted">{data?.namaConfirmed}</span>
+                                        </div>
+                                    </>
+                                )}
+                            </div>
+
+                            {data?.status === "DITOLAK" && (
+                                <div className="row mt-3">
+                                    <div className="col-12">
+                                        <div className="alert alert-danger">
+                                            <div className="fw-semibold mb-2">Alasan Penolakan:</div>
+                                            <div>{data?.reason}</div>
                                         </div>
                                     </div>
-                                }
-                            </div>
-                        </div>
-                    }
+                                </div>
+                            )}
+                        </Card.Body>
+                    </Card>
                 </Modal.Body>
                 <Modal.Footer className="d-flex justify-content-end">
                     <div>

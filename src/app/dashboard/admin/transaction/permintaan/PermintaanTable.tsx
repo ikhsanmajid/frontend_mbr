@@ -12,6 +12,7 @@ import PaginationComponent from "@/app/component/pagination/Pagination";
 import React from "react";
 import RowActions from "./RowActions";
 import { useSorting } from "@/app/lib/useSorting";
+import ModalDelete from "./ModalDelete";
 
 export interface IPermintaan {
     id: number;
@@ -43,15 +44,19 @@ export default function PermintaanTable() {
     const [showModalLihat, setShowModalLihat] = useState<boolean>(false)
     const [dataLihat, setDataLihat] = useState<IPermintaan | null>(null)
 
+    const [showModalDelete, setShowModalDelete] = useState<boolean>(false)
+    const [dataDelete, setDataDelete] = useState<IPermintaan | null>(null)
+
     const StatusKonfirmasi = useFilterState(state => state.StatusKonfirmasi)
     const StatusDipakai = useFilterState(state => state.StatusDipakai)
     const NIKNama = useFilterState(state => state.NIKNama)
     const idProduk = useFilterState(state => state.idProduk)
     const idBagian = useFilterState(state => state.idBagian)
     const filterYear = useFilterState(state => state.filterYear)
+    const idTransaksi = useFilterState(state => state.idTransaksi)
 
 
-    const { listPermintaan, isLoadingListPermintaan, error: errorPermintaan, mutateListPermintaan } = GetPermintaanRBAdmin(pageSize, pageIndex * pageSize, { status: StatusKonfirmasi, used: StatusDipakai, keyword: NIKNama, idProduk: idProduk, idBagian: idBagian, year: filterYear }, { field: field, order: order })
+    const { listPermintaan, isLoadingListPermintaan, error: errorPermintaan, mutateListPermintaan } = GetPermintaanRBAdmin(pageSize, pageIndex * pageSize, { status: StatusKonfirmasi, used: StatusDipakai, keyword: NIKNama, idProduk: idProduk, idBagian: idBagian, year: filterYear, id: idTransaksi}, { field: field, order: order })
 
     const columns = useMemo(() => [
         columnHelper.display({
@@ -87,7 +92,7 @@ export default function PermintaanTable() {
         }),
         columnHelper.accessor("status", {
             header: "Status Konfirmasi",
-            cell: info => (<span className={`badge fs-6 px-3 py-2 ${info.getValue() === "DITERIMA" ? 'bg-success': info.getValue() === "DITOLAK" ? 'bg-danger' : 'bg-warning'}`}>{info.getValue()}</span>),
+            cell: info => (<span className={`badge fs-6 px-3 py-2 ${info.getValue() === "DITERIMA" ? 'bg-success' : info.getValue() === "DITOLAK" ? 'bg-danger' : 'bg-warning'}`}>{info.getValue()}</span>),
             enableSorting: false,
         }),
         columnHelper.display({
@@ -95,9 +100,13 @@ export default function PermintaanTable() {
             id: "actions",
             cell: props => <RowActions
                 props={props}
-                handleShow={(data: IPermintaan) => {
+                handleShowLihat={(data: IPermintaan) => {
                     setShowModalLihat(true)
                     setDataLihat(data)
+                }}
+                handleShowDelete={(data: IPermintaan) => {
+                    setShowModalDelete(true)
+                    setDataDelete(data)
                 }}>
             </RowActions>,
             enableSorting: false,
@@ -188,7 +197,7 @@ export default function PermintaanTable() {
                                 <tbody className="table-group-divider">
                                     {isLoadingListPermintaan &&
                                         <tr>
-                                            <td colSpan={7} className="text-center py-4 text-muted fst-italic">
+                                            <td colSpan={8} className="text-center py-4 text-muted fst-italic">
                                                 <div className="spinner-border spinner-border-sm me-2" role="status">
                                                     <span className="visually-hidden">Loading...</span>
                                                 </div>
@@ -198,7 +207,7 @@ export default function PermintaanTable() {
 
                                     {(!isLoadingListPermintaan && listPermintaan != null && listPermintaan.count == 0) ?
                                         <tr>
-                                            <td colSpan={7} className="text-center py-4 text-muted fst-italic">
+                                            <td colSpan={8} className="text-center py-4 text-muted fst-italic">
                                                 <i className="fas fa-inbox me-2"></i>
                                                 Data Kosong
                                             </td>
@@ -261,6 +270,12 @@ export default function PermintaanTable() {
                 mutateListPermintaan()
                 toast.success("Berhasil Mengonfirmasi Permintaan")
             }}></ModalLihat>
+
+            <ModalDelete show={showModalDelete} deleteData={dataDelete} onClose={() => {
+                setShowModalDelete(false)
+            }} listMutate={mutateListPermintaan}>
+
+            </ModalDelete>
         </div >
     )
 }

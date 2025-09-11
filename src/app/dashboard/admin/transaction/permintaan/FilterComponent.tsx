@@ -11,6 +11,7 @@ import Select from "react-select";
 export default function FilterComponentPermintaan() {
     const [isMounted, setIsMounted] = useState<boolean>(false);
     const [keyword, setKeyword] = useState<string>("")
+    const [idTransaksiTemp, setIdTransaksiTemp] = useState<number | null>(null)
 
     const [date1, setDate1] = useState<Date | null>(null)
     const [idBagianChoosen, setIdBagianChoosen] = useState<number | null>(useFilterState((state) => state.idBagian));
@@ -19,7 +20,8 @@ export default function FilterComponentPermintaan() {
     const [idProdukChoosen, setIdProdukChoosen] = useState<number | null>(useFilterState((state) => state.idProduk));
     const [bagianList, setBagianList] = useState<{ value: number | null; label: string }[]>([]);
     const [productList, setProductList] = useState<{ value: number | null; label: string }[]>([]);
-
+    
+    const setIdTransaksi = useFilterState((state) => state.setIdTransaksi)
     const setFilterYear = useFilterState((state) => state.setFilterYear)
     const setIdProduk = useFilterState((state) => state.setIdProduk)
     const setNIKNama = useFilterState((state) => state.setNIKNama)
@@ -93,10 +95,11 @@ export default function FilterComponentPermintaan() {
             setBagianList([])
         }
 
-        //     eslint-disable-next-line react-hooks/exhaustive-deps
+        //eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isLoadingBagian])
 
     function handleSubmit() {
+        setIdTransaksi(idTransaksiTemp)
         setNIKNama(keyword)
         setStatusKonfirmasi(statusConfirmed)
         setStatusDipakai(statusUsed)
@@ -112,6 +115,19 @@ export default function FilterComponentPermintaan() {
                 <Accordion.Body>
                     <div className="row w-100">
                         <div className="col-12 col-lg-6">
+                            <div className="row mb-3 align-items-center">
+                                <div className="col-12 col-md-3 mb-2 mb-md-0">
+                                    <span>ID transaksi: </span>
+                                </div>
+                                <div className="col-12 col-md-9">
+                                    <div className="input-group">
+                                        <input onChange={(e) => {
+                                            setIdTransaksiTemp(Number(e.target.value))
+                                        }} type="text" autoComplete="off" className="form-control" id="inputSearchIdTrx" />
+                                    </div>
+                                </div>
+                            </div>
+
                             <div className="row mb-3 align-items-center">
                                 <div className="col-12 col-md-3 mb-2 mb-md-0">
                                     <span>NIK/Nama: </span>
