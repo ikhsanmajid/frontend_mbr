@@ -34,6 +34,8 @@ export default function ListPengembalianUser() {
         pageSize: 10,
     })
 
+    const [status, setStatus] = useState<boolean>(false)
+
     const { pageIndex, pageSize } = pagination
     const [pageList, setPageList] = useState<Array<number>>([])
 
@@ -142,6 +144,10 @@ export default function ListPengembalianUser() {
             setPengembalianData(listPengembalian.data)
         }
 
+                if (listPengembalian.status == "success"){
+            setStatus(true)
+        }
+
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isLoadingListPengembalian, listPengembalian, error])
 
@@ -197,7 +203,7 @@ export default function ListPengembalianUser() {
                                             onChange={(e) => {
                                                 setTempFilterNomor(e.currentTarget.value)
                                             }}
-                                            disabled={(count <= 0)}
+                                            disabled={!status}
                                         />
                                         <button
                                             className="btn btn-primary"
@@ -205,7 +211,7 @@ export default function ListPengembalianUser() {
                                             onClick={() => {
                                                 setFilterNomor(tempFilterNomor)
                                             }}
-                                            disabled={(count <= 0)}
+                                            disabled={!status}
                                         >
                                             <i className="fas fa-search"></i>
                                             <span className="d-none d-sm-inline ms-1">Cari</span>
