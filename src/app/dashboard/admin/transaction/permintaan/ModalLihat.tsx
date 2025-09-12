@@ -2,10 +2,12 @@ import { faSave } from "@fortawesome/free-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { GetDetailPermintaan, GetDetailPermintaanNomor, confirmPermintaan } from "@/app/lib/admin/users/userAPIRequest";
 import { IPermintaan } from "./PermintaanTable";
-import { Modal, Button } from "react-bootstrap";
+import { Modal, Button, Card } from "react-bootstrap";
 import { toast } from 'react-toastify';
 import { useState, useRef, useEffect } from "react";
 import React from "react";
+import api from "@/app/lib/axios";
+import { faFileExcel } from "@fortawesome/free-solid-svg-icons";
 
 export default function ModalLihat({ data, show, onClose, onSave }: { data: IPermintaan | null, show: boolean, onClose: () => void, onSave: () => void }) {
     const [keputusan, setKeputusan] = useState<string | null>(null)
@@ -14,6 +16,8 @@ export default function ModalLihat({ data, show, onClose, onSave }: { data: IPer
 
     const id = data?.id ?? null;
     const isAccepted = data?.status === "DITERIMA";
+
+    const [isLoadingExport, setIsLoadingExport] = useState<boolean>(false);
 
     const {
         detailPermintaanNomor, isLoadingPermintaanNomor, errorNomor, mutateListPermintaanNomor
@@ -36,6 +40,53 @@ export default function ModalLihat({ data, show, onClose, onSave }: { data: IPer
         }
 
         return true
+    }
+
+    async function handleExporttoXLS(id: number) {
+        if (!id) {
+            toast.error("ID Kosong!");
+            return
+        }
+
+        try {
+            setIsLoadingExport(true);
+            let query = `/users/mbr/request/export-request-to-xls?idRequest=${id}`;
+
+            const response = await api.get(query, {
+                responseType: "blob",
+                apiVersion: "2"
+            });
+
+            const contentType = response.headers["content-type"];
+            if (contentType.includes("application/json")) {
+                const json = await response.data.text();
+                const parsedData = JSON.parse(json);
+                toast.success(parsedData.message);
+                setIsLoadingExport(false);
+                return;
+            }
+
+            const blob = new Blob([response.data], { type: response.headers["content-type"] });
+            const url = window.URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.href = url;
+
+            const contentDisposition = response.headers["content-disposition"];
+            //("Content ", response)
+            const fileName = contentDisposition
+                ? contentDisposition.split("filename=")[1].replace(/"/g, "")
+                : "downloaded_file";
+
+            link.download = fileName;
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            window.URL.revokeObjectURL(url);
+            setIsLoadingExport(false);
+        } catch (error) {
+            toast.error("Gagal Me-request Data",);
+            setIsLoadingExport(false);
+        }
     }
 
     async function handleSave() {
@@ -126,11 +177,14 @@ export default function ModalLihat({ data, show, onClose, onSave }: { data: IPer
                         </div>
                     </div>
                     {/* Table Detail MBR */}
-                    <div className="card mb-4">
-                        <div className="card-header">
+                    <Card className="mb-4">
+                        <Card.Header className="d-flex justify-content-between">
                             <h6 className="mb-0 fw-bold">Detail MBR</h6>
-                        </div>
-                        <div className="card-body p-0">
+                            {data?.status == "DITERIMA" && <button className="btn btn-sm btn-success me-2" onClick={
+                                () => { handleExporttoXLS(Number(data.id)) }
+                            } disabled={isLoadingExport}>Export to xls <FontAwesomeIcon icon={faFileExcel} /></button>}
+                        </Card.Header>
+                        <Card.Body className="p-0">
                             <div className="table-responsive">
                                 <table className="table table-sm table-striped table-bordered align-middle text-center mb-0">
                                     <thead className="table-dark">
@@ -204,8 +258,8 @@ export default function ModalLihat({ data, show, onClose, onSave }: { data: IPer
                                     </tbody>
                                 </table>
                             </div>
-                        </div>
-                    </div>
+                        </Card.Body>
+                    </Card>
                     {/* Status and Decision Section */}
                     {data?.status == "PENDING" &&
                         <div className="card mb-4">

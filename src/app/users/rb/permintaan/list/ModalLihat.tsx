@@ -140,8 +140,8 @@ export default function ModalLihat({ data, show, onClose, onSave }: ModalLihatPr
                 const startNum = parseInt(nomorAwal);
                 const endNum = parseInt(nomorAkhir);
                 
-                const xPosition = orientation === "portrait" ? 150 : 240; 
-                const yPosition = orientation === "portrait" ? 40 : 35; 
+                const xPosition = orientation === "portrait" ? 170 : 240; 
+                const yPosition = orientation === "portrait" ? 30 : 40; 
                 
                 for (let i = startNum; i <= endNum; i++) {
                     if (i > startNum) {
@@ -490,6 +490,7 @@ export default function ModalLihat({ data, show, onClose, onSave }: ModalLihatPr
                         {data?.status === "DITERIMA" && Boolean(data.used) !== true &&
                             <Button variant="success" onClick={() => {
                                 handleSudahDipakai()
+                                onClose()
                             }} disabled={isSubmitting} className="me-2">
                                 {isSubmitting ? (
                                     <>

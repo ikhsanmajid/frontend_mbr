@@ -18,12 +18,14 @@ interface IListNomorRB {
     tanggalKembali: string | null;
     namaUserTerima: string | null;
     nomorBatch: string | null;
+    keterangan: string | null;
 }
 
 const columnHelper = createColumnHelper<IListNomorRB>()
 
 export default function TableLihatNomor({ idData }: { idData: string | number }) {
     const nomorBatchRef = useRef<HTMLInputElement>(null)
+    const keteranganRef = useRef<HTMLTextAreaElement>(null)
     const [idEdit, setIdEdit] = useState<string | number | null>(null)
     const [editData, setEditData] = useState<IListNomorRB | null>(null)
     const [isLoadingAdd, setIsLoadingAdd] = useState(false)
@@ -95,7 +97,8 @@ export default function TableLihatNomor({ idData }: { idData: string | number })
             const updateData = await api.put(`/users/rb/updateNomorRBReturn/${idEdit}`, {
                 status: editData?.status,
                 nomor_batch: nomorBatchRef.current?.value.toUpperCase() ?? "",
-                tanggal_kembali: editData?.status === "KEMBALI" || editData?.status === "BATAL" ? dateTime.data.time : ""
+                tanggal_kembali: editData?.status === "KEMBALI" || editData?.status === "BATAL" ? dateTime.data.time : "",
+                keterangan: keteranganRef.current?.value ?? ""
             })
 
             if (updateData.data.status === "success") {
@@ -104,6 +107,7 @@ export default function TableLihatNomor({ idData }: { idData: string | number })
                     if (data.id === idEdit) {
                         data.nomorBatch = nomorBatchRef.current?.value ?? ""
                         data.status = editData!.status
+                        data.keterangan = keteranganRef.current?.value ?? ""
                         if (editData!.status === "KEMBALI" || editData!.status === "BATAL") {
                             data.tanggalKembali = dateShow
                         } else {
@@ -227,6 +231,55 @@ export default function TableLihatNomor({ idData }: { idData: string | number })
             header: "Dikonfirmasi Oleh",
             cell: (info) => info.row.original.namaUserTerima,
             size: 100,
+            enableSorting: false,
+        }),
+        columnHelper.display({
+            header: "Keterangan",
+            cell: (info) => {
+                if (idEdit === info.row.original.id) {
+                    if (editData?.status === "ACTIVE") {
+                        return (
+                            <textarea 
+                                name="keterangan" 
+                                className="form-control" 
+                                rows={2}
+                                disabled 
+                            />
+                        )
+                    }
+
+                    return (
+                        <textarea
+                            name="keterangan"
+                            className="form-control"
+                            rows={2}
+                            ref={keteranganRef}
+                            defaultValue={info.row.original.keterangan ?? ""}
+                            placeholder="Masukkan keterangan..."
+                            onKeyDown={(e) => {
+                                if (e.key === "Enter" && e.ctrlKey) {
+                                    handleSave()
+                                } else if (e.key === "Escape") {
+                                    setIdEdit(null)
+                                }
+                            }}
+                            disabled={isLoadingAdd}
+                        />
+                    )
+                } else {
+                    return (
+                        <textarea
+                            name="keterangan"
+                            className="form-control"
+                            rows={2}
+                            value={info.row.original.keterangan ?? ""}
+                            disabled
+                            style={{ resize: 'none', backgroundColor: '#f8f9fa' }}
+                        />
+                    )
+                }
+            },
+            size: 150,
             enableSorting: false,
         }),
         columnHelper.display({
