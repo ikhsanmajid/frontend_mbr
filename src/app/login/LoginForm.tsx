@@ -1,5 +1,6 @@
 import { Form, Button, Spinner, FloatingLabel, Container, Row, Col } from "react-bootstrap"
 import { useState } from "react"
+import Link from "next/link"
 
 export default function LoginForm({ handleSubmit, isLoading }: { handleSubmit: any, isLoading: boolean }) {
     const [showPassword, setShowPassword] = useState<boolean>(false)
@@ -28,7 +29,8 @@ export default function LoginForm({ handleSubmit, isLoading }: { handleSubmit: a
                                 </Form.Check>
                             </Form.Group>
 
-                            <Form.Group className="d-flex justify-content-end">
+                            <Form.Group className="d-flex justify-content-between">
+                                <Link href="/SOP Penggunaan Program e-RB.pdf" className="mt-3">Download User Guide</Link>
                                 {!isLoading ? <Button variant="primary" type="submit">
                                     Login
                                 </Button> : <Button variant="primary" type="submit" disabled>
