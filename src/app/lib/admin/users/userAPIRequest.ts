@@ -7,7 +7,7 @@ export const fetcher = ([endpoint, options]: [string, object]) => api.get(endpoi
 
 //SECTION - User API Endpoint
 //ANCHOR - Get Semua Users
-export function FetchAllUser(limit?: number, offset?: number, params?: { search_user?: string, active?: string }) {
+export function FetchAllUser(limit?: number, offset?: number, params?: { search_user?: string, active?: string, idBagian?: string | null }) {
     const [listUser, setListUser] = useState<any>(null);
     const [isLoadingUser, setIsLoadingUser] = useState<boolean>(true);
     const [error, setError] = useState<any>(null);
@@ -28,8 +28,8 @@ export function FetchAllUser(limit?: number, offset?: number, params?: { search_
 
             if (params !== undefined) {
                 for (const [key, value] of Object.entries(params)) {
-                    if (value != "") {
-                        queryParams.append(key, value)
+                    if (value != "" && value != null) {
+                        queryParams.append(key, String(value))
                     }
                 }
             }
@@ -44,7 +44,7 @@ export function FetchAllUser(limit?: number, offset?: number, params?: { search_
             setIsLoadingUser(false)
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [limit, offset, params?.active, params?.search_user])
+    }, [limit, offset, params?.active, params?.search_user, params?.idBagian])
 
     useEffect(() => {
         fetchData()

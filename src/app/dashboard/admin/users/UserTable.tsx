@@ -31,8 +31,9 @@ export default function UserTable({ mutateUsers, onAdd }: { mutateUsers: (mutate
     //Filter
     const [searchUser, setSearchUser] = useState<string>("")
     const [statusUser, setStatusUser] = useState<string>("all")
+    const [idBagian, setIdBagian] = useState<string | null>(null)
 
-    const { listUser, isLoadingUser, error: errorUser, mutateUser } = FetchAllUser(pageSize, pageIndex * pageSize, { search_user: searchUser, active: statusUser })
+    const { listUser, isLoadingUser, error: errorUser, mutateUser } = FetchAllUser(pageSize, pageIndex * pageSize, { search_user: searchUser, active: statusUser, idBagian: idBagian })
 
     const handleEdit = (data: number | null) => {
         if (data == null) {
@@ -162,6 +163,9 @@ export default function UserTable({ mutateUsers, onAdd }: { mutateUsers: (mutate
                     }}
                     statusUser={(value: string) => {
                         setStatusUser(value)
+                    }}
+                    idBagianSearch={(value: string | null) => {
+                        setIdBagian(value)
                     }}>
                 </FilterComponentUser>
 
