@@ -197,6 +197,7 @@ export default function ListPengembalianUser() {
                                             onChange={(e) => {
                                                 setTempFilterNomor(e.currentTarget.value)
                                             }}
+                                            disabled={(count <= 0)}
                                         />
                                         <button
                                             className="btn btn-primary"
@@ -204,9 +205,11 @@ export default function ListPengembalianUser() {
                                             onClick={() => {
                                                 setFilterNomor(tempFilterNomor)
                                             }}
+                                            disabled={(count <= 0)}
                                         >
                                             <i className="fas fa-search"></i>
                                             <span className="d-none d-sm-inline ms-1">Cari</span>
+                                            
                                         </button>
                                     </div>
                                 </div>
