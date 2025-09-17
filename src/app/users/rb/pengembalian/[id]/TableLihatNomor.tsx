@@ -200,16 +200,6 @@ export default function TableLihatNomor({ idData }: { idData: string | number })
             header: "Keterangan",
             cell: (info) => {
                 if (idEdit === info.row.original.id) {
-                    if (editData?.status === "ACTIVE") {
-                        return (
-                            <textarea 
-                                name="keterangan" 
-                                className="form-control" 
-                                rows={2}
-                                disabled 
-                            />
-                        )
-                    }
 
                     return (
                         <textarea
