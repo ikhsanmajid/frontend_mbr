@@ -179,14 +179,15 @@ export default function TableLihatNomor({ idData }: { idData: string | number })
                         </select>
                     )
                 } else {
+                    const badgeType = info.row.original.status == "KEMBALI" ? "text-bg-success" : info.row.original.status == "ACTIVE" ? "text-bg-warning" : "text-bg-danger"
                     if (info.row.original.status === "KEMBALI") {
-                        return "Sudah Kembali"
+                        return (<h5><span className={`badge ${badgeType}`}>Sudah Kembali</span></h5>)
                     }
                     if (info.row.original.status === "BATAL") {
-                        return "Batal Digunakan"
+                        return (<h5><span className={`badge ${badgeType}`}>Batal Digunakan</span></h5>)
                     }
                     if (info.row.original.status === "ACTIVE") {
-                        return "Belum Kembali"
+                        return (<h5><span className={`badge ${badgeType}`}>Belum Kembali</span></h5>)
                     }
                 }
             },
