@@ -74,7 +74,7 @@ export default function TableLihatNomor({ idData }: { idData: string | number })
                 
                 pengembalianNomorData?.map((data) => {
                     if (data.id === idEdit) {
-                        data.nomorBatch = nomorBatchRef.current?.value ?? ""
+                        data.nomorBatch = nomorBatchRef.current?.value.toUpperCase() ?? ""
                         data.status = editData!.status
                         data.keterangan = keteranganRef.current?.value ?? ""
                         if (editData!.status === "KEMBALI" || editData!.status === "BATAL") {
