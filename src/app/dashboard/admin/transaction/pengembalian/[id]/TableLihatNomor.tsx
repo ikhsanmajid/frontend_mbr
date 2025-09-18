@@ -8,6 +8,9 @@ import { useEffect, useRef } from "react";
 import { useMemo, useState } from "react";
 import api from "@/app/lib/axios";
 import PaginationComponent from "@/app/component/pagination/Pagination";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faClockRotateLeft } from "@fortawesome/free-solid-svg-icons";
+import ModalAuditTrail from "../ModalAuditTrail";
 
 
 
@@ -29,6 +32,10 @@ export default function TableLihatNomor({ idData }: { idData: string | number })
     const [idEdit, setIdEdit] = useState<string | number | null>(null)
     const [editData, setEditData] = useState<IListNomorRB | null>(null)
     const [isLoadingAdd, setIsLoadingAdd] = useState(false)
+
+    const [showModalHistory, setShowModalHistory] = useState<boolean>(false)
+    const [modalAuditData, setModalAuditData] = useState<{ id: number | null, nomorUrut: string | null }>({ id: null, nomorUrut: null })
+
 
     const [count, setCount] = useState<number>(0)
     const [pagination, setPagination] = useState<PaginationState>({
@@ -66,16 +73,18 @@ export default function TableLihatNomor({ idData }: { idData: string | number })
                 mutateListNomorPengembalian()
                 setIdConfirm(null)
                 setShow(false)
-            } else {
-                toast.error("Data gagal dikonfirmasi")
             }
         } catch (err) {
             if (err instanceof AxiosError) {
-                if (error.response?.status === 401) {
+                if (err.response?.status === 401) {
                     window.location.href = '/mbr/login?code=session_expired';
                 }
+
+                toast.error(`Data gagal dikonfirmasi, ${err.response?.data.message}`)
+            } else {
+                toast.error("Data gagal dikonfirmasi, Backend Error")
             }
-            toast.error("Data gagal dikonfirmasi, Backend Error")
+
         } finally {
             setIsLoadingAdd(false)
         }
@@ -154,7 +163,7 @@ export default function TableLihatNomor({ idData }: { idData: string | number })
                             //console.log(e.target.value)
 
                             if (e.target.value === "ACTIVE") {
-                                setEditData((prev) => { return { ...prev, nomorBatch: "", status: e.target.value, tanggalKembali: null } as IListNomorRB })
+                                setEditData((prev) => { return { ...prev, nomorBatch: "", status: e.target.value, tanggalKembali: "" } as IListNomorRB })
                             } else if (e.target.value === "BATAL") {
                                 setEditData((prev) => { return { ...prev, nomorBatch: "", status: e.target.value } as IListNomorRB })
                             } else {
@@ -237,7 +246,7 @@ export default function TableLihatNomor({ idData }: { idData: string | number })
             header: "Keterangan",
             cell: (info) => {
                 if (idEdit === info.row.original.id) {
-                    
+
 
                     return (
                         <textarea
@@ -274,7 +283,7 @@ export default function TableLihatNomor({ idData }: { idData: string | number })
             enableSorting: false,
         }),
         columnHelper.display({
-            header: "Edit",
+            header: "Aksi",
             cell: (info) => {
                 if (idEdit === info.row.original.id) {
                     return (
@@ -288,22 +297,58 @@ export default function TableLihatNomor({ idData }: { idData: string | number })
                         </>
                     )
                 } else {
-                    if (info.row.original.namaUserTerima !== undefined) {
-                        return (
-                            <button className="btn btn-sm btn-warning" disabled>Edit</button>
-                        )
-                    } else {
-                        return (<>
-                            <button className="btn btn-sm btn-warning m-1" onClick={() => {
-                                setIdEdit(info.row.original.id)
-                                setEditData(info.row.original)
-                            }}>Edit</button>
-                            {info.row.original.status !== "ACTIVE" && <button className="btn btn-sm btn-primary" onClick={() => showModalConfirm(info.row.original.id)}>Confirm</button>}
-                        </>)
-                    }
+
+                    const isReceived = info.row.original?.namaUserTerima != null;
+
+                    return (
+                        <>
+                            <button
+                                className="btn btn-sm btn-warning"
+                                onClick={() => {
+                                    if (!isReceived) {
+                                        setIdEdit(info.row.original.id);
+                                        setEditData(info.row.original);
+                                    }
+                                }}
+                                disabled={isReceived}
+                                aria-disabled={isReceived}
+                            >
+                                Edit
+                            </button>
+
+                            {info.row.original.status !== "ACTIVE" && !isReceived && <button className="ms-1 btn btn-sm btn-primary" onClick={() => showModalConfirm(info.row.original.id)}>Confirm</button>}
+
+
+                        </>
+                    );
                 }
             },
             size: 100,
+            enableSorting: false,
+        }),
+        columnHelper.display({
+            header: "Riwayat",
+            cell: (info) => {
+
+
+
+
+                return (
+                    <>
+                        <button
+                            className="btn btn-sm btn-primary text-white"
+                            onClick={() => {
+                                setShowModalHistory(true);
+                                setModalAuditData((prev) => ({ ...prev, id: info.row.original.id, nomorUrut: info.row.original.nomorUrut }))
+                            }}
+                        >
+                            <FontAwesomeIcon icon={faClockRotateLeft} /> History
+                        </button>
+                    </>
+                );
+
+            },
+            size: 20,
             enableSorting: false,
         })
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -449,7 +494,7 @@ export default function TableLihatNomor({ idData }: { idData: string | number })
                             <tbody className="table-group-divider">
                                 {isLoadingListNomorPengembalian &&
                                     <tr>
-                                        <td colSpan={7} className="text-center py-4 text-muted fst-italic">
+                                        <td colSpan={8} className="text-center py-4 text-muted fst-italic">
                                             <div className="spinner-border spinner-border-sm me-2" role="status">
                                                 <span className="visually-hidden">Loading...</span>
                                             </div>
@@ -459,7 +504,7 @@ export default function TableLihatNomor({ idData }: { idData: string | number })
 
                                 {!isLoadingListNomorPengembalian && pengembalianNomorData?.length == 0 &&
                                     <tr>
-                                        <td colSpan={7} className="text-center py-4 text-muted fst-italic">
+                                        <td colSpan={8} className="text-center py-4 text-muted fst-italic">
                                             <i className="fas fa-inbox me-2"></i>
                                             Data Kosong
                                         </td>
@@ -541,6 +586,15 @@ export default function TableLihatNomor({ idData }: { idData: string | number })
                     <Button variant="primary" onClick={handleConfirm} disabled={isLoadingAdd}>Confirm</Button>
                 </Modal.Footer>
             </Modal>
+
+            <ModalAuditTrail
+                key={`${modalAuditData.id}-${showModalHistory}`}
+                show={showModalHistory}
+                onClose={() => {
+                    setShowModalHistory(false)
+                }}
+                data={modalAuditData}
+            />
         </>
     );
 }

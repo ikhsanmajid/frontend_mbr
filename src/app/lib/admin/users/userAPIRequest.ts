@@ -893,7 +893,7 @@ export function GetAllReturnRBByProduct(id: any, limit?: number, offset?: number
 }
 
 //ANCHOR - Pengembalian RB
-export function GetAllReturnRBByProductAndIdPermintaan(idProduk: any, idPermintaan: any, limit?: number, offset?: number, params?: { status?: string | null }) {
+export function GetAllReturnRBByProductAndIdPermintaan(idProduk: any, idPermintaan: any, group_id: any, limit?: number, offset?: number, params?: { status?: string | null }) {
     const [listPengembalian, setListPengembalian] = useState<any>(null);
     const [isLoadingListPengembalian, setIsLoadingListPengembalian] = useState<boolean>(true);
     const [error, setError] = useState<any>(null);
@@ -911,7 +911,7 @@ export function GetAllReturnRBByProductAndIdPermintaan(idProduk: any, idPerminta
                 throw new Error("ID Permintaan Tidak Ada")
             }
 
-            const endpoint = `/users/rb/getRBReturnByProduct/${idProduk}/${idPermintaan}`
+            const endpoint = `/users/rb/getRBReturnByProduct/${idProduk}/${idPermintaan}/${group_id}`
 
             const queryParams = new URLSearchParams({})
 
@@ -950,6 +950,56 @@ export function GetAllReturnRBByProductAndIdPermintaan(idProduk: any, idPerminta
 
     return {
         listPengembalian, isLoadingListPengembalian, error, mutateListPengembalian
+    }
+}
+
+
+//ANCHOR - Get Audit Trails
+export function GetAuditTrailsNomorMBR(id: number | null) {
+    const [listAuditTrails, setListAuditTrails] = useState<any>(null);
+    const [isLoadingListAuditTrails, setIsLoadingListAuditTrails] = useState<boolean>(true);
+    const [error, setError] = useState<any>(null);
+
+    const fetchData = useCallback(async () => {
+        try {
+            setIsLoadingListAuditTrails(true)
+            setError(null)
+
+            if (id === null) {
+                throw new Error("ID Tidak Ada")
+            }
+
+            const endpoint = `/users/mbr/audit/nomor-mbr-audit-trails`
+
+            const queryParams = new URLSearchParams({})
+
+            if (id) queryParams.append("id", String(id))
+
+            const response = await api.get(endpoint, {
+                params: queryParams,
+                apiVersion: "2"
+            })
+
+            setListAuditTrails(response.data);
+
+        } catch (e) {
+            setError(e)
+        } finally {
+            setIsLoadingListAuditTrails(false)
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [id])
+
+    useEffect(() => {
+        fetchData()
+    }, [fetchData])
+
+    const mutateListAuditTrails = useCallback(() => {
+        fetchData()
+    }, [fetchData])
+
+    return {
+        listAuditTrails, isLoadingListAuditTrails, error, mutateListAuditTrails
     }
 }
 
@@ -1079,7 +1129,7 @@ export function GetAllReturnRBAdminByProduct(id: any, limit?: number, offset?: n
 }
 
 //ANCHOR - Pengembalian RB - Admin
-export function GetAllReturnRBAdminByProductAndIdPermintaan(idProduk: any, idPermintaan: any, limit?: number, offset?: number, params?: { status?: string }) {
+export function GetAllReturnRBAdminByProductAndIdPermintaan(idProduk: any, idPermintaan: any, group_id: any, limit?: number, offset?: number, params?: { status?: string }) {
     const [listPengembalian, setListPengembalian] = useState<any>(null);
     const [isLoadingListPengembalian, setIsLoadingListPengembalian] = useState<boolean>(true);
     const [error, setError] = useState<any>(null);
@@ -1097,7 +1147,7 @@ export function GetAllReturnRBAdminByProductAndIdPermintaan(idProduk: any, idPer
                 throw new Error("ID Permintaan Tidak Ada")
             }
 
-            const endpoint = `/admin/mbr/return/get-returned-admin-by-product/${idProduk}/${idPermintaan}`
+            const endpoint = `/admin/mbr/return/get-returned-admin-by-product/${idProduk}/${idPermintaan}/${group_id}`
 
             const queryParams = new URLSearchParams({})
 

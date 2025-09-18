@@ -17,6 +17,7 @@ import ModalLihat from "./ModalLihat";
 export interface IReturnRB {
     id: number;
     idProduk: number;
+    group_id: number;
     namaProduk: string;
     tanggalBulan: string;
     tahun: string;
@@ -51,7 +52,7 @@ export default function ListPengembalianUser() {
     const startDate = useFilterState(state => state.startDate)
     const endDate = useFilterState(state => state.endDate)
 
-    const { listPengembalian, isLoadingListPengembalian, error, mutateListPengembalian } = GetAllReturnRBByProduct(idProduk, pageSize, pageIndex * pageSize, { number: filterNomor, status: statusKembali, startDate: startDate, endDate: endDate })
+    const { listPengembalian, isLoadingListPengembalian, error, mutateListPengembalian } = GetAllReturnRBByProduct(idProduk,  pageSize, pageIndex * pageSize, { number: filterNomor, status: statusKembali, startDate: startDate, endDate: endDate })
 
     //console.log("Pengembalian Data: ", listPengembalian)
 
@@ -65,7 +66,7 @@ export default function ListPengembalianUser() {
         }),
         columnHelper.accessor("namaProduk", {
             header: "Nama Produk",
-            cell: ({ cell, row }) => <Link href={`pengembalian/${idProduk}?idPermintaan=${row.original.id}`}>{cell.getValue()}</Link>,
+            cell: ({ cell, row }) => <Link href={`pengembalian/${idProduk}?idPermintaan=${row.original.id}&groupId=${row.original.group_id}`}>{cell.getValue()}</Link>,
             size: 180,
             meta: {
                 className: "text-start" as any
@@ -207,7 +208,7 @@ export default function ListPengembalianUser() {
                                         />
                                         <button
                                             className="btn btn-primary"
-                                            type="button"
+                                            style={{zIndex: 0}}
                                             onClick={() => {
                                                 setFilterNomor(tempFilterNomor)
                                             }}
@@ -242,7 +243,7 @@ export default function ListPengembalianUser() {
                                     <tbody className="table-group-divider">
                                         {isLoadingListPengembalian &&
                                             <tr>
-                                                <td colSpan={7} className="text-center py-4 text-muted fst-italic">
+                                                <td colSpan={8} className="text-center py-4 text-muted fst-italic">
                                                     <div className="spinner-border spinner-border-sm me-2" role="status">
                                                         <span className="visually-hidden">Loading...</span>
                                                     </div>
