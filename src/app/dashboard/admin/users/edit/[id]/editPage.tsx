@@ -341,7 +341,7 @@ export function EditUser({ id }: { id: number }) {
         } else {
             try {
                 const addProcess = await addBagianJabatan({ idBagianJabatan: newIdBagianJabatan, idUser: userId })
-                console.log("status text: ", addProcess)
+                //console.log("status text: ", addProcess)
                 if (addProcess.status == 200) {
                     toast.success("Tambah Bagian Jabatan Berhasil")
                     setAddMode(false)

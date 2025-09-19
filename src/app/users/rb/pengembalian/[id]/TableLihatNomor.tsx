@@ -7,6 +7,9 @@ import { useEffect, useRef } from "react";
 import { useMemo, useState } from "react";
 import api from "@/app/lib/axios";
 import PaginationComponent from "@/app/component/pagination/Pagination";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faClockRotateLeft } from "@fortawesome/free-solid-svg-icons";
+import ModalAuditTrail from "../ModalAuditTrail";
 
 interface IListNomorRB {
     id: number;
@@ -26,6 +29,9 @@ export default function TableLihatNomor({ idData }: { idData: string | number })
     const [idEdit, setIdEdit] = useState<string | number | null>(null)
     const [editData, setEditData] = useState<IListNomorRB | null>(null)
     const [isLoadingAdd, setIsLoadingAdd] = useState(false)
+
+    const [showModalHistory, setShowModalHistory] = useState<boolean>(false)
+    const [modalAuditData, setModalAuditData] = useState<{ id: number | null, nomorUrut: string | null }>({ id: null, nomorUrut: null })
 
     const [count, setCount] = useState<number>(0)
     const [pagination, setPagination] = useState<PaginationState>({
@@ -58,16 +64,17 @@ export default function TableLihatNomor({ idData }: { idData: string | number })
         try {
             const updateData = await api.put(`/users/rb/updateNomorRBReturn/${idEdit}`, {
                 status: editData?.status,
-                nomor_batch: nomorBatchRef.current?.value ?? "",
+                nomor_batch: nomorBatchRef.current?.value.toUpperCase() ?? "",
                 tanggal_kembali: editData?.status === "KEMBALI" || editData?.status === "BATAL" ? dateTime.data.time : "",
                 keterangan: keteranganRef.current?.value ?? ""
             })
 
             if (updateData.data.status === "success") {
                 toast.success("Data berhasil diupdate")
+                
                 pengembalianNomorData?.map((data) => {
                     if (data.id === idEdit) {
-                        data.nomorBatch = nomorBatchRef.current?.value ?? ""
+                        data.nomorBatch = nomorBatchRef.current?.value.toUpperCase() ?? ""
                         data.status = editData!.status
                         data.keterangan = keteranganRef.current?.value ?? ""
                         if (editData!.status === "KEMBALI" || editData!.status === "BATAL") {
@@ -77,9 +84,10 @@ export default function TableLihatNomor({ idData }: { idData: string | number })
                         }
                     }
                 })
+                
                 setIdEdit(null)
             }
-            
+
         } catch (err) {
 
             if (err instanceof AxiosError) {
@@ -120,7 +128,7 @@ export default function TableLihatNomor({ idData }: { idData: string | number })
                     return (
                         <select className="form-select" onChange={(e) => {
                             if (e.target.value === "ACTIVE") {
-                                setEditData((prev) => { return { ...prev, nomorBatch: "", status: e.target.value, tanggalKembali: null } as IListNomorRB })
+                                setEditData((prev) => { return { ...prev, nomorBatch: "", status: e.target.value, tanggalKembali: "" } as IListNomorRB })
                             } else if (e.target.value === "BATAL") {
                                 setEditData((prev) => { return { ...prev, nomorBatch: "", status: e.target.value } as IListNomorRB })
                             } else {
@@ -133,14 +141,15 @@ export default function TableLihatNomor({ idData }: { idData: string | number })
                         </select>
                     )
                 } else {
+                    const badgeType = info.row.original.status == "KEMBALI" ? "text-bg-success" : info.row.original.status == "ACTIVE" ? "text-bg-warning" : "text-bg-danger"
                     if (info.row.original.status === "KEMBALI") {
-                        return "Sudah Kembali"
+                        return (<h5><span className={`badge ${badgeType}`}>Sudah Kembali</span></h5>)
                     }
                     if (info.row.original.status === "BATAL") {
-                        return "Batal Digunakan"
+                        return (<h5><span className={`badge ${badgeType}`}>Batal Digunakan</span></h5>)
                     }
                     if (info.row.original.status === "ACTIVE") {
-                        return "Belum Kembali"
+                        return (<h5><span className={`badge ${badgeType}`}>Belum Kembali</span></h5>)
                     }
                 }
             },
@@ -200,7 +209,6 @@ export default function TableLihatNomor({ idData }: { idData: string | number })
             header: "Keterangan",
             cell: (info) => {
                 if (idEdit === info.row.original.id) {
-
                     return (
                         <textarea
                             name="keterangan"
@@ -236,7 +244,7 @@ export default function TableLihatNomor({ idData }: { idData: string | number })
             enableSorting: false,
         }),
         columnHelper.display({
-            header: "Edit",
+            header: "Aksi",
             cell: (info) => {
                 if (idEdit === info.row.original.id) {
                     return (
@@ -250,21 +258,40 @@ export default function TableLihatNomor({ idData }: { idData: string | number })
                         </>
                     )
                 } else {
-                    if (info.row.original.namaUserTerima !== undefined) {
-                        return (
-                            <button className="btn btn-sm btn-warning" disabled>Edit</button>
-                        )
-                    } else {
-                        return (<button className="btn btn-sm btn-warning" onClick={() => {
-                            setIdEdit(info.row.original.id)
-                            setEditData(info.row.original)
-                        }}>Edit</button>)
-                    }
+                    const isReceived = info.row.original?.namaUserTerima != null; 
+
+                    return (
+                        <>
+                            <button
+                                className="btn btn-sm btn-warning"
+                                onClick={() => {
+                                    if (!isReceived) {
+                                        setIdEdit(info.row.original.id);
+                                        setEditData(info.row.original);
+                                    }
+                                }}
+                                disabled={isReceived}
+                                aria-disabled={isReceived}
+                            >
+                                Edit
+                            </button>
+
+                            <button
+                                className="ms-1 btn btn-sm btn-primary text-white"
+                                onClick={() => {
+                                    setShowModalHistory(true);
+                                    setModalAuditData((prev) => ({...prev, id: info.row.original.id, nomorUrut: info.row.original.nomorUrut}))
+                                }}
+                            >
+                                <FontAwesomeIcon icon={faClockRotateLeft} /> History
+                            </button>
+                        </>
+                    );
                 }
             },
             size: 100,
             enableSorting: false,
-        })
+        }),
         // eslint-disable-next-line react-hooks/exhaustive-deps
     ], [editData, idEdit])
 
@@ -474,6 +501,15 @@ export default function TableLihatNomor({ idData }: { idData: string | number })
                     </div>
                 </div>
             </div>
+
+            <ModalAuditTrail
+                key={`${modalAuditData.id}-${showModalHistory}`}
+                show={showModalHistory}
+                onClose={() => {
+                    setShowModalHistory(false)
+                }}
+                data={modalAuditData}
+            />
         </>
     );
 }

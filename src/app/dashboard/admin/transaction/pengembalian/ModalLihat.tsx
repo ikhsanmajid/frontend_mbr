@@ -8,9 +8,11 @@ import { GetAllReturnRBAdminByProductAndIdPermintaan } from "@/app/lib/admin/use
 export default function ModalLihat({ show, onClose, data }: { show: boolean, onClose: () => void, data: any | null }) {
     const idProduk = useFilterState(state => state.idProduk)
 
-    const { listPengembalian, isLoadingListPengembalian, error, mutateListPengembalian } = GetAllReturnRBAdminByProductAndIdPermintaan(idProduk, data.id)
+    //console.log("modal data: ", data)
 
-    console.log("data: ", idProduk)
+    const { listPengembalian, isLoadingListPengembalian, error, mutateListPengembalian } = GetAllReturnRBAdminByProductAndIdPermintaan(idProduk ?? data.idProduk, data.id, data.group_id)
+
+    //console.log("data: ", idProduk)
 
     const [key, setKey] = useState<string>("0");
         return (

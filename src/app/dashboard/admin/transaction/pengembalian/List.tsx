@@ -17,6 +17,7 @@ import PaginationComponent from "@/app/component/pagination/Pagination";
 interface IReturnRB {
     id: number;
     idProduk: number;
+    group_id: number;
     namaProduk: string;
     tanggalBulan: string;
     tahun: string;
@@ -70,7 +71,7 @@ export default function ListPengembalianUser() {
         }),
         columnHelper.accessor("namaProduk", {
             header: "Nama Produk",
-            cell: ({ cell, row }) => <Link href={`pengembalian/${row.original.idProduk == undefined ? idProduk : row.original.idProduk}?idPermintaan=${row.original.id}`}>{cell.getValue()}</Link>,
+            cell: ({ cell, row }) => <Link href={`pengembalian/${row.original.idProduk == undefined ? idProduk : row.original.idProduk}?idPermintaan=${row.original.id}&groupId=${row.original.group_id}`}>{cell.getValue()}</Link>,
             size: 180,
             meta: {
                 className: "text-start" as any
@@ -223,8 +224,7 @@ export default function ListPengembalianUser() {
                                             disabled={!status}
                                         />
                                         <button
-                                            className="btn btn-primary"
-                                            type="button"
+                                            className="btn btn-primary" style={{zIndex: 0}}
                                             onClick={() => {
                                                 setFilterNomor(tempFilterNomor)
                                             }}
@@ -258,7 +258,7 @@ export default function ListPengembalianUser() {
                                     <tbody className="table-group-divider">
                                         {isLoadingListPengembalian &&
                                             <tr>
-                                                <td colSpan={8} className="text-center py-4 text-muted fst-italic">
+                                                <td colSpan={(statusKembali == "outstanding") ? 9 : 8} className="text-center py-4 text-muted fst-italic">
                                                     <div className="spinner-border spinner-border-sm me-2" role="status">
                                                         <span className="visually-hidden">Loading...</span>
                                                     </div>
@@ -268,7 +268,7 @@ export default function ListPengembalianUser() {
 
                                         {!isLoadingListPengembalian && pengembalianData?.length == 0 &&
                                             <tr>
-                                                <td colSpan={8} className="text-center py-4 text-muted fst-italic">
+                                                <td colSpan={(statusKembali == "outstanding") ? 9 : 8} className="text-center py-4 text-muted fst-italic">
                                                     <i className="fas fa-inbox me-2"></i>
                                                     Data Kosong
                                                 </td>

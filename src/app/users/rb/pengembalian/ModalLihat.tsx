@@ -7,7 +7,7 @@ import { GetAllReturnRBByProductAndIdPermintaan } from "@/app/lib/admin/users/us
 export default function ModalLihat({ show, onClose, data }: { show: boolean, onClose: () => void, data: any | null }) {
     const idProduk = useFilterState(state => state.idProduk)
 
-    const { listPengembalian, isLoadingListPengembalian, error, mutateListPengembalian } = GetAllReturnRBByProductAndIdPermintaan(idProduk, data.id)
+    const { listPengembalian, isLoadingListPengembalian, error, mutateListPengembalian } = GetAllReturnRBByProductAndIdPermintaan(idProduk, data.id, data.group_id)
     
     const [key, setKey] = useState<string>("0");
     return (

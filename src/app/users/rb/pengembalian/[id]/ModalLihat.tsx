@@ -1,9 +1,9 @@
 import { Modal, Button } from "react-bootstrap"
-import { useState } from "react"
 import TableLihatNomor from "./TableLihatNomor"
 
 
 export default function ModalLihat({ show, onClose, data }: { show: boolean, onClose: () => void, data: any | null }) {
+
     return (
         <>
             <Modal show={show} onHide={onClose} size="xl" style={{ zIndex: 1050 }} backdrop="static" animation={true} keyboard={false}>
@@ -76,7 +76,7 @@ export default function ModalLihat({ show, onClose, data }: { show: boolean, onC
                             <h6 className="mb-0 fw-bold">Detail Nomor RB</h6>
                         </div>
                         <div className="card-body p-0">
-                            <TableLihatNomor idData={data?.id} />
+                            <TableLihatNomor idData={data?.id}/>
                         </div>
                     </div>
                 </Modal.Body>
