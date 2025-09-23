@@ -13,6 +13,7 @@ import React from "react";
 import RowActions from "./RowActions";
 import { useSorting } from "@/app/lib/useSorting";
 import ModalDelete from "./ModalDelete";
+import { Table } from "react-bootstrap";
 
 export interface IPermintaan {
     id: number;
@@ -56,7 +57,7 @@ export default function PermintaanTable() {
     const idTransaksi = useFilterState(state => state.idTransaksi)
 
 
-    const { listPermintaan, isLoadingListPermintaan, error: errorPermintaan, mutateListPermintaan } = GetPermintaanRBAdmin(pageSize, pageIndex * pageSize, { status: StatusKonfirmasi, used: StatusDipakai, keyword: NIKNama, idProduk: idProduk, idBagian: idBagian, year: filterYear, id: idTransaksi}, { field: field, order: order })
+    const { listPermintaan, isLoadingListPermintaan, error: errorPermintaan, mutateListPermintaan } = GetPermintaanRBAdmin(pageSize, pageIndex * pageSize, { status: StatusKonfirmasi, used: StatusDipakai, keyword: NIKNama, idProduk: idProduk, idBagian: idBagian, year: filterYear, id: idTransaksi }, { field: field, order: order })
 
     const columns = useMemo(() => [
         columnHelper.display({
@@ -179,51 +180,49 @@ export default function PermintaanTable() {
 
                 <div className="row">
                     <div className="col-12">
-                        <div className="table-responsive">
-                            <table className="table table-sm table-striped table-hover table-bordered align-middle text-center">
-                                <thead className="table-dark">
-                                    {table.getHeaderGroups().map(headerGroup => (
-                                        <tr key={headerGroup.id}>
-                                            {headerGroup.headers.map(header => (
-                                                <th key={header.id} scope="col" className="text-white fw-semibold" style={{ minWidth: `${header.getSize()}px` }} {...(header.column.getCanSort() ? { onClick: header.column.getToggleSortingHandler() } : {})}>
-                                                    {flexRender(header.column.columnDef.header, header.getContext())}
+                        <Table responsive striped hover bordered className="align-middle text-center">
+                            <thead className="table-dark">
+                                {table.getHeaderGroups().map(headerGroup => (
+                                    <tr key={headerGroup.id}>
+                                        {headerGroup.headers.map(header => (
+                                            <th key={header.id} scope="col" className="text-white fw-semibold" style={{ minWidth: `${header.getSize()}px` }} {...(header.column.getCanSort() ? { onClick: header.column.getToggleSortingHandler() } : {})}>
+                                                {flexRender(header.column.columnDef.header, header.getContext())}
 
-                                                    {header.column.getIsSorted() === "asc" ? (<span> <FontAwesomeIcon className="ms-1" icon={faSortUp} /></span>) : header.column.getIsSorted() === "desc" ? (<span> <FontAwesomeIcon className="ms-1" icon={faSortDown} /></span>) : header.column.getCanSort() ? (<span> <FontAwesomeIcon className="ms-1" icon={faSort} /></span>) : ""}
-                                                </th>
+                                                {header.column.getIsSorted() === "asc" ? (<span> <FontAwesomeIcon className="ms-1" icon={faSortUp} /></span>) : header.column.getIsSorted() === "desc" ? (<span> <FontAwesomeIcon className="ms-1" icon={faSortDown} /></span>) : header.column.getCanSort() ? (<span> <FontAwesomeIcon className="ms-1" icon={faSort} /></span>) : ""}
+                                            </th>
+                                        ))}
+                                    </tr>
+                                ))}
+                            </thead>
+                            <tbody className="table-group-divider">
+                                {isLoadingListPermintaan &&
+                                    <tr>
+                                        <td colSpan={8} className="text-center py-4 text-muted fst-italic">
+                                            <div className="spinner-border spinner-border-sm me-2" role="status">
+                                                <span className="visually-hidden">Loading...</span>
+                                            </div>
+                                            Loading ...
+                                        </td>
+                                    </tr>}
+
+                                {(!isLoadingListPermintaan && listPermintaan != null && listPermintaan.count == 0) ?
+                                    <tr>
+                                        <td colSpan={8} className="text-center py-4 text-muted fst-italic">
+                                            <i className="fas fa-inbox me-2"></i>
+                                            Data Kosong
+                                        </td>
+                                    </tr> :
+                                    !isLoadingListPermintaan && table.getRowModel().rows.map(row => (
+                                        <tr key={row.id} className="table-row-hover">
+                                            {row.getVisibleCells().map((cell) => (
+                                                <td key={cell.id} className="text-nowrap" style={{ minWidth: `${cell.column.getSize()}px` }}>
+                                                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                                                </td>
                                             ))}
                                         </tr>
                                     ))}
-                                </thead>
-                                <tbody className="table-group-divider">
-                                    {isLoadingListPermintaan &&
-                                        <tr>
-                                            <td colSpan={8} className="text-center py-4 text-muted fst-italic">
-                                                <div className="spinner-border spinner-border-sm me-2" role="status">
-                                                    <span className="visually-hidden">Loading...</span>
-                                                </div>
-                                                Loading ...
-                                            </td>
-                                        </tr>}
-
-                                    {(!isLoadingListPermintaan && listPermintaan != null && listPermintaan.count == 0) ?
-                                        <tr>
-                                            <td colSpan={8} className="text-center py-4 text-muted fst-italic">
-                                                <i className="fas fa-inbox me-2"></i>
-                                                Data Kosong
-                                            </td>
-                                        </tr> :
-                                        !isLoadingListPermintaan && table.getRowModel().rows.map(row => (
-                                            <tr key={row.id} className="table-row-hover">
-                                                {row.getVisibleCells().map((cell) => (
-                                                    <td key={cell.id} className="text-nowrap" style={{ minWidth: `${cell.column.getSize()}px` }}>
-                                                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                                                    </td>
-                                                ))}
-                                            </tr>
-                                        ))}
-                                </tbody>
-                            </table>
-                        </div>
+                            </tbody>
+                        </Table>
                     </div>
                 </div>
             </div>

@@ -2,7 +2,7 @@ import { faSave } from "@fortawesome/free-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { GetDetailPermintaan, GetDetailPermintaanNomor, confirmPermintaan } from "@/app/lib/admin/users/userAPIRequest";
 import { IPermintaan } from "./PermintaanTable";
-import { Modal, Button, Card } from "react-bootstrap";
+import { Modal, Button, Card, Table } from "react-bootstrap";
 import { toast } from 'react-toastify';
 import { useState, useRef, useEffect } from "react";
 import React from "react";
@@ -163,11 +163,10 @@ export default function ModalLihat({ data, show, onClose, onSave }: { data: IPer
                                     <div className="border rounded p-3 h-100">
                                         <div className="d-flex flex-column">
                                             <small className="text-muted">Status</small>
-                                            <span className={`fw-semibold ${
-                                                data?.status === 'DITERIMA' ? 'text-success' : 
-                                                data?.status === 'DITOLAK' ? 'text-danger' : 
-                                                'text-warning'
-                                            }`}>
+                                            <span className={`fw-semibold ${data?.status === 'DITERIMA' ? 'text-success' :
+                                                    data?.status === 'DITOLAK' ? 'text-danger' :
+                                                        'text-warning'
+                                                }`}>
                                                 {data?.status}
                                             </span>
                                         </div>
@@ -185,79 +184,77 @@ export default function ModalLihat({ data, show, onClose, onSave }: { data: IPer
                             } disabled={isLoadingExport}>Export to xls <FontAwesomeIcon icon={faFileExcel} /></button>}
                         </Card.Header>
                         <Card.Body className="p-0">
-                            <div className="table-responsive">
-                                <table className="table table-sm table-striped table-bordered align-middle text-center mb-0">
-                                    <thead className="table-dark">
-                                        <tr>
-                                            <th scope="col">No.</th>
-                                            <th scope="col">Nama Produk</th>
-                                            <th scope="col">No. MBR</th>
-                                            <th scope="col">Tipe MBR</th>
-                                            <th scope="col">Jumlah</th>
-                                            {data?.status == "DITERIMA" &&
-                                                <>
-                                                    <th scope="col">Nomor Awal</th>
-                                                    <th scope="col">Nomor Akhir</th>
-                                                </>}
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {data?.status !== "DITERIMA" && !isLoadingPermintaan && detailPermintaan && detailPermintaan.data.map((item: any, produkIndex: number) => (
-                                            item.items.map((produk: any, index: number) => (
-                                                <tr key={`${produkIndex}${index}`}>
+                            <Table responsive="sm" striped bordered hover className="align-middle text-center mb-0" variant="light">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">No.</th>
+                                        <th scope="col">Nama Produk</th>
+                                        <th scope="col">No. MBR</th>
+                                        <th scope="col">Tipe MBR</th>
+                                        <th scope="col">Jumlah</th>
+                                        {data?.status == "DITERIMA" &&
+                                            <>
+                                                <th scope="col">Nomor Awal</th>
+                                                <th scope="col">Nomor Akhir</th>
+                                            </>}
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {data?.status !== "DITERIMA" && !isLoadingPermintaan && detailPermintaan && detailPermintaan.data.map((item: any, produkIndex: number) => (
+                                        item.items.map((produk: any, index: number) => (
+                                            <tr key={`${produkIndex}${index}`}>
 
-                                                    {index == 0 ?
-                                                        <>
-                                                            <td rowSpan={item.items.length} className="fw-semibold">{produkIndex + 1}</td>
-                                                            <td rowSpan={item.items.length} className="fw-semibold text-start">{item.namaProduk}</td>
-                                                        </> : null}
-
-
-                                                    <td>{produk.nomorMBR}</td>
-                                                    <td>
-                                                        <span className={`badge ${produk.tipeMBR === 'PO' ? 'bg-primary' : 'bg-info'}`}>
-                                                            {produk.tipeMBR}
-                                                        </span>
-                                                    </td>
-                                                    <td className="fw-semibold">{produk.jumlah}</td>
-                                                </tr>
-                                            ))
-                                        ))}
-
-                                        {data?.status === "DITERIMA" && !isLoadingPermintaanNomor && detailPermintaanNomor && detailPermintaanNomor.data.map((item: any, produkIndex: number) => (
-                                            item.items.map((produk: any, index: number) => (
-                                                <tr key={`${produkIndex}${index}`}>
-
-                                                    {index == 0 ?
-                                                        <>
-                                                            <td rowSpan={item.items.length} className="fw-semibold">{produkIndex + 1}</td>
-                                                            <td rowSpan={item.items.length} className="fw-semibold text-start">{item.namaProduk}</td>
-                                                        </> : null}
+                                                {index == 0 ?
+                                                    <>
+                                                        <td rowSpan={item.items.length} className="fw-semibold">{produkIndex + 1}</td>
+                                                        <td rowSpan={item.items.length} className="fw-semibold text-start">{item.namaProduk}</td>
+                                                    </> : null}
 
 
-                                                    <td>{produk.nomorMBR}</td>
-                                                    <td>
-                                                        <span className={`badge ${produk.tipeMBR === 'PO' ? 'bg-primary' : 'bg-info'}`}>
-                                                            {produk.tipeMBR}
-                                                        </span>
-                                                    </td>
-                                                    <td className="fw-semibold">{produk.jumlah}</td>
-                                                    <td className="fw-bold text-success">{produk.nomorAwal}</td>
-                                                    <td className="fw-bold text-success">{produk.nomorAkhir}</td>
-                                                </tr>
-                                            ))
-                                        ))}
-
-                                        {(!isLoadingPermintaan || !isLoadingPermintaanNomor) && errorNomor && error &&
-                                            <tr>
-                                                <td colSpan={data?.status == "DITERIMA" ? 7 : 5} className="text-center text-danger py-4">
-                                                    {errorNomor?.message || error?.message}
+                                                <td>{produk.nomorMBR}</td>
+                                                <td>
+                                                    <span className={`badge ${produk.tipeMBR === 'PO' ? 'bg-primary' : 'bg-info'}`}>
+                                                        {produk.tipeMBR}
+                                                    </span>
                                                 </td>
+                                                <td className="fw-semibold">{produk.jumlah}</td>
                                             </tr>
-                                        }
-                                    </tbody>
-                                </table>
-                            </div>
+                                        ))
+                                    ))}
+
+                                    {data?.status === "DITERIMA" && !isLoadingPermintaanNomor && detailPermintaanNomor && detailPermintaanNomor.data.map((item: any, produkIndex: number) => (
+                                        item.items.map((produk: any, index: number) => (
+                                            <tr key={`${produkIndex}${index}`}>
+
+                                                {index == 0 ?
+                                                    <>
+                                                        <td rowSpan={item.items.length} className="fw-semibold">{produkIndex + 1}</td>
+                                                        <td rowSpan={item.items.length} className="fw-semibold text-start">{item.namaProduk}</td>
+                                                    </> : null}
+
+
+                                                <td>{produk.nomorMBR}</td>
+                                                <td>
+                                                    <span className={`badge ${produk.tipeMBR === 'PO' ? 'bg-primary' : 'bg-info'}`}>
+                                                        {produk.tipeMBR}
+                                                    </span>
+                                                </td>
+                                                <td className="fw-semibold">{produk.jumlah}</td>
+                                                <td className="fw-bold text-success">{produk.nomorAwal}</td>
+                                                <td className="fw-bold text-success">{produk.nomorAkhir}</td>
+                                            </tr>
+                                        ))
+                                    ))}
+
+                                    {(!isLoadingPermintaan || !isLoadingPermintaanNomor) && errorNomor && error &&
+                                        <tr>
+                                            <td colSpan={data?.status == "DITERIMA" ? 7 : 5} className="text-center text-danger py-4">
+                                                {errorNomor?.message || error?.message}
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </Table>
                         </Card.Body>
                     </Card>
                     {/* Status and Decision Section */}
@@ -312,9 +309,8 @@ export default function ModalLihat({ data, show, onClose, onSave }: { data: IPer
                                         <span className="fw-semibold">Keputusan:</span>
                                     </div>
                                     <div className="col-12 col-lg-auto">
-                                        <span className={`badge fs-6 px-3 py-2 ${
-                                            data?.status === 'DITERIMA' ? 'bg-success' : 'bg-danger'
-                                        }`}>
+                                        <span className={`badge fs-6 px-3 py-2 ${data?.status === 'DITERIMA' ? 'bg-success' : 'bg-danger'
+                                            }`}>
                                             {data?.status}
                                         </span>
                                     </div>
@@ -326,6 +322,14 @@ export default function ModalLihat({ data, show, onClose, onSave }: { data: IPer
                                     </div>
                                     <div className="col-12 col-lg-auto">
                                         <span className="text-muted">{data?.confirmedBy || ''}</span>
+                                    </div>
+                                    <div className="col-12 col-lg-auto">
+                                        <span className="fw-semibold">
+                                            {data?.status !== 'PENDING' ? 'Waktu Konfirmasi:' : ''}
+                                        </span>
+                                    </div>
+                                    <div className="col-12 col-lg-auto">
+                                        <span className="text-muted">{data?.confirmedAt || ''}</span>
                                     </div>
                                 </div>
 

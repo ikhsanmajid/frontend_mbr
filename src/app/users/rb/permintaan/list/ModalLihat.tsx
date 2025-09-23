@@ -2,7 +2,7 @@ import { faFileExcel, faFilePdf } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { GetDetailPermintaan, GetDetailPermintaanNomor, usedPermintaanNomor } from "@/app/lib/admin/users/userAPIRequest";
 import { IPermintaan } from "./List";
-import { Modal, Button, Dropdown, Card } from "react-bootstrap";
+import { Modal, Button, Dropdown, Card, Table } from "react-bootstrap";
 import { toast } from 'react-toastify';
 import { useState } from "react";
 import api from '@/app/lib/axios';
@@ -23,23 +23,23 @@ export default function ModalLihat({ data, show, onClose, onSave }: ModalLihatPr
     const isAccepted = data?.status === "DITERIMA";
     const dataId = data ? Number(data.id) : null;
 
-    const { 
-        detailPermintaan, 
-        isLoadingPermintaan, 
-        error, 
-        mutateListPermintaan 
-    } = !isAccepted 
-        ? GetDetailPermintaan(dataId) 
-        : { detailPermintaan: null, isLoadingPermintaan: false, error: null, mutateListPermintaan: null };
+    const {
+        detailPermintaan,
+        isLoadingPermintaan,
+        error,
+        mutateListPermintaan
+    } = !isAccepted
+            ? GetDetailPermintaan(dataId)
+            : { detailPermintaan: null, isLoadingPermintaan: false, error: null, mutateListPermintaan: null };
 
-    const { 
-        detailPermintaanNomor, 
-        isLoadingPermintaanNomor, 
-        errorNomor, 
-        mutateListPermintaanNomor 
-    } = isAccepted 
-        ? GetDetailPermintaanNomor(dataId) 
-        : { detailPermintaanNomor: null, isLoadingPermintaanNomor: false, errorNomor: null, mutateListPermintaanNomor: null };
+    const {
+        detailPermintaanNomor,
+        isLoadingPermintaanNomor,
+        errorNomor,
+        mutateListPermintaanNomor
+    } = isAccepted
+            ? GetDetailPermintaanNomor(dataId)
+            : { detailPermintaanNomor: null, isLoadingPermintaanNomor: false, errorNomor: null, mutateListPermintaanNomor: null };
 
     async function handleExporttoXLS(id: number) {
         if (!id) {
@@ -89,15 +89,15 @@ export default function ModalLihat({ data, show, onClose, onSave }: ModalLihatPr
     }
 
     async function handleDownloadPDF(
-        produkIndex: number, 
-        itemIndex: number, 
-        nomorMBR: string, 
-        nomorAwal: string, 
-        nomorAkhir: string, 
+        produkIndex: number,
+        itemIndex: number,
+        nomorMBR: string,
+        nomorAwal: string,
+        nomorAkhir: string,
         orientation: 'portrait' | 'landscape' = 'portrait'
     ) {
         const loadingKey = `${produkIndex}-${itemIndex}`;
-        
+
         if (!nomorAwal || !nomorAkhir) {
             toast.error("Nomor awal atau akhir tidak tersedia!");
             return;
@@ -105,14 +105,14 @@ export default function ModalLihat({ data, show, onClose, onSave }: ModalLihatPr
 
         try {
             setIsLoadingPDF(prev => ({ ...prev, [loadingKey]: true }));
-            
+
             await openPDFInNewTab({
                 nomorMBR,
                 nomorAwal,
                 nomorAkhir,
                 orientation
             });
-            
+
             toast.success("PDF berhasil dibuka di tab baru!");
         } catch (error) {
             toast.error("Gagal membuka PDF");
@@ -136,20 +136,20 @@ export default function ModalLihat({ data, show, onClose, onSave }: ModalLihatPr
         return new Promise<void>((resolve, reject) => {
             try {
                 const doc = new jsPDF({ orientation, format: 'a4' });
-                
+
                 const startNum = parseInt(nomorAwal);
                 const endNum = parseInt(nomorAkhir);
-                
-                const xPosition = orientation === "portrait" ? 170 : 240; 
-                const yPosition = orientation === "portrait" ? 30 : 40; 
-                
+
+                const xPosition = orientation === "portrait" ? 170 : 240;
+                const yPosition = orientation === "portrait" ? 30 : 40;
+
                 for (let i = startNum; i <= endNum; i++) {
                     if (i > startNum) {
                         doc.addPage();
                     }
-                    
+
                     const currentNumber = i.toString().padStart(6, '0');
-                    
+
                     doc.setFontSize(18);
                     doc.setFont('helvetica', 'bold');
                     doc.setTextColor('red')
@@ -158,17 +158,17 @@ export default function ModalLihat({ data, show, onClose, onSave }: ModalLihatPr
 
                 const pdfBlob = doc.output('blob');
                 const pdfUrl = URL.createObjectURL(pdfBlob);
-                
+
                 const newTab = window.open(pdfUrl, '_blank');
-                
+
                 if (!newTab) {
                     throw new Error('Popup Blocked');
                 }
-                
+
                 setTimeout(() => {
                     URL.revokeObjectURL(pdfUrl);
                 }, 1000);
-                
+
                 resolve();
             } catch (error) {
                 reject(error);
@@ -291,150 +291,148 @@ export default function ModalLihat({ data, show, onClose, onSave }: ModalLihatPr
                             } disabled={isLoadingExport}>Export to xls <FontAwesomeIcon icon={faFileExcel} /></button>}
                         </Card.Header>
                         <Card.Body className="p-0">
-                            <div className="table-responsive">
-                                <table className="table table-sm table-striped table-bordered align-middle text-center mb-0">
-                                    <thead className="table-dark">
-                                        <tr>
-                                            <th scope="col">No.</th>
-                                            <th scope="col">Nama Produk</th>
-                                            <th scope="col">No. MBR</th>
-                                            <th scope="col">Tipe MBR</th>
-                                            <th scope="col">Jumlah</th>
-                                            {data?.status == "DITERIMA" &&
-                                                <>
-                                                    <th scope="col">Nomor Awal</th>
-                                                    <th scope="col">Nomor Akhir</th>
-                                                    <th scope="col">View PDF</th>
-                                                </>}
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {data?.status !== "DITERIMA" && !isLoadingPermintaan && detailPermintaan && detailPermintaan.data.map((item: any, produkIndex: number) => (
-                                            item.items.map((produk: any, index: number) => (
-                                                <tr key={index}>
+                            <Table responsive="sm" striped bordered hover className="align-middle text-center mb-0" variant="light">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">No.</th>
+                                        <th scope="col">Nama Produk</th>
+                                        <th scope="col">No. MBR</th>
+                                        <th scope="col">Tipe MBR</th>
+                                        <th scope="col">Jumlah</th>
+                                        {data?.status == "DITERIMA" &&
+                                            <>
+                                                <th scope="col">Nomor Awal</th>
+                                                <th scope="col">Nomor Akhir</th>
+                                                <th scope="col">View PDF</th>
+                                            </>}
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {data?.status !== "DITERIMA" && !isLoadingPermintaan && detailPermintaan && detailPermintaan.data.map((item: any, produkIndex: number) => (
+                                        item.items.map((produk: any, index: number) => (
+                                            <tr key={index}>
 
-                                                    {index == 0 ?
-                                                        <>
-                                                            <td rowSpan={item.items.length} className="fw-semibold">{produkIndex + 1}</td>
-                                                            <td rowSpan={item.items.length} className="fw-semibold text-start">{item.namaProduk}</td>
-                                                        </> : null}
-
-
-                                                    <td>{produk.nomorMBR}</td>
-                                                    <td>
-                                                        <span className={`badge ${produk.tipeMBR === 'PO' ? 'bg-primary' : 'bg-info'}`}>
-                                                            {produk.tipeMBR}
-                                                        </span>
-                                                    </td>
-                                                    <td className="fw-semibold">{produk.jumlah}</td>
-                                                </tr>
-                                            ))
-                                        ))}
-
-                                        {data?.status === "DITERIMA" && !isLoadingPermintaanNomor && detailPermintaanNomor && detailPermintaanNomor.data.map((item: any, produkIndex: number) => (
-                                            item.items.map((produk: any, index: number) => (
-                                                <tr key={index}>
-
-                                                    {index == 0 ?
-                                                        <>
-                                                            <td rowSpan={item.items.length} className="fw-semibold">{produkIndex + 1}</td>
-                                                            <td rowSpan={item.items.length} className="fw-semibold text-start">{item.namaProduk}</td>
-                                                        </> : null}
+                                                {index == 0 ?
+                                                    <>
+                                                        <td rowSpan={item.items.length} className="fw-semibold">{produkIndex + 1}</td>
+                                                        <td rowSpan={item.items.length} className="fw-semibold text-start">{item.namaProduk}</td>
+                                                    </> : null}
 
 
-                                                    <td>{produk.nomorMBR}</td>
-                                                    <td>
-                                                        <span className={`badge ${produk.tipeMBR === 'PO' ? 'bg-primary' : 'bg-info'}`}>
-                                                            {produk.tipeMBR}
-                                                        </span>
-                                                    </td>
-                                                    <td className="fw-semibold">{produk.jumlah}</td>
-                                                    <td className="fw-bold text-success">{produk.nomorAwal}</td>
-                                                    <td className="fw-bold text-success">{produk.nomorAkhir}</td>
-                                                    <td>
-                                                        <Dropdown>
-                                                            <Dropdown.Toggle 
-                                                                variant="danger" 
-                                                                size="sm" 
+                                                <td>{produk.nomorMBR}</td>
+                                                <td>
+                                                    <span className={`badge ${produk.tipeMBR === 'PO' ? 'bg-primary' : 'bg-info'}`}>
+                                                        {produk.tipeMBR}
+                                                    </span>
+                                                </td>
+                                                <td className="fw-semibold">{produk.jumlah}</td>
+                                            </tr>
+                                        ))
+                                    ))}
+
+                                    {data?.status === "DITERIMA" && !isLoadingPermintaanNomor && detailPermintaanNomor && detailPermintaanNomor.data.map((item: any, produkIndex: number) => (
+                                        item.items.map((produk: any, index: number) => (
+                                            <tr key={index}>
+
+                                                {index == 0 ?
+                                                    <>
+                                                        <td rowSpan={item.items.length} className="fw-semibold">{produkIndex + 1}</td>
+                                                        <td rowSpan={item.items.length} className="fw-semibold text-start">{item.namaProduk}</td>
+                                                    </> : null}
+
+
+                                                <td>{produk.nomorMBR}</td>
+                                                <td>
+                                                    <span className={`badge ${produk.tipeMBR === 'PO' ? 'bg-primary' : 'bg-info'}`}>
+                                                        {produk.tipeMBR}
+                                                    </span>
+                                                </td>
+                                                <td className="fw-semibold">{produk.jumlah}</td>
+                                                <td className="fw-bold text-success">{produk.nomorAwal}</td>
+                                                <td className="fw-bold text-success">{produk.nomorAkhir}</td>
+                                                <td>
+                                                    <Dropdown>
+                                                        <Dropdown.Toggle
+                                                            variant="danger"
+                                                            size="sm"
+                                                            disabled={isLoadingPDF[`${produkIndex}-${index}`]}
+                                                        >
+                                                            {isLoadingPDF[`${produkIndex}-${index}`] ? (
+                                                                <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                                            ) : (
+                                                                <>
+                                                                    <FontAwesomeIcon icon={faFilePdf} className="me-1" />
+                                                                </>
+                                                            )}
+                                                        </Dropdown.Toggle>
+
+                                                        <Dropdown.Menu
+                                                            popperConfig={{
+                                                                strategy: 'fixed',
+                                                                modifiers: [
+                                                                    {
+                                                                        name: 'preventOverflow',
+                                                                        options: {
+                                                                            boundary: 'viewport',
+                                                                            altAxis: true,
+                                                                            padding: 8
+                                                                        }
+                                                                    }
+                                                                ]
+                                                            }}
+                                                        >
+                                                            <Dropdown.Item
+                                                                onClick={() => handleDownloadPDF(
+                                                                    produkIndex,
+                                                                    index,
+                                                                    produk.nomorMBR,
+                                                                    produk.nomorAwal,
+                                                                    produk.nomorAkhir,
+                                                                    'portrait'
+                                                                )}
                                                                 disabled={isLoadingPDF[`${produkIndex}-${index}`]}
                                                             >
-                                                                {isLoadingPDF[`${produkIndex}-${index}`] ? (
-                                                                    <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                                                                ) : (
-                                                                    <>
-                                                                        <FontAwesomeIcon icon={faFilePdf} className="me-1" />
-                                                                    </>
+                                                                Portrait
+                                                            </Dropdown.Item>
+                                                            <Dropdown.Item
+                                                                onClick={() => handleDownloadPDF(
+                                                                    produkIndex,
+                                                                    index,
+                                                                    produk.nomorMBR,
+                                                                    produk.nomorAwal,
+                                                                    produk.nomorAkhir,
+                                                                    'landscape'
                                                                 )}
-                                                            </Dropdown.Toggle>
-
-                                                            <Dropdown.Menu 
-                                                                popperConfig={{
-                                                                    strategy: 'fixed',
-                                                                    modifiers: [
-                                                                        {
-                                                                            name: 'preventOverflow',
-                                                                            options: {
-                                                                                boundary: 'viewport',
-                                                                                altAxis: true,
-                                                                                padding: 8
-                                                                            }
-                                                                        }
-                                                                    ]
-                                                                }}
+                                                                disabled={isLoadingPDF[`${produkIndex}-${index}`]}
                                                             >
-                                                                <Dropdown.Item
-                                                                    onClick={() => handleDownloadPDF(
-                                                                        produkIndex, 
-                                                                        index, 
-                                                                        produk.nomorMBR, 
-                                                                        produk.nomorAwal, 
-                                                                        produk.nomorAkhir,
-                                                                        'portrait'
-                                                                    )}
-                                                                    disabled={isLoadingPDF[`${produkIndex}-${index}`]}
-                                                                >
-                                                                    Portrait
-                                                                </Dropdown.Item>
-                                                                <Dropdown.Item
-                                                                    onClick={() => handleDownloadPDF(
-                                                                        produkIndex, 
-                                                                        index, 
-                                                                        produk.nomorMBR, 
-                                                                        produk.nomorAwal, 
-                                                                        produk.nomorAkhir,
-                                                                        'landscape'
-                                                                    )}
-                                                                    disabled={isLoadingPDF[`${produkIndex}-${index}`]}
-                                                                >
-                                                                    Landscape
-                                                                </Dropdown.Item>
-                                                            </Dropdown.Menu>
-                                                        </Dropdown>
-                                                    </td>
-                                                </tr>
-                                            ))
-                                        ))}
-
-                                        {(isLoadingPermintaan || isLoadingPermintaanNomor) && error &&
-                                            <tr>
-                                                <td colSpan={data?.status == "DITERIMA" ? 8 : 5} className="text-center py-4">
-                                                    <div className="spinner-border text-primary" role="status">
-                                                        <span className="visually-hidden">Loading...</span>
-                                                    </div>
+                                                                Landscape
+                                                            </Dropdown.Item>
+                                                        </Dropdown.Menu>
+                                                    </Dropdown>
                                                 </td>
                                             </tr>
-                                        }
+                                        ))
+                                    ))}
 
-                                        {(!isLoadingPermintaan || !isLoadingPermintaanNomor) && error &&
-                                            <tr>
-                                                <td colSpan={data?.status == "DITERIMA" ? 8 : 5} className="text-center text-danger py-4">
-                                                    {error.message}
-                                                </td>
-                                            </tr>
-                                        }
-                                    </tbody>
-                                </table>
-                            </div>
+                                    {(isLoadingPermintaan || isLoadingPermintaanNomor) && error &&
+                                        <tr>
+                                            <td colSpan={data?.status == "DITERIMA" ? 8 : 5} className="text-center py-4">
+                                                <div className="spinner-border text-primary" role="status">
+                                                    <span className="visually-hidden">Loading...</span>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+
+                                    {(!isLoadingPermintaan || !isLoadingPermintaanNomor) && error &&
+                                        <tr>
+                                            <td colSpan={data?.status == "DITERIMA" ? 8 : 5} className="text-center text-danger py-4">
+                                                {error.message}
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </Table>
                         </Card.Body>
                     </Card>
 
@@ -449,11 +447,10 @@ export default function ModalLihat({ data, show, onClose, onSave }: ModalLihatPr
                                     <span className="fw-semibold">Keputusan:</span>
                                 </div>
                                 <div className="col-12 col-lg-auto">
-                                    <span className={`badge fs-6 px-3 py-2 ${
-                                        data?.status === 'DITERIMA' ? 'bg-success' : 
-                                        data?.status === 'DITOLAK' ? 'bg-danger' : 
-                                        'bg-warning text-dark'
-                                    }`}>
+                                    <span className={`badge fs-6 px-3 py-2 ${data?.status === 'DITERIMA' ? 'bg-success' :
+                                            data?.status === 'DITOLAK' ? 'bg-danger' :
+                                                'bg-warning text-dark'
+                                        }`}>
                                         {data?.status}
                                     </span>
                                 </div>
@@ -467,6 +464,14 @@ export default function ModalLihat({ data, show, onClose, onSave }: ModalLihatPr
                                         </div>
                                         <div className="col-12 col-lg-auto">
                                             <span className="text-muted">{data?.namaConfirmed}</span>
+                                        </div>
+                                        <div className="col-12 col-lg-auto">
+                                            <span className="fw-semibold">
+                                                Waktu Konfirmasi:
+                                            </span>
+                                        </div>
+                                        <div className="col-12 col-lg-auto">
+                                            <span className="text-muted">{data?.timeConfirmed}</span>
                                         </div>
                                     </>
                                 )}
