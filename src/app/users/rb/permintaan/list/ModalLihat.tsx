@@ -337,7 +337,7 @@ export default function ModalLihat({ data, show, onClose, onSave }: ModalLihatPr
                                                 {index == 0 ?
                                                     <>
                                                         <td rowSpan={item.items.length} className="fw-semibold">{produkIndex + 1}</td>
-                                                        <td rowSpan={item.items.length} className="fw-semibold text-start">{item.namaProduk}</td>
+                                                        <td rowSpan={item.items.length} className="fw-semibold text-start text-wrap">{item.namaProduk}</td>
                                                     </> : null}
 
 
