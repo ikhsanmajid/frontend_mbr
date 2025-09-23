@@ -341,7 +341,7 @@ export default function ModalLihat({ data, show, onClose, onSave }: ModalLihatPr
                                                     </> : null}
 
 
-                                                <td>{produk.nomorMBR}</td>
+                                                <td className="text-nowrap">{produk.nomorMBR}</td>
                                                 <td>
                                                     <span className={`badge ${produk.tipeMBR === 'PO' ? 'bg-primary' : 'bg-info'}`}>
                                                         {produk.tipeMBR}
