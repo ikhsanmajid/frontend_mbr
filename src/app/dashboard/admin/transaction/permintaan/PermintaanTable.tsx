@@ -77,15 +77,22 @@ export default function PermintaanTable() {
             size: 40,
             cell: info => info.getValue(),
             enableSorting: false,
+            
         }),
         columnHelper.accessor("createdBy", {
             header: "Nama Pembuat",
             cell: info => info.getValue(),
             enableSorting: false,
+            meta: {
+                className: "text-start text-wrap"
+            }
         }),
         columnHelper.accessor("createdByBagian", {
             header: "Nama Bagian Pembuat",
             cell: info => info.getValue(),
+            meta: {
+                className: "text-start text-wrap"
+            }
         }),
         columnHelper.accessor("createdAt", {
             header: "Waktu Dibuat",
@@ -215,7 +222,7 @@ export default function PermintaanTable() {
                                     !isLoadingListPermintaan && table.getRowModel().rows.map(row => (
                                         <tr key={row.id} className="table-row-hover">
                                             {row.getVisibleCells().map((cell) => (
-                                                <td key={cell.id} className="text-nowrap" style={{ minWidth: `${cell.column.getSize()}px` }}>
+                                                <td key={cell.id} className={`${cell.column.columnDef.meta?.className}`} style={{ minWidth: `${cell.column.getSize()}px` }}>
                                                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                                 </td>
                                             ))}
