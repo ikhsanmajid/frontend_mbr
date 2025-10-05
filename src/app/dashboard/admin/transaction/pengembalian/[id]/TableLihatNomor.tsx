@@ -96,7 +96,7 @@ export default function TableLihatNomor({ idData }: { idData: string | number })
         const dateUpload = new Date(dateTime.data.time)
         const dateShow = dateUpload.toLocaleString("id-ID", { timeZone: "Asia/Jakarta" })
 
-        if (editData?.status === "KEMBALI" && (nomorBatchRef.current?.value === "" || nomorBatchRef.current?.value === null)) {
+        if (editData?.status === "KEMBALI" && (nomorBatchRef.current?.value.trim() === "" || nomorBatchRef.current?.value === null)) {
             toast.error("Nomor Batch harus diisi")
             setIsLoadingAdd(false)
             return
