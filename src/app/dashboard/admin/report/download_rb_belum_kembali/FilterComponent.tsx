@@ -25,6 +25,8 @@ export default function FilterComponentLaporanRB() {
     const setDate1 = useFilterState((state) => state.setDate1);
     const date2 = useFilterState((state) => state.date2);
     const setDate2 = useFilterState((state) => state.setDate2);
+    const includeUnConfirmed = useFilterState((state) => state.includeUnConfirmed)
+    const setIncludeUnConfirmed = useFilterState((state) => state.setIncludeUnConfirmed)
 
     const { detailBagian, isLoadingBagian } = useGetAllBagian(true);
 
@@ -167,6 +169,32 @@ export default function FilterComponentLaporanRB() {
                                 </div>
                             </div>
                         </div>
+
+                        {statusKembali === "belum" &&
+                            <div className="row mb-2 mt-2 align-items-center">
+                                <div className="col-12 col-md-2 mb-2 mb-md-0">
+                                    <span>Belum Konfirmasi: </span>
+                                </div>
+                                <div className="col-12 col-md-auto">
+                                    <div className="row g-2">
+                                        <div className="col-12 col-sm-auto">
+                                            <div className="form-check form-check-inline">
+                                                <input
+                                                    className="form-check-input"
+                                                    type="checkbox"
+                                                    id="checkbox1"
+                                                    onChange={(state) => setIncludeUnConfirmed(state.currentTarget.checked)}
+                                                    checked={includeUnConfirmed}
+                                                />
+                                                <label className="form-check-label" htmlFor="checkbox1">
+                                                    Termasuk Belum Konfirmasi DC
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
                     </div>
                 </Accordion.Body>
             </Accordion.Item>
