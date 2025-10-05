@@ -52,34 +52,39 @@ export default function UserTable({ mutateUsers, onAdd }: { mutateUsers: (mutate
             header: "No",
             cell: (info) => info.table.getState().pagination.pageIndex * info.table.getState().pagination.pageSize + info.row.index + 1,
             enableSorting: false,
-            size: 20
+            size: 50
 
         }),
         columnHelper.accessor("nik", {
             header: "NIK",
             cell: info => info.getValue(),
+            size: 100,
         }),
         columnHelper.accessor("nama", {
             header: "Nama",
             cell: info => info.getValue(),
             meta: {
-                className: "text-start"
-            }
+                className: "text-start text-wrap"
+            },
+            size: 200,
         }),
         columnHelper.accessor("email", {
             header: "Email",
             cell: info => info.getValue(),
             meta: {
-                className: "text-start"
-            }
+                className: "text-start text-wrap"
+            },
+            size: 200,
         }),
         columnHelper.accessor("isActive", {
             header: "Status Aktif",
             cell: info => <input className="form-check-input" type="checkbox" checked={info.cell.getValue() == true ? true : false} id="flexCheckDefault" disabled></input>,
+            size: 100,
         }),
         columnHelper.accessor("isAdmin", {
             header: "Status Administrator",
             cell: info => <input className="form-check-input" type="checkbox" checked={info.cell.getValue() == true ? true : false} id="flexCheckDefault" disabled></input>,
+            size: 150,
         }),
         columnHelper.display({
             header: "Actions",
@@ -89,6 +94,7 @@ export default function UserTable({ mutateUsers, onAdd }: { mutateUsers: (mutate
                 handleEdit={(data: IUser) => handleEdit(data.id == undefined ? null : data.id)}
                 handleDelete={(data: IUser) => handleDelete(data)}>
             </RowActions>,
+            size: 100,
         }),
         // eslint-disable-next-line react-hooks/exhaustive-deps
     ], [])
@@ -179,7 +185,16 @@ export default function UserTable({ mutateUsers, onAdd }: { mutateUsers: (mutate
                                     {table.getHeaderGroups().map(headerGroup => (
                                         <tr key={headerGroup.id}>
                                             {headerGroup.headers.map(header => (
-                                                <th key={header.id} scope="col" className="text-white fw-semibold" style={{ minWidth: `${header.getSize()}px` }}>
+                                                <th 
+                                                    key={header.id} 
+                                                    scope="col" 
+                                                    className="text-white fw-semibold" 
+                                                    style={{ 
+                                                        width: header.getSize(),
+                                                        maxWidth: header.column.columnDef.maxSize,
+                                                        minWidth: header.column.columnDef.minSize
+                                                    }}
+                                                >
                                                     {flexRender(header.column.columnDef.header, header.getContext())}
                                                 </th>
                                             ))}
@@ -207,7 +222,15 @@ export default function UserTable({ mutateUsers, onAdd }: { mutateUsers: (mutate
                                         !isLoadingUser && table.getRowModel().rows.map(row => (
                                             <tr key={row.id} className="table-row-hover">
                                                 {row.getVisibleCells().map((cell) => (
-                                                    <td key={cell.id} className={`text-nowrap ${cell.column.columnDef.meta?.className || 'text-center'}`} style={{ minWidth: `${cell.column.getSize()}px` }}>
+                                                    <td 
+                                                        key={cell.id} 
+                                                        className={`${cell.column.columnDef.meta?.className || ''}`}
+                                                        style={{
+                                                            width: cell.column.getSize(),
+                                                            maxWidth: cell.column.columnDef.maxSize,
+                                                            minWidth: cell.column.columnDef.minSize
+                                                        }}
+                                                    >
                                                         {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                                     </td>
                                                 ))}

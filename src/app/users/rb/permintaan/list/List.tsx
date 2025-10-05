@@ -84,11 +84,18 @@ export default function ListMBR() {
             header: "Nama Pembuat",
             cell: info => info.getValue(),
             enableSorting: false,
+            meta: {
+                className: "text-start text-wrap"
+            },
+            size: 200,
         }),
         columnHelper.accessor("namaBagianCreated", {
             header: "Nama Bagian Pembuat",
             cell: info => info.getValue(),
             enableSorting: false,
+            meta: {
+                className: "text-start text-wrap"
+            }
         }),
         columnHelper.accessor("timeCreated", {
             header: "Waktu Dibuat",
@@ -194,10 +201,26 @@ export default function ListMBR() {
                                         {table.getHeaderGroups().map(headerGroup => (
                                             <tr key={headerGroup.id}>
                                                 {headerGroup.headers.map(header => (
-                                                    <th key={header.id} scope="col" className="text-white fw-semibold" style={{ minWidth: `${header.getSize()}px` }} {...(header.column.getCanSort() ? { onClick: header.column.getToggleSortingHandler() } : {})}>
+                                                    <th 
+                                                        key={header.id} 
+                                                        scope="col" 
+                                                        className="text-white fw-semibold" 
+                                                        style={{ 
+                                                            width: header.getSize(),
+                                                            maxWidth: header.column.columnDef.maxSize,
+                                                            minWidth: header.column.columnDef.minSize
+                                                        }} 
+                                                        {...(header.column.getCanSort() ? { onClick: header.column.getToggleSortingHandler() } : {})}
+                                                    >
                                                         {flexRender(header.column.columnDef.header, header.getContext())}
 
-                                                        {header.column.getIsSorted() === "asc" ? (<span> <FontAwesomeIcon className="ms-1" icon={faSortUp} /></span>) : header.column.getIsSorted() === "desc" ? (<span> <FontAwesomeIcon className="ms-1" icon={faSortDown} /></span>) : header.column.getCanSort() ? (<span> <FontAwesomeIcon className="ms-1" icon={faSort} /></span>) : ""}
+                                                        {header.column.getIsSorted() === "asc" ? (
+                                                            <span> <FontAwesomeIcon className="ms-1" icon={faSortUp} /></span>
+                                                        ) : header.column.getIsSorted() === "desc" ? (
+                                                            <span> <FontAwesomeIcon className="ms-1" icon={faSortDown} /></span>
+                                                        ) : header.column.getCanSort() ? (
+                                                            <span> <FontAwesomeIcon className="ms-1" icon={faSort} /></span>
+                                                        ) : ""}
                                                     </th>
                                                 ))}
                                             </tr>
@@ -224,7 +247,15 @@ export default function ListMBR() {
                                             !isLoadingListPermintaan && table.getRowModel().rows.map(row => (
                                                 <tr key={row.id} className="table-row-hover">
                                                     {row.getVisibleCells().map((cell) => (
-                                                        <td key={cell.id} className="text-nowrap" style={{ minWidth: `${cell.column.getSize()}px` }}>
+                                                        <td 
+                                                            key={cell.id} 
+                                                            className={`${cell.column.columnDef.meta?.className}`}
+                                                            style={{
+                                                                width: cell.column.getSize(),
+                                                                maxWidth: cell.column.columnDef.maxSize,
+                                                                minWidth: cell.column.columnDef.minSize
+                                                            }}
+                                                        >
                                                             {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                                         </td>
                                                     ))}
