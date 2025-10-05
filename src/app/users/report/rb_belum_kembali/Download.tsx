@@ -12,6 +12,7 @@ export default function DownloadRB() {
     const startDate = useFilterState((state) => state.startDate);
     const endDate = useFilterState((state) => state.endDate);
     const statusKembali = useFilterState((state) => state.statusKembali);
+    const includeUnConfirmed = useFilterState((state) => state.includeUnConfirmed)
 
     async function handleDownload() {
 
@@ -27,6 +28,12 @@ export default function DownloadRB() {
             if (startDate !== null && endDate !== null) {
                 query += `&startDate=${startDate}&endDate=${endDate}`;
             }
+
+            if (statusKembali === "belum"){
+                query += `&includeUnConfirmed=${includeUnConfirmed}`
+            }
+
+
 
             const response = await api.get(query, {
                 responseType: "blob",
