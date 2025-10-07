@@ -16,7 +16,7 @@ export default function ModalEdit({ show, onClose, editData, mutate }: { show: b
     async function checkProduct(value: { namaProduk: string, id_bagian: string }) {
         const { namaProduk, id_bagian } = value
 
-        const encodedNamaProduk = encodeURIComponent(namaProduk)
+        const encodedNamaProduk = namaProduk
 
         const productCheck = await api.get(`/admin/product/check-product?nama_produk=${encodedNamaProduk}&id_bagian=${id_bagian}`,
             { apiVersion: "2" }

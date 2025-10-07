@@ -331,6 +331,7 @@ export default function ListPengembalianUser() {
                     onClose={() => {
                         setShowModal(false)
                         setIdDataLihat(null)
+                        mutateListPengembalian()
                     }}
                     data={idDataLihat}>
 

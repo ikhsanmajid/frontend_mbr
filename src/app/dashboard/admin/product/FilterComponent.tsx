@@ -22,7 +22,7 @@ export default function FilterComponentProduct({ valueNamaProduk, valueBagian, s
     }
 
     function handleSubmit() {
-        valueNamaProduk(encodeURIComponent(inputSearchRef.current!.value.toString()))
+        valueNamaProduk(inputSearchRef.current!.value.toString())
         valueBagian(selectedBagian?.value || "")
         statusProduct(statusActive)
     }
