@@ -1080,11 +1080,11 @@ export function GetAllReturnRBAdminByProduct(id: any, limit?: number, offset?: n
             let endpoint = `/admin/mbr/return/get-returned-admin-by-product/`
 
             if (params?.status === "outstanding" && params?.idBagian !== null && id === null) {
-                endpoint = `/admin/mbr/return/get-returned-admin-by-department?`
+                endpoint = `/admin/mbr/return/get-returned-admin-by-department`
             } else if (params?.status === "outstanding" && params?.idBagian === null) {
-                endpoint = `/admin/mbr/return/get-returned-admin-by-status-outstanding?`
+                endpoint = `/admin/mbr/return/get-returned-admin-by-status-outstanding`
             } else {
-                endpoint += `${id}?`
+                endpoint += `${id}`
             }
 
             const queryParams = new URLSearchParams({})
