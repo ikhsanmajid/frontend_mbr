@@ -97,7 +97,7 @@ export default function AddPermintaanRB() {
         }).filter(permintaan => permintaan !== null) || null;
 
         setListPermintaan(newList);
-        
+
         // Clear validation errors for deleted MBR item
         if (listPermintaan && listPermintaan[index]) {
             const permintaanUuid = listPermintaan[index].uuid;
@@ -105,7 +105,7 @@ export default function AddPermintaanRB() {
                 if (prev[permintaanUuid]?.mbr) {
                     const newMbrErrors = { ...prev[permintaanUuid].mbr };
                     delete newMbrErrors[mbrIndex];
-                    
+
                     // Reindex remaining MBR errors
                     const reindexedMbrErrors: { [key: number]: { no_mbr?: string; jumlah?: string } } = {};
                     Object.keys(newMbrErrors).forEach(key => {
@@ -116,7 +116,7 @@ export default function AddPermintaanRB() {
                             reindexedMbrErrors[numKey] = newMbrErrors[numKey];
                         }
                     });
-                    
+
                     return {
                         ...prev,
                         [permintaanUuid]: {
@@ -128,7 +128,7 @@ export default function AddPermintaanRB() {
                 return prev;
             });
         }
-        
+
         //console.log("Delete MBR Item", listPermintaan);
     }
 
@@ -147,10 +147,10 @@ export default function AddPermintaanRB() {
 
             // Validasi MBR
             const mbrErrors: { [mbrIndex: number]: { no_mbr?: string; jumlah?: string } } = {};
-            
+
             permintaan.mbr.forEach((mbr, mbrIndex) => {
                 const mbrError: { no_mbr?: string; jumlah?: string } = {};
-                
+
                 if (!mbr.no_mbr.trim()) {
                     mbrError.no_mbr = "No MBR tidak boleh kosong";
                     hasErrors = true;
@@ -158,7 +158,7 @@ export default function AddPermintaanRB() {
                     mbrError.no_mbr = "No MBR harus memiliki minimal 2 karakter '-'";
                     hasErrors = true;
                 }
-                
+
                 if (!mbr.jumlah || mbr.jumlah <= 0) {
                     mbrError.jumlah = "Jumlah harus lebih dari 0";
                     hasErrors = true;
@@ -189,7 +189,7 @@ export default function AddPermintaanRB() {
                 });
                 setCollapseStates(newCollapseStates);
             }
-            
+
             toast.error("Mohon lengkapi semua field yang diperlukan", {
                 className: "w-75"
             });
@@ -225,7 +225,7 @@ export default function AddPermintaanRB() {
                 tipe_mbr: "PO"
             }]
         }]);
-        
+
         //console.log("Add Produk", listPermintaan);
     }
 
@@ -234,7 +234,7 @@ export default function AddPermintaanRB() {
             const newList = prevListPermintaan?.filter((permintaan) => permintaan.uuid !== idPermintaan) || null;
             return newList;
         });
-        
+
         // Clear validation errors for deleted product
         setValidationErrors(prev => {
             const newErrors = { ...prev };
@@ -256,7 +256,7 @@ export default function AddPermintaanRB() {
         }) || null;
 
         setListPermintaan(newList);
-        
+
         // Clear validation errors for this field
         if (validationErrors[uuid]?.idProduk) {
             setValidationErrors(prev => ({
@@ -267,7 +267,7 @@ export default function AddPermintaanRB() {
                 }
             }));
         }
-        
+
         //console.log("Change Produk", listPermintaan);
     }
 
@@ -313,7 +313,7 @@ export default function AddPermintaanRB() {
         }) || null;
 
         setListPermintaan(newList);
-        
+
         // Clear validation errors for this field
         if (validationErrors[uuid]?.mbr?.[mbrIndex] && (field === 'no_mbr' || field === 'jumlah')) {
             setValidationErrors(prev => ({
@@ -330,7 +330,7 @@ export default function AddPermintaanRB() {
                 }
             }));
         }
-        
+
         //console.log("Change MBR", listPermintaan);
     }
 
@@ -369,33 +369,37 @@ export default function AddPermintaanRB() {
 
     return (
         <div className="card mt-3">
-
             <div className="card-header">
                 <span className="fw-bold">Form Permintaan RB</span>
             </div>
             <div className="card-body">
                 {isLoadingListProduk ? <p>Loading...</p> :
                     <>
-                        <div className="row d-none d-lg-flex mb-3 py-3 bg-light rounded">
-                            <div className="col-1 fw-semibold ps-5 d-flex align-items-center justify-content-center">
+                        <div className="row d-none d-lg-flex mb-3 py-3 bg-light rounded ps-3">
+                            <div className="col-1 fw-semibold d-flex align-items-center justify-content-center">
                                 No.
                             </div>
-                            <div style={{marginLeft: -20}} className="col-3 fw-semibold ps-5 d-flex align-items-center">
+                            <div className="col-4 fw-semibold d-flex align-items-center">
                                 Nama Produk
                             </div>
-                            <div style={{marginLeft: 25}} className="col-2 fw-semibold ps-3 d-flex align-items-center">
-                                No Dokumen MBR
-                            </div>
-                            <div style={{marginLeft: 30}} className="col-1 fw-semibold d-flex align-items-start justify-content-start">
-                                Tipe MBR
-                            </div>
-                            <div className="col-1 fw-semibold d-flex align-items-start justify-content-start">
-                                Jumlah
-                            </div>
-                            <div style={{marginLeft: 50}} className="col-1 fw-semibold d-flex align-items-start justify-content-start">
-                                Aksi
+                            <div className="col-5">
+                                <div className="row">
+                                    <div className="col-5 fw-semibold d-flex align-items-center">
+                                        No Dokumen MBR
+                                    </div>
+                                    <div className="col-2 fw-semibold d-flex align-items-center">
+                                        Tipe MBR
+                                    </div>
+                                    <div className="col-2 fw-semibold d-flex align-items-center">
+                                        Jumlah
+                                    </div>
+                                    <div className="col-3 fw-semibold d-flex align-items-center">
+                                        Aksi
+                                    </div>
+                                </div>
                             </div>
                         </div>
+
                         {!listPermintaan && (
                             <div className="row">
                                 <div className="col-12">
@@ -410,14 +414,12 @@ export default function AddPermintaanRB() {
                         )}
                         {listPermintaan && listPermintaan?.map((data, index) => (
                             <div key={data.uuid} className="border rounded p-3 mb-3 shadow-sm">
-                                {/* Mobile Layout */}
                                 <div className="d-lg-none">
-                                    {/* Collapsible Header */}
                                     <div className="d-flex justify-content-between align-items-center mb-2">
                                         <h6 className="fw-bold mb-0">Produk #{index + 1}</h6>
-                                        <button 
-                                            className="btn btn-outline-primary" 
-                                            type="button" 
+                                        <button
+                                            className="btn btn-outline-primary"
+                                            type="button"
                                             style={{ minWidth: '40px', minHeight: '40px', fontSize: '18px', fontWeight: 'bold' }}
                                             onClick={() => {
                                                 setCollapseStates(prev => ({
@@ -429,8 +431,7 @@ export default function AddPermintaanRB() {
                                             {collapseStates[data.uuid] ? '−' : '+'}
                                         </button>
                                     </div>
-                                    
-                                    {/* Collapsible Content - Controlled by React state */}
+
                                     <div className={`${collapseStates[data.uuid] ? '' : 'd-none'}`}>
                                         <div className="mb-3">
                                             <label className="form-label fw-semibold">Nama Produk</label>
@@ -438,13 +439,13 @@ export default function AddPermintaanRB() {
                                             {validationErrors[data.uuid]?.idProduk && (
                                                 <div className="text-danger small mb-2">{validationErrors[data.uuid].idProduk}</div>
                                             )}
-                                            <button onClick={() => deleteProduk(data.uuid)} className="btn btn-sm btn-danger w-100" style={{backgroundColor: '#dc3545', borderColor: '#dc3545'}} disabled={isSubmitting}>Delete Produk</button>
+                                            <button onClick={() => deleteProduk(data.uuid)} className="btn btn-sm btn-danger w-100" style={{ backgroundColor: '#dc3545', borderColor: '#dc3545' }} disabled={isSubmitting}>Delete Produk</button>
                                         </div>
-                                        
+
                                         {data.mbr.map((mbr, mbrIndex) => (
                                             <div key={mbrIndex} className="border-top pt-3 mb-3">
                                                 <h6 className="fw-semibold">MBR #{mbrIndex + 1}</h6>
-                                                
+
                                                 <div className="mb-2">
                                                     <label className="form-label fw-semibold">No Dokumen MBR</label>
                                                     <input
@@ -459,7 +460,7 @@ export default function AddPermintaanRB() {
                                                         <div className="text-danger small mt-1">{validationErrors[data.uuid].mbr![mbrIndex].no_mbr}</div>
                                                     )}
                                                 </div>
-                                                
+
                                                 <div className="row mb-2">
                                                     <div className="col-6">
                                                         <label className="form-label fw-semibold">Tipe MBR</label>
@@ -489,22 +490,21 @@ export default function AddPermintaanRB() {
                                                         )}
                                                     </div>
                                                 </div>
-                                                
-                                                <button onClick={() => handleDeleteMBRItem(index, mbrIndex)} className="btn btn-sm btn-danger w-100" style={{backgroundColor: '#dc3545', borderColor: '#dc3545'}} disabled={isSubmitting}>Delete</button>
+
+                                                <button onClick={() => handleDeleteMBRItem(index, mbrIndex)} className="btn btn-sm btn-danger w-100" style={{ backgroundColor: '#dc3545', borderColor: '#dc3545' }} disabled={isSubmitting}>Delete</button>
                                             </div>
                                         ))}
-                                        
-                                        <button onClick={() => addMBRItem(data.uuid)} className="btn btn-sm btn-success w-100" style={{backgroundColor: '#198754', borderColor: '#198754'}} disabled={isSubmitting}>Tambah PO/PS</button>
+
+                                        <button onClick={() => addMBRItem(data.uuid)} className="btn btn-sm btn-success w-100" style={{ backgroundColor: '#198754', borderColor: '#198754' }} disabled={isSubmitting}>Tambah PO/PS</button>
                                     </div>
                                 </div>
 
-                                {/* Desktop Layout */}
                                 <div className="d-none d-lg-block">
-                                    <div className="row">
+                                    <div className="row align-items-start">
                                         <div className="col-1 d-flex align-items-start justify-content-center pt-2">
                                             <span className="badge bg-primary fs-6">{index + 1}</span>
                                         </div>
-                                        <div className="col-3">
+                                        <div className="col-4">
                                             <div className="mb-2">
                                                 {isMounted ? <Select className="mb-2" onChange={(e) => handleChangeProduk(data.uuid, e!.value, e!.label)} options={produkList} isSearchable isLoading={isLoadingListProduk} /> : null}
                                                 {validationErrors[data.uuid]?.idProduk && (
@@ -521,75 +521,76 @@ export default function AddPermintaanRB() {
                                             </div>
                                         </div>
 
-                                        <div className="col-6">
-                                            <table className="table table-borderless table-sm mb-0">
-                                                <tbody>
-                                                    {data.mbr.map((mbr, mbrIndex) => (
-                                                        <tr key={mbrIndex}>
-                                                            <td style={{width: '21.5%', paddingLeft: '0', paddingRight: '8px'}}>
-                                                                <input
-                                                                    type="text"
-                                                                    className={`form-control ${validationErrors[data.uuid]?.mbr?.[mbrIndex]?.no_mbr ? 'is-invalid' : ''}`}
-                                                                    placeholder="No Dokumen MBR"
-                                                                    value={mbr.no_mbr}
-                                                                    onChange={(e) => handleChangeMBR(data.uuid, mbrIndex, 'no_mbr', e.target.value)}
-                                                                    disabled={isSubmitting}
-                                                                />
-                                                                {validationErrors[data.uuid]?.mbr?.[mbrIndex]?.no_mbr && (
-                                                                    <div className="text-danger small mt-1">{validationErrors[data.uuid].mbr![mbrIndex].no_mbr}</div>
-                                                                )}
-                                                            </td>
-                                                            <td style={{width: '6.5%', paddingLeft: '8px', paddingRight: '8px'}}>
-                                                                <select
-                                                                    className="form-select"
-                                                                    aria-label="Pilih Tipe MBR"
-                                                                    value={mbr.tipe_mbr}
-                                                                    onChange={(e) => handleChangeMBR(data.uuid, mbrIndex, 'tipe_mbr', e.target.value)}
-                                                                    disabled={isSubmitting}
-                                                                >
-                                                                    <option value="PO">PO</option>
-                                                                    <option value="PS">PS</option>
-                                                                </select>
-                                                            </td>
-                                                            <td style={{width: '10.5%', paddingLeft: '8px', paddingRight: '8px'}}>
-                                                                <input
-                                                                    type="number"
-                                                                    className={`form-control text-center ${validationErrors[data.uuid]?.mbr?.[mbrIndex]?.jumlah ? 'is-invalid' : ''}`}
-                                                                    placeholder="0"
-                                                                    min="1"
-                                                                    value={mbr.jumlah}
-                                                                    onChange={(e) => handleChangeMBR(data.uuid, mbrIndex, 'jumlah', e.target.value)}
-                                                                    disabled={isSubmitting}
-                                                                />
-                                                                {validationErrors[data.uuid]?.mbr?.[mbrIndex]?.jumlah && (
-                                                                    <div className="text-danger small mt-1 text-center">{validationErrors[data.uuid].mbr![mbrIndex].jumlah}</div>
-                                                                )}
-                                                            </td>
-                                                            <td style={{width: '12.5%', paddingLeft: '8px', paddingRight: '0'}} className="text-center">
-                                                                <button 
-                                                                    onClick={() => handleDeleteMBRItem(index, mbrIndex)} 
-                                                                    className="btn btn-sm btn-danger" 
-                                                                    disabled={isSubmitting}
-                                                                    title="Hapus MBR"
-                                                                >
-                                                                    Hapus
-                                                                </button>
-                                                            </td>
-                                                        </tr>
-                                                    ))}
-                                                </tbody>
-                                            </table>
+                                        <div className="col-5">
+                                            {data.mbr.map((mbr, mbrIndex) => (
+                                                <div key={mbrIndex} className="row g-2 mb-2 align-items-start">
+
+                                                    <div className="col-5">
+                                                        <input
+                                                            type="text"
+                                                            className={`form-control ${validationErrors[data.uuid]?.mbr?.[mbrIndex]?.no_mbr ? 'is-invalid' : ''}`}
+                                                            placeholder="No Dokumen MBR"
+                                                            value={mbr.no_mbr}
+                                                            onChange={(e) => handleChangeMBR(data.uuid, mbrIndex, 'no_mbr', e.target.value)}
+                                                            disabled={isSubmitting}
+                                                        />
+                                                        {validationErrors[data.uuid]?.mbr?.[mbrIndex]?.no_mbr && (
+                                                            <div className="text-danger small mt-1">{validationErrors[data.uuid].mbr![mbrIndex].no_mbr}</div>
+                                                        )}
+                                                    </div>
+
+                                                    <div className="col-2">
+                                                        <select
+                                                            className="form-select"
+                                                            aria-label="Pilih Tipe MBR"
+                                                            value={mbr.tipe_mbr}
+                                                            onChange={(e) => handleChangeMBR(data.uuid, mbrIndex, 'tipe_mbr', e.target.value)}
+                                                            disabled={isSubmitting}
+                                                        >
+                                                            <option value="PO">PO</option>
+                                                            <option value="PS">PS</option>
+                                                        </select>
+                                                    </div>
+
+                                                    <div className="col-2">
+                                                        <input
+                                                            type="number"
+                                                            className={`form-control text-center ${validationErrors[data.uuid]?.mbr?.[mbrIndex]?.jumlah ? 'is-invalid' : ''}`}
+                                                            placeholder="0"
+                                                            min="1"
+                                                            value={mbr.jumlah}
+                                                            onChange={(e) => handleChangeMBR(data.uuid, mbrIndex, 'jumlah', e.target.value)}
+                                                            disabled={isSubmitting}
+                                                        />
+                                                        {validationErrors[data.uuid]?.mbr?.[mbrIndex]?.jumlah && (
+                                                            <div className="text-danger small mt-1 text-center">{validationErrors[data.uuid].mbr![mbrIndex].jumlah}</div>
+                                                        )}
+                                                    </div>
+
+                                                    <div className="col-2 text-center">
+                                                        <button
+                                                            onClick={() => handleDeleteMBRItem(index, mbrIndex)}
+                                                            className="btn btn-sm btn-danger w-100"
+                                                            disabled={isSubmitting}
+                                                            title="Hapus MBR"
+                                                        >
+                                                            Hapus
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            ))}
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         ))}
+
                         <div className="row mt-4">
                             <div className="col-12">
                                 <div className="d-flex justify-content-start gap-3">
-                                    <button 
-                                        onClick={addProduk} 
-                                        className="btn btn-primary d-flex align-items-center" 
+                                    <button
+                                        onClick={addProduk}
+                                        className="btn btn-primary d-flex align-items-center"
                                         disabled={isSubmitting}
                                         style={{
                                             animation: !isSubmitting ? 'bounce 2s infinite' : 'none'
@@ -597,8 +598,8 @@ export default function AddPermintaanRB() {
                                     >
                                         Tambah Produk
                                     </button>
-                                    <button 
-                                        onClick={submitPermintaan} 
+                                    <button
+                                        onClick={submitPermintaan}
                                         className="btn btn-success d-flex align-items-center"
                                         disabled={(isSubmitting || listPermintaan == null)}
                                         style={{
