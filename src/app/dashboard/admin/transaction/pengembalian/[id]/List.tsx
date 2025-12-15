@@ -12,13 +12,14 @@ import ModalLihat from "./ModalLihat";
 export default function ListPengembalianUser({ idProduk }: { idProduk: string }) {
     const searchParams = useSearchParams()
     const idPermintaan = searchParams.get("idPermintaan")
+    const group_id = searchParams.get("groupId")
 
     const statusKembali = useFilterState(state => state.statusKembali)
     
     const [showModalLihat, setShowModalLihat] = useState(false)
     const [dataLihat, setDataLihat] = useState<any | null>(null)
 
-    const { listPengembalian, isLoadingListPengembalian, error, mutateListPengembalian } = GetAllReturnRBAdminByProductAndIdPermintaan(idProduk, idPermintaan, undefined, undefined, { status: statusKembali })
+    const { listPengembalian, isLoadingListPengembalian, error, mutateListPengembalian } = GetAllReturnRBAdminByProductAndIdPermintaan(idProduk, idPermintaan, group_id, undefined, undefined, { status: statusKembali })
 
     function handleShowModalLihat(data: any) {
         setDataLihat(data)

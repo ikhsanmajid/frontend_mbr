@@ -86,75 +86,88 @@ export default function FilterComponentPengembalian() {
                     <Accordion.Header><span className="fw-bold">Filter</span></Accordion.Header>
                     <Accordion.Body>
                         <div className="row w-100">
-                            <div className="row mb-2 align-items-center">
-                                <div className="col col-2">
-                                    <span>Nama Produk: </span>
+                            <div className="col-12 col-lg-6">
+                                <div className="row mb-3 align-items-center">
+                                    <div className="col-12 col-md-3 mb-2 mb-md-0">
+                                        <span>Nama Produk: </span>
+                                    </div>
+                                    <div className="col-12 col-md-9">
+                                        {isMounted && (productList.length !== 0) && <Select options={productList} onChange={(e) => { setIdProdukChoosen(e!.value) }} isSearchable isLoading={isLoadingListProduk} defaultValue={productList.find(item => { return item.value == idProdukChoosen })} />}
+                                    </div>
                                 </div>
-                                <div className="col col-5">
-                                    {isMounted && (productList.length !== 0) && <Select options={productList} onChange={(e) => { setIdProdukChoosen(e!.value) }} isSearchable isLoading={isLoadingListProduk} defaultValue={productList.find(item => { return item.value == idProdukChoosen })} />}
-                                </div>
-                            </div>
 
-                            <div className="row mb-2 align-items-center">
-                                <div className="col col-2">
-                                    <span>Periode Permintaan: </span>
-                                </div>
-                                <div className="col col-auto">
-                                    <div className="row row-cols-auto align-items-center">
-                                        <div className="col">
-                                            <DatePicker
-                                                className="form-control"
-                                                selected={date1}
-                                                onChange={(date) => {
-                                                    setDate1(date)
-                                                    setDate2(null)
-                                                }}
-                                                isClearable
-                                                dateFormat="MM/yyyy"
-                                                showIcon={true}
-                                                icon={<FontAwesomeIcon icon={faCalendar}></FontAwesomeIcon>}
-                                                showMonthYearPicker></DatePicker>
+                                <div className="row mb-3 align-items-center">
+                                    <div className="col-12 col-md-3 mb-2 mb-md-0">
+                                        <span>Periode Permintaan: </span>
+                                    </div>
+                                    <div className="col-12 col-md-9">
+                                        <div className="row g-2 align-items-center">
+                                            <div className="col-12 col-sm-auto">
+                                                <DatePicker
+                                                    className="form-control"
+                                                    selected={date1}
+                                                    onChange={(date) => {
+                                                        setDate1(date)
+                                                        setDate2(null)
+                                                    }}
+                                                    isClearable
+                                                    dateFormat="MM/yyyy"
+                                                    showIcon={true}
+                                                    icon={<FontAwesomeIcon icon={faCalendar}></FontAwesomeIcon>}
+                                                    showMonthYearPicker
+                                                ></DatePicker>
+                                            </div>
+                                            <div className="col-12 col-sm-auto d-flex align-items-center justify-content-center">
+                                                <span> s.d. </span>
+                                            </div>
+                                            <div className="col-12 col-sm-auto">
+                                                <DatePicker
+                                                    className="form-control"
+                                                    selected={date2}
+                                                    minDate={date1!}
+                                                    onChange={(date) => {
+                                                        setDate2(date)
+                                                    }}
+                                                    isClearable
+                                                    dateFormat="MM/yyyy"
+                                                    showIcon={true}
+                                                    icon={<FontAwesomeIcon icon={faCalendar}></FontAwesomeIcon>}
+                                                    showMonthYearPicker
+                                                    disabled={date1 === null}
+                                                ></DatePicker>
+                                            </div>
                                         </div>
-                                        <span> s.d. </span>
-                                        <div className="col">
-                                            <DatePicker
-                                                className="form-control"
-                                                selected={date2}
-                                                minDate={date1!}
-                                                onChange={(date) => {
-                                                    setDate2(date)
-                                                }}
-                                                isClearable
-                                                dateFormat="MM/yyyy"
-                                                showIcon={true}
-                                                icon={<FontAwesomeIcon icon={faCalendar}></FontAwesomeIcon>}
-                                                showMonthYearPicker
-                                                disabled={date1 === null}></DatePicker>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div className="col-12 col-lg-6">
+                                <div className="row mb-3 align-items-center">
+                                    <div className="col-12 mb-2">
+                                        <span className="fw-semibold">Status Kembali: </span>
+                                    </div>
+                                    <div className="col-12">
+                                        <div className="row g-2">
+                                            <div className="col-12 col-sm-6 col-md-auto">
+                                                <div className="form-check form-check-inline">
+                                                    <input className="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="belum" onChange={handleChangeStatus} checked={statusKembaliChoosen == "belum"} />
+                                                    <label className="form-check-label" htmlFor="inlineRadio1">Belum Kembali Saja</label>
+                                                </div>
+                                            </div>
+                                            <div className="col-12 col-sm-6 col-md-auto">
+                                                <div className="form-check form-check-inline">
+                                                    <input className="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="all" onChange={handleChangeStatus} checked={statusKembaliChoosen == "all"} />
+                                                    <label className="form-check-label" htmlFor="inlineRadio2">Semua</label>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
-
                                 </div>
                             </div>
 
-                            <div className="row mb-2 align-items-center">
-                                <div className="col col-2">
-                                    <span>Status Kembali: </span>
-                                </div>
-                                <div className="col col-5">
-                                    <div className="form-check form-check-inline">
-                                        <input className="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="belum" onChange={handleChangeStatus} checked={statusKembaliChoosen == "belum"} />
-                                        <label className="form-check-label" htmlFor="inlineRadio1">Belum Kembali Saja</label>
-                                    </div>
-                                    <div className="form-check form-check-inline">
-                                        <input className="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="all" onChange={handleChangeStatus} checked={statusKembaliChoosen == "all"} />
-                                        <label className="form-check-label" htmlFor="inlineRadio2">Semua</label>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="row mb-1 mt-1">
-                                <div className="col col-auto">
-                                    <button className="btn btn-primary" onClick={handleCari}>Cari</button>
+                            <div className="row mb-1 mt-3">
+                                <div className="col-12 col-md-auto">
+                                    <button className="btn btn-primary w-100 w-md-auto" onClick={handleCari}>Cari</button>
                                 </div>
                             </div>
                         </div>

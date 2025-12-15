@@ -1,5 +1,5 @@
 "use client";
-import { faRefresh } from "@fortawesome/free-solid-svg-icons";
+import { faRefresh, faSort, faSortDown, faSortUp } from "@fortawesome/free-solid-svg-icons";
 import { flexRender, getCoreRowModel, useReactTable, createColumnHelper, PaginationState, getPaginationRowModel } from "@tanstack/react-table";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { GetPermintaanRB } from "@/app/lib/admin/users/userAPIRequest";
@@ -12,6 +12,7 @@ import ModalLihat from "./ModalLihat";
 import PaginationComponent from "@/app/component/pagination/Pagination";
 import React from "react";
 import RowActions from "./RowActions";
+import { useSorting } from "@/app/lib/useSorting";
 
 export interface IPermintaan {
     id: number | string;
@@ -40,6 +41,8 @@ export default function ListMBR() {
     const { pageIndex, pageSize } = pagination
     const [pageList, setPageList] = useState<Array<number>>([])
 
+    const { sorting, onSortingChange, order, field } = useSorting("createdAt", "DESC")
+
     const [usersData, setUsersData] = useState<IPermintaan[] | null>(null)
 
     const [showEditModal, setShowEditModal] = useState<boolean>(false)
@@ -48,13 +51,14 @@ export default function ListMBR() {
     const [dataLihatEdit, setDataLihatEdit] = useState<IPermintaan | null>(null)
 
     //Filter
+    const idTransaksi = useFilterState((state) => state.idTransaksi)
     const idProduk = useFilterState((state) => state.idProduk)
     const NIKNama = useFilterState((state) => state.NIKNama)
     const StatusKonfirmasi = useFilterState((state) => state.StatusKonfirmasi)
     const StatusDipakai = useFilterState((state) => state.StatusDipakai)
     const filterYear = useFilterState(state => state.filterYear)
 
-    const { listPermintaan, isLoadingListPermintaan, error: errorPermintaan, mutateListPermintaan } = GetPermintaanRB(pageSize, pageIndex * pageSize, { status: StatusKonfirmasi, used: StatusDipakai, keyword: NIKNama, idProduk: idProduk, year: filterYear })
+    const { listPermintaan, isLoadingListPermintaan, error: errorPermintaan, mutateListPermintaan } = GetPermintaanRB(pageSize, pageIndex * pageSize, { status: StatusKonfirmasi, used: StatusDipakai, keyword: NIKNama, idProduk: idProduk, year: filterYear, id: idTransaksi }, { field: field, order: order })
 
 
     const columns = useMemo(() => [
@@ -69,20 +73,29 @@ export default function ListMBR() {
             header: "ID Transaksi",
             cell: info => info.getValue(),
             size: 20,
-            enableSorting: false,
         }),
         columnHelper.accessor("nikCreated", {
             header: "NIK Pembuat",
             size: 40,
             cell: info => info.getValue(),
+            enableSorting: false,
         }),
         columnHelper.accessor("namaCreated", {
             header: "Nama Pembuat",
             cell: info => info.getValue(),
+            enableSorting: false,
+            meta: {
+                className: "text-start text-wrap"
+            },
+            size: 200,
         }),
         columnHelper.accessor("namaBagianCreated", {
             header: "Nama Bagian Pembuat",
             cell: info => info.getValue(),
+            enableSorting: false,
+            meta: {
+                className: "text-start text-wrap"
+            }
         }),
         columnHelper.accessor("timeCreated", {
             header: "Waktu Dibuat",
@@ -90,7 +103,9 @@ export default function ListMBR() {
         }),
         columnHelper.accessor("status", {
             header: "Status Konfirmasi",
-            cell: info => info.getValue(),
+            // cell: info => info.getValue(),
+            cell: info => (<span className={`badge fs-6 px-3 py-2 ${info.getValue() === "DITERIMA" ? 'bg-success': info.getValue() === "DITOLAK" ? 'bg-danger' : 'bg-warning'}`}>{info.getValue()}</span>),
+            enableSorting: false,
         }),
         columnHelper.display({
             header: "Actions",
@@ -109,6 +124,7 @@ export default function ListMBR() {
                 }
             >
             </RowActions>,
+            enableSorting: false,
         })
         // eslint-disable-next-line react-hooks/exhaustive-deps
     ], [])
@@ -122,10 +138,13 @@ export default function ListMBR() {
         getPaginationRowModel: getPaginationRowModel(),
         onPaginationChange: setPagination,
         manualPagination: true,
+        manualSorting: true,
+        onSortingChange: onSortingChange,
         rowCount: count,
         autoResetPageIndex: false,
         state: {
             pagination,
+            sorting
         },
     })
 
@@ -175,71 +194,111 @@ export default function ListMBR() {
                     </div>
 
                     <div className="row">
-                        <div className="table-responsive">
-                            <table className="table table-sm table-striped table-bordered align-middle text-center">
-                                <thead>
-                                    {table.getHeaderGroups().map(headerGroup => (
-                                        <tr key={headerGroup.id}>
-                                            {headerGroup.headers.map(header => (
-                                                <th key={header.id} scope="col" style={{ width: `${header.getSize()} px` }}>
-                                                    {flexRender(header.column.columnDef.header, header.getContext())}
-                                                </th>
-                                            ))}
-                                        </tr>
-                                    ))}
-                                </thead>
-                                <tbody className="table-group-divider">
-                                    {isLoadingListPermintaan &&
-                                        <tr>
-                                            <td colSpan={8} className="text-center"> Loading ....</td>
-                                        </tr>}
+                        <div className="col-12">
+                            <div className="table-responsive">
+                                <table className="table table-sm table-striped table-hover table-bordered align-middle text-center">
+                                    <thead className="table-dark">
+                                        {table.getHeaderGroups().map(headerGroup => (
+                                            <tr key={headerGroup.id}>
+                                                {headerGroup.headers.map(header => (
+                                                    <th 
+                                                        key={header.id} 
+                                                        scope="col" 
+                                                        className="text-white fw-semibold" 
+                                                        style={{ 
+                                                            width: header.getSize(),
+                                                            maxWidth: header.column.columnDef.maxSize,
+                                                            minWidth: header.column.columnDef.minSize
+                                                        }} 
+                                                        {...(header.column.getCanSort() ? { onClick: header.column.getToggleSortingHandler() } : {})}
+                                                    >
+                                                        {flexRender(header.column.columnDef.header, header.getContext())}
 
-                                    {(!isLoadingListPermintaan && listPermintaan != null && listPermintaan.count == 0) ?
-                                        <tr>
-                                            <td colSpan={8} className="text-center"> Data Kosong </td>
-                                        </tr> :
-                                        !isLoadingListPermintaan && table.getRowModel().rows.map(row => (
-                                            <tr key={row.id} style={{ height: `10px` }}>
-                                                {row.getVisibleCells().map((cell) => (
-                                                    <td key={cell.id} style={{ width: `${cell.column.getSize()}px` }}>
-                                                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                                                    </td>
+                                                        {header.column.getIsSorted() === "asc" ? (
+                                                            <span> <FontAwesomeIcon className="ms-1" icon={faSortUp} /></span>
+                                                        ) : header.column.getIsSorted() === "desc" ? (
+                                                            <span> <FontAwesomeIcon className="ms-1" icon={faSortDown} /></span>
+                                                        ) : header.column.getCanSort() ? (
+                                                            <span> <FontAwesomeIcon className="ms-1" icon={faSort} /></span>
+                                                        ) : ""}
+                                                    </th>
                                                 ))}
                                             </tr>
                                         ))}
-                                </tbody>
-                            </table>
+                                    </thead>
+                                    <tbody className="table-group-divider">
+                                        {isLoadingListPermintaan &&
+                                            <tr>
+                                                <td colSpan={8} className="text-center py-4 text-muted fst-italic">
+                                                    <div className="spinner-border spinner-border-sm me-2" role="status">
+                                                        <span className="visually-hidden">Loading...</span>
+                                                    </div>
+                                                    Loading ...
+                                                </td>
+                                            </tr>}
+
+                                        {(!isLoadingListPermintaan && listPermintaan != null && listPermintaan.count == 0) ?
+                                            <tr>
+                                                <td colSpan={8} className="text-center py-4 text-muted fst-italic">
+                                                    <i className="fas fa-inbox me-2"></i>
+                                                    Data Kosong
+                                                </td>
+                                            </tr> :
+                                            !isLoadingListPermintaan && table.getRowModel().rows.map(row => (
+                                                <tr key={row.id} className="table-row-hover">
+                                                    {row.getVisibleCells().map((cell) => (
+                                                        <td 
+                                                            key={cell.id} 
+                                                            className={`${cell.column.columnDef.meta?.className}`}
+                                                            style={{
+                                                                width: cell.column.getSize(),
+                                                                maxWidth: cell.column.columnDef.maxSize,
+                                                                minWidth: cell.column.columnDef.minSize
+                                                            }}
+                                                        >
+                                                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                                                        </td>
+                                                    ))}
+                                                </tr>
+                                            ))}
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <div className="card-footer d-flex justify-content-between px-4 pt-3">
-                    <div className="col">
-                        <div className="row g-3 align-items-center">
-                            <div className="col-auto">
-                                <label className="col-form-label">Data ditampilkan: </label>
-                            </div>
-                            <div className="col-auto">
-                                <select className="form-select"
-                                    value={table.getState().pagination.pageSize}
-                                    onChange={e => {
-                                        table.setPageSize(Number(e.target.value))
-                                    }}
-                                >
-                                    {[5, 10, 20, 30].map(pageSize => (
-                                        <option key={pageSize} value={pageSize}>
-                                            {pageSize}
-                                        </option>
-                                    ))}
-                                </select>
-                            </div>
-                            <div className="col-auto">
-                                <label className="col-form-label">Total Data: {listPermintaan && listPermintaan.count} </label>
+                <div className="card-footer">
+                    <div className="row g-3 align-items-center">
+                        <div className="col-12 col-lg-6">
+                            <div className="row g-2 align-items-center justify-content-center justify-content-lg-start">
+                                <div className="col-auto">
+                                    <small className="text-muted fw-medium">Data per halaman:</small>
+                                </div>
+                                <div className="col-auto">
+                                    <select className="form-select form-select-sm"
+                                        value={table.getState().pagination.pageSize}
+                                        onChange={e => {
+                                            table.setPageSize(Number(e.target.value))
+                                        }}
+                                    >
+                                        {[5, 10, 20, 30].map(pageSize => (
+                                            <option key={pageSize} value={pageSize}>
+                                                {pageSize}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+                                <div className="col-auto">
+                                    <small className="text-muted fw-medium">
+                                        Total: <span className="text-primary fw-semibold">{listPermintaan && listPermintaan.count}</span>
+                                    </small>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div className="col d-flex justify-content-end align-items-center">
-                        <PaginationComponent table={table} currentPage={currentPage} pageCount={pageCount} pageList={pageList}></PaginationComponent>
+                        <div className="col-12 col-lg-6 d-flex justify-content-center justify-content-lg-end align-items-center">
+                            <PaginationComponent table={table} currentPage={currentPage} pageCount={pageCount} pageList={pageList}></PaginationComponent>
+                        </div>
                     </div>
                 </div>
 

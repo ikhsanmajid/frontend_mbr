@@ -29,8 +29,10 @@ export default function ModalAdd({ show, onClose, mutate }: { show: boolean, onC
 
     async function checkProduct(value: { namaProduk: string, id_bagian: string }) {
         const { namaProduk, id_bagian } = value
-        const encodedNamaProduk = encodeURIComponent(namaProduk)
-        const productCheck = await api.get(`/admin/product/checkProduct?nama_produk=${encodedNamaProduk}&id_bagian=${id_bagian}`)
+        const encodedNamaProduk = namaProduk
+        const productCheck = await api.get(`/admin/product/check-product?nama_produk=${encodedNamaProduk}&id_bagian=${id_bagian}`,
+            { apiVersion: "2" }
+        )
 
         return productCheck
     }
@@ -53,11 +55,11 @@ export default function ModalAdd({ show, onClose, mutate }: { show: boolean, onC
     })
 
     async function add_product(data: any) {
-        const addProcess = await api.post("/admin/product/addProduct", {
+        const addProcess = await api.post("/admin/product/add-product", {
             nama_produk: data.nama_produk,
             id_bagian: data.id_bagian,
             id_kategori: data.id_kategori
-        })
+        }, { apiVersion: "2" })
 
         return addProcess.data
     }
@@ -90,7 +92,7 @@ export default function ModalAdd({ show, onClose, mutate }: { show: boolean, onC
 
             if (e instanceof AxiosError) {
                 if (e.response?.status === 401) {
-                    window.location.href = '/mbr/login?code=session_expired'; 
+                    window.location.href = '/mbr/login?code=session_expired';
                 }
                 toast.error("Produk Gagal Ditambahkan")
             }

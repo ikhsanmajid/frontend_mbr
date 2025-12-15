@@ -31,8 +31,9 @@ export default function UserTable({ mutateUsers, onAdd }: { mutateUsers: (mutate
     //Filter
     const [searchUser, setSearchUser] = useState<string>("")
     const [statusUser, setStatusUser] = useState<string>("all")
+    const [idBagian, setIdBagian] = useState<string | null>(null)
 
-    const { listUser, isLoadingUser, error: errorUser, mutateUser } = FetchAllUser(pageSize, pageIndex * pageSize, { search_user: searchUser, active: statusUser })
+    const { listUser, isLoadingUser, error: errorUser, mutateUser } = FetchAllUser(pageSize, pageIndex * pageSize, { search_user: searchUser, active: statusUser, idBagian: idBagian })
 
     const handleEdit = (data: number | null) => {
         if (data == null) {
@@ -51,28 +52,39 @@ export default function UserTable({ mutateUsers, onAdd }: { mutateUsers: (mutate
             header: "No",
             cell: (info) => info.table.getState().pagination.pageIndex * info.table.getState().pagination.pageSize + info.row.index + 1,
             enableSorting: false,
-            size: 20
+            size: 50
 
         }),
         columnHelper.accessor("nik", {
             header: "NIK",
             cell: info => info.getValue(),
+            size: 100,
         }),
         columnHelper.accessor("nama", {
             header: "Nama",
             cell: info => info.getValue(),
+            meta: {
+                className: "text-start text-wrap"
+            },
+            size: 200,
         }),
         columnHelper.accessor("email", {
             header: "Email",
             cell: info => info.getValue(),
+            meta: {
+                className: "text-start text-wrap"
+            },
+            size: 200,
         }),
         columnHelper.accessor("isActive", {
             header: "Status Aktif",
             cell: info => <input className="form-check-input" type="checkbox" checked={info.cell.getValue() == true ? true : false} id="flexCheckDefault" disabled></input>,
+            size: 100,
         }),
         columnHelper.accessor("isAdmin", {
             header: "Status Administrator",
             cell: info => <input className="form-check-input" type="checkbox" checked={info.cell.getValue() == true ? true : false} id="flexCheckDefault" disabled></input>,
+            size: 150,
         }),
         columnHelper.display({
             header: "Actions",
@@ -82,6 +94,7 @@ export default function UserTable({ mutateUsers, onAdd }: { mutateUsers: (mutate
                 handleEdit={(data: IUser) => handleEdit(data.id == undefined ? null : data.id)}
                 handleDelete={(data: IUser) => handleDelete(data)}>
             </RowActions>,
+            size: 100,
         }),
         // eslint-disable-next-line react-hooks/exhaustive-deps
     ], [])
@@ -156,77 +169,111 @@ export default function UserTable({ mutateUsers, onAdd }: { mutateUsers: (mutate
                     }}
                     statusUser={(value: string) => {
                         setStatusUser(value)
+                    }}
+                    idBagianSearch={(value: string | null) => {
+                        setIdBagian(value)
                     }}>
                 </FilterComponentUser>
 
 
 
                 <div className="row">
-                    <div className="table-responsive">
-                        <table className="table table-sm table-striped table-bordered align-middle text-center">
-                            <thead>
-                                {table.getHeaderGroups().map(headerGroup => (
-                                    <tr key={headerGroup.id}>
-                                        {headerGroup.headers.map(header => (
-                                            <th key={header.id} scope="col" style={{ width: `${header.getSize()}px` }}>
-                                                {flexRender(header.column.columnDef.header, header.getContext())}
-                                            </th>
-                                        ))}
-                                    </tr>
-                                ))}
-                            </thead>
-                            <tbody className="table-group-divider">
-                                {isLoadingUser &&
-                                    <tr>
-                                        <td colSpan={7} className="text-center"> Loading ....</td>
-                                    </tr>}
-
-                                {(!isLoadingUser && listUser != null && listUser.count == 0) ?
-                                    <tr>
-                                        <td colSpan={7} className="text-center"> Data Kosong </td>
-                                    </tr> :
-                                    !isLoadingUser && table.getRowModel().rows.map(row => (
-                                        <tr key={row.id}>
-                                            {row.getVisibleCells().map((cell) => (
-                                                <td key={cell.id} style={{ width: `${cell.column.getSize()}px` }}>
-                                                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                                                </td>
+                    <div className="col-12">
+                        <div className="table-responsive">
+                            <table className="table table-sm table-striped table-hover table-bordered align-middle text-center">
+                                <thead className="table-dark">
+                                    {table.getHeaderGroups().map(headerGroup => (
+                                        <tr key={headerGroup.id}>
+                                            {headerGroup.headers.map(header => (
+                                                <th 
+                                                    key={header.id} 
+                                                    scope="col" 
+                                                    className="text-white fw-semibold" 
+                                                    style={{ 
+                                                        width: header.getSize(),
+                                                        maxWidth: header.column.columnDef.maxSize,
+                                                        minWidth: header.column.columnDef.minSize
+                                                    }}
+                                                >
+                                                    {flexRender(header.column.columnDef.header, header.getContext())}
+                                                </th>
                                             ))}
                                         </tr>
                                     ))}
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody className="table-group-divider">
+                                    {isLoadingUser &&
+                                        <tr>
+                                            <td colSpan={7} className="text-center py-4 text-muted fst-italic">
+                                                <div className="spinner-border spinner-border-sm me-2" role="status">
+                                                    <span className="visually-hidden">Loading...</span>
+                                                </div>
+                                                Loading ...
+                                            </td>
+                                        </tr>}
+
+                                    {(!isLoadingUser && listUser != null && listUser.count == 0) ?
+                                        <tr>
+                                            <td colSpan={7} className="text-center py-4 text-muted fst-italic">
+                                                <i className="fas fa-inbox me-2"></i>
+                                                Data Kosong
+                                            </td>
+                                        </tr> :
+                                        !isLoadingUser && table.getRowModel().rows.map(row => (
+                                            <tr key={row.id} className="table-row-hover">
+                                                {row.getVisibleCells().map((cell) => (
+                                                    <td 
+                                                        key={cell.id} 
+                                                        className={`${cell.column.columnDef.meta?.className || ''}`}
+                                                        style={{
+                                                            width: cell.column.getSize(),
+                                                            maxWidth: cell.column.columnDef.maxSize,
+                                                            minWidth: cell.column.columnDef.minSize
+                                                        }}
+                                                    >
+                                                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                                                    </td>
+                                                ))}
+                                            </tr>
+                                        ))}
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <div className="card-footer d-flex justify-content-between px-4 pt-3">
-                <div className="col">
-                    <div className="row g-3 align-items-center">
-                        <div className="col-auto">
-                            <label className="col-form-label">Data ditampilkan: </label>
-                        </div>
-                        <div className="col-auto">
-                            <select className="form-select"
-                                value={table.getState().pagination.pageSize}
-                                onChange={e => {
-                                    table.setPageSize(Number(e.target.value))
-                                }}
-                            >
-                                {[5, 10, 20, 30].map(pageSize => (
-                                    <option key={pageSize} value={pageSize}>
-                                        {pageSize}
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
-                        <div className="col-auto">
-                            <label className="col-form-label">Total Data: {listUser && listUser.count} </label>
+            <div className="card-footer">
+                <div className="row g-3 align-items-center">
+                    <div className="col-12 col-lg-6">
+                        <div className="row g-2 align-items-center justify-content-center justify-content-lg-start">
+                            <div className="col-auto">
+                                <small className="text-muted fw-medium">Data per halaman:</small>
+                            </div>
+                            <div className="col-auto">
+                                <select className="form-select form-select-sm"
+                                    value={table.getState().pagination.pageSize}
+                                    onChange={e => {
+                                        table.setPageSize(Number(e.target.value))
+                                    }}
+                                >
+                                    {[5, 10, 20, 30].map(pageSize => (
+                                        <option key={pageSize} value={pageSize}>
+                                            {pageSize}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                            <div className="col-auto">
+                                <small className="text-muted fw-medium">
+                                    Total: <span className="text-primary fw-semibold">{listUser && listUser.count}</span>
+                                </small>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div className="col d-flex justify-content-end align-items-center">
-                    <PaginationComponent table={table} currentPage={currentPage} pageCount={pageCount} pageList={pageList}></PaginationComponent>
+                    <div className="col-12 col-lg-6 d-flex justify-content-center justify-content-lg-end align-items-center">
+                        <PaginationComponent table={table} currentPage={currentPage} pageCount={pageCount} pageList={pageList}></PaginationComponent>
+                    </div>
                 </div>
             </div>
 

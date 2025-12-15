@@ -8,6 +8,9 @@ import { useEffect, useRef } from "react";
 import { useMemo, useState } from "react";
 import api from "@/app/lib/axios";
 import PaginationComponent from "@/app/component/pagination/Pagination";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faClockRotateLeft } from "@fortawesome/free-solid-svg-icons";
+import ModalAuditTrail from "../ModalAuditTrail";
 
 
 
@@ -18,15 +21,21 @@ interface IListNomorRB {
     tanggalKembali: string | null;
     namaUserTerima: string | null;
     nomorBatch: string | null;
+    keterangan: string | null;
 }
 
 const columnHelper = createColumnHelper<IListNomorRB>()
 
 export default function TableLihatNomor({ idData }: { idData: string | number }) {
     const nomorBatchRef = useRef<HTMLInputElement>(null)
+    const keteranganRef = useRef<HTMLTextAreaElement>(null)
     const [idEdit, setIdEdit] = useState<string | number | null>(null)
     const [editData, setEditData] = useState<IListNomorRB | null>(null)
     const [isLoadingAdd, setIsLoadingAdd] = useState(false)
+
+    const [showModalHistory, setShowModalHistory] = useState<boolean>(false)
+    const [modalAuditData, setModalAuditData] = useState<{ id: number | null, nomorUrut: string | null }>({ id: null, nomorUrut: null })
+
 
     const [count, setCount] = useState<number>(0)
     const [pagination, setPagination] = useState<PaginationState>({
@@ -39,7 +48,10 @@ export default function TableLihatNomor({ idData }: { idData: string | number })
 
     const [pengembalianNomorData, setPengembalianNomorData] = useState<IListNomorRB[] | null>(null)
 
-    const { listNomorPengembalian, isLoadingListNomorPengembalian, error, mutateListNomorPengembalian } = GetAllNomorReturnRBByIDDetailPermintaan(idData, pageSize, pageIndex * pageSize)
+    const [searchNumber, setSearchNumber] = useState<string>("")
+    const [tempSearchNumber, setTempSearchNumber] = useState<string>("")
+
+    const { listNomorPengembalian, isLoadingListNomorPengembalian, error, mutateListNomorPengembalian } = GetAllNomorReturnRBByIDDetailPermintaan(idData, pageSize, pageIndex * pageSize, { searchNumber: searchNumber })
 
     const [show, setShow] = useState(false);
     const [idConfirm, setIdConfirm] = useState<number | null>(null)
@@ -52,23 +64,27 @@ export default function TableLihatNomor({ idData }: { idData: string | number })
     async function handleConfirm() {
         setIsLoadingAdd(true)
         try {
-            const confirmData = await api.post(`/admin/product_rb/confirmRBReturnAdmin/${idConfirm}`)
+            const confirmData = await api.post(`/admin/mbr/return/confirm-return-admin/${idConfirm}`,
+                {}, { apiVersion: "2" }
+            )
 
             if (confirmData.data.status === "success") {
                 toast.success("Data berhasil dikonfirmasi")
                 mutateListNomorPengembalian()
                 setIdConfirm(null)
                 setShow(false)
-            } else {
-                toast.error("Data gagal dikonfirmasi")
             }
         } catch (err) {
             if (err instanceof AxiosError) {
-                if (error.response?.status === 401) {
+                if (err.response?.status === 401) {
                     window.location.href = '/mbr/login?code=session_expired';
                 }
+
+                toast.error(`Data gagal dikonfirmasi, ${err.response?.data.message}`)
+            } else {
+                toast.error("Data gagal dikonfirmasi, Backend Error")
             }
-            toast.error("Data gagal dikonfirmasi, Backend Error")
+
         } finally {
             setIsLoadingAdd(false)
         }
@@ -76,11 +92,11 @@ export default function TableLihatNomor({ idData }: { idData: string | number })
 
     async function handleSave() {
         setIsLoadingAdd(true)
-        const dateTime = await api.get(`/time`)
+        const dateTime = await api.get(`/time`, { apiVersion: "2" })
         const dateUpload = new Date(dateTime.data.time)
         const dateShow = dateUpload.toLocaleString("id-ID", { timeZone: "Asia/Jakarta" })
 
-        if (editData?.status === "KEMBALI" && (nomorBatchRef.current?.value === "" || nomorBatchRef.current?.value === null)) {
+        if (editData?.status === "KEMBALI" && (nomorBatchRef.current?.value.trim() === "" || nomorBatchRef.current?.value === null)) {
             toast.error("Nomor Batch harus diisi")
             setIsLoadingAdd(false)
             return
@@ -90,15 +106,17 @@ export default function TableLihatNomor({ idData }: { idData: string | number })
             const updateData = await api.put(`/users/rb/updateNomorRBReturn/${idEdit}`, {
                 status: editData?.status,
                 nomor_batch: nomorBatchRef.current?.value.toUpperCase() ?? "",
-                tanggal_kembali: editData?.status === "KEMBALI" || editData?.status === "BATAL" ? dateTime.data.time : ""
+                tanggal_kembali: editData?.status === "KEMBALI" || editData?.status === "BATAL" ? dateTime.data.time : "",
+                keterangan: keteranganRef.current?.value ?? ""
             })
 
             if (updateData.data.status === "success") {
                 toast.success("Data berhasil diupdate")
                 pengembalianNomorData?.map((data) => {
                     if (data.id === idEdit) {
-                        data.nomorBatch = nomorBatchRef.current?.value ?? ""
+                        data.nomorBatch = nomorBatchRef.current?.value.toUpperCase() ?? ""
                         data.status = editData!.status
+                        data.keterangan = keteranganRef.current?.value ?? ""
                         if (editData!.status === "KEMBALI" || editData!.status === "BATAL") {
                             data.tanggalKembali = dateShow
                         } else {
@@ -116,7 +134,7 @@ export default function TableLihatNomor({ idData }: { idData: string | number })
                     window.location.href = '/mbr/login?code=session_expired';
                 }
             }
-            console.log(err)
+            //console.log(err)
         } finally {
             setIsLoadingAdd(false)
         }
@@ -145,7 +163,7 @@ export default function TableLihatNomor({ idData }: { idData: string | number })
                             //console.log(e.target.value)
 
                             if (e.target.value === "ACTIVE") {
-                                setEditData((prev) => { return { ...prev, nomorBatch: "", status: e.target.value, tanggalKembali: null } as IListNomorRB })
+                                setEditData((prev) => { return { ...prev, nomorBatch: "", status: e.target.value, tanggalKembali: "" } as IListNomorRB })
                             } else if (e.target.value === "BATAL") {
                                 setEditData((prev) => { return { ...prev, nomorBatch: "", status: e.target.value } as IListNomorRB })
                             } else {
@@ -161,14 +179,15 @@ export default function TableLihatNomor({ idData }: { idData: string | number })
                         </select>
                     )
                 } else {
+                    const badgeType = info.row.original.status == "KEMBALI" ? "text-bg-success" : info.row.original.status == "ACTIVE" ? "text-bg-warning" : "text-bg-danger"
                     if (info.row.original.status === "KEMBALI") {
-                        return "Sudah Kembali"
+                        return (<h5><span className={`badge ${badgeType}`}>Sudah Kembali</span></h5>)
                     }
                     if (info.row.original.status === "BATAL") {
-                        return "Batal Digunakan"
+                        return (<h5><span className={`badge ${badgeType}`}>Batal Digunakan</span></h5>)
                     }
                     if (info.row.original.status === "ACTIVE") {
-                        return "Belum Kembali"
+                        return (<h5><span className={`badge ${badgeType}`}>Belum Kembali</span></h5>)
                     }
                 }
             },
@@ -225,7 +244,47 @@ export default function TableLihatNomor({ idData }: { idData: string | number })
             enableSorting: false,
         }),
         columnHelper.display({
-            header: "Edit",
+            header: "Keterangan",
+            cell: (info) => {
+                if (idEdit === info.row.original.id) {
+
+
+                    return (
+                        <textarea
+                            name="keterangan"
+                            className="form-control"
+                            rows={2}
+                            ref={keteranganRef}
+                            defaultValue={info.row.original.keterangan ?? ""}
+                            placeholder="Masukkan keterangan..."
+                            onKeyDown={(e) => {
+                                if (e.key === "Enter" && e.ctrlKey) {
+                                    handleSave()
+                                } else if (e.key === "Escape") {
+                                    setIdEdit(null)
+                                }
+                            }}
+                            disabled={isLoadingAdd}
+                        />
+                    )
+                } else {
+                    return (
+                        <textarea
+                            name="keterangan"
+                            className="form-control"
+                            rows={2}
+                            value={info.row.original.keterangan ?? ""}
+                            disabled
+                            style={{ resize: 'none', backgroundColor: '#f8f9fa' }}
+                        />
+                    )
+                }
+            },
+            size: 150,
+            enableSorting: false,
+        }),
+        columnHelper.display({
+            header: "Aksi",
             cell: (info) => {
                 if (idEdit === info.row.original.id) {
                     return (
@@ -239,22 +298,58 @@ export default function TableLihatNomor({ idData }: { idData: string | number })
                         </>
                     )
                 } else {
-                    if (info.row.original.namaUserTerima !== undefined) {
-                        return (
-                            <button className="btn btn-sm btn-warning" disabled>Edit</button>
-                        )
-                    } else {
-                        return (<>
-                            <button className="btn btn-sm btn-warning m-1" onClick={() => {
-                                setIdEdit(info.row.original.id)
-                                setEditData(info.row.original)
-                            }}>Edit</button>
-                            {info.row.original.status !== "ACTIVE" && <button className="btn btn-sm btn-primary" onClick={() => showModalConfirm(info.row.original.id)}>Confirm</button>}
-                        </>)
-                    }
+
+                    const isReceived = info.row.original?.namaUserTerima != null;
+
+                    return (
+                        <>
+                            <button
+                                className="btn btn-sm btn-warning"
+                                onClick={() => {
+                                    if (!isReceived) {
+                                        setIdEdit(info.row.original.id);
+                                        setEditData(info.row.original);
+                                    }
+                                }}
+                                disabled={isReceived}
+                                aria-disabled={isReceived}
+                            >
+                                Edit
+                            </button>
+
+                            {info.row.original.status !== "ACTIVE" && !isReceived && <button className="ms-1 btn btn-sm btn-primary" onClick={() => showModalConfirm(info.row.original.id)}>Confirm</button>}
+
+
+                        </>
+                    );
                 }
             },
             size: 100,
+            enableSorting: false,
+        }),
+        columnHelper.display({
+            header: "Riwayat",
+            cell: (info) => {
+
+
+
+
+                return (
+                    <>
+                        <button
+                            className="btn btn-sm btn-primary text-white"
+                            onClick={() => {
+                                setShowModalHistory(true);
+                                setModalAuditData((prev) => ({ ...prev, id: info.row.original.id, nomorUrut: info.row.original.nomorUrut }))
+                            }}
+                        >
+                            <FontAwesomeIcon icon={faClockRotateLeft} /> History
+                        </button>
+                    </>
+                );
+
+            },
+            size: 20,
             enableSorting: false,
         })
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -278,6 +373,27 @@ export default function TableLihatNomor({ idData }: { idData: string | number })
 
     const pageCount = table.getPageCount()
     const currentPage = table.getState().pagination.pageIndex
+
+    // Debounce effect for search (500ms)
+    useEffect(() => {
+        const handler = setTimeout(() => {
+            setSearchNumber(tempSearchNumber)
+            // Reset to first page when searching
+            if (tempSearchNumber !== searchNumber) {
+                setPagination(prev => ({ ...prev, pageIndex: 0 }))
+            }
+        }, 500)
+
+        return () => {
+            clearTimeout(handler)
+        }
+    }, [tempSearchNumber, searchNumber])
+
+    // Reset search when idData changes
+    useEffect(() => {
+        setSearchNumber("")
+        setTempSearchNumber("")
+    }, [idData])
 
     useEffect(() => {
         if (error) {
@@ -308,72 +424,141 @@ export default function TableLihatNomor({ idData }: { idData: string | number })
     }, [pageCount])
 
     return (
-        <div className="row">
-            <div className="table-responsive">
-                <table className="table table-sm table-striped table-bordered align-middle text-center">
-                    <thead>
-                        {table.getHeaderGroups().map(headerGroup => (
-                            <tr key={headerGroup.id}>
-                                {headerGroup.headers.map(header => (
-                                    <th key={header.id} scope="col" style={{ width: `${header.getSize()} px` }}>
-                                        {flexRender(header.column.columnDef.header, header.getContext())}
-                                    </th>
-                                ))}
-                            </tr>
-                        ))}
-                    </thead>
-                    <tbody className="table-group-divider">
-                        {isLoadingListNomorPengembalian &&
-                            <tr>
-                                <td colSpan={7} className="text-center"> Loading ....</td>
-                            </tr>}
-
-                        {!isLoadingListNomorPengembalian && pengembalianNomorData?.length == 0 &&
-                            <tr>
-                                <td colSpan={7} className="text-center"> Data Kosong </td>
-                            </tr>
-                        }
-
-                        {!isLoadingListNomorPengembalian && pengembalianNomorData?.length !== 0 &&
-                            table.getRowModel().rows.map(row => (
-                                <tr key={row.id} style={{ height: `10px` }}>
-                                    {row.getVisibleCells().map((cell) => (
-                                        <td key={cell.id} className={cell.column.columnDef.meta?.className ?? ""} style={{ width: `${cell.column.getSize()}px` }}>
-                                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                                        </td>
-                                    ))}
-                                </tr>
-                            ))}
-                    </tbody>
-                </table>
-            </div>
-            <div className="card-footer d-flex justify-content-between px-4 pt-3">
-                <div className="col">
-                    <div className="row g-3 align-items-center">
-                        <div className="col-auto">
-                            <label className="col-form-label">Data ditampilkan: </label>
+        <>
+            {/* Search Input Section */}
+            <div className="card border-0 shadow-sm mb-3">
+                <div className="card-body py-3">
+                    <div className="row align-items-center">
+                        <div className="col-12 col-md-3 col-lg-2">
+                            <label className="form-label text-muted fw-medium mb-0">
+                                Pencarian Nomor
+                            </label>
                         </div>
-                        <div className="col-auto">
-                            <select className="form-select"
-                                value={table.getState().pagination.pageSize}
-                                onChange={e => {
-                                    table.setPageSize(Number(e.target.value))
-                                }}
-                            >
-                                {[5, 10, 20, 30].map(pageSize => (
-                                    <option key={pageSize} value={pageSize}>
-                                        {pageSize}
-                                    </option>
-                                ))}
-                            </select>
+                        <div className="col-12 col-md-9 col-lg-6">
+                            <div className="position-relative">
+                                <input
+                                    type="text"
+                                    className="form-control border-primary border-opacity-25 ps-3 pe-3"
+                                    placeholder="Ketik nomor urut"
+                                    value={tempSearchNumber}
+                                    onChange={(e) => setTempSearchNumber(e.target.value)}
+                                    style={{
+                                        borderRadius: '8px',
+                                        fontSize: '0.95rem',
+                                        padding: '0.7rem 1rem',
+                                        transition: 'all 0.2s ease'
+                                    }}
+                                />
+                                {tempSearchNumber && tempSearchNumber !== searchNumber && (
+                                    <div className="position-absolute top-100 start-0 mt-1">
+                                        <small className="text-primary fst-italic">
+                                            <span className="spinner-border spinner-border-sm me-1" style={{ width: '0.7rem', height: '0.7rem' }}></span>
+                                            Mencari...
+                                        </small>
+                                    </div>
+                                )}
+                            </div>
                         </div>
-                        <div className="col-auto">
-                            <label className="col-form-label">Total Data: {listNomorPengembalian && listNomorPengembalian.count} </label>
-                        </div>
+                        {searchNumber && (
+                            <div className="col-12 col-lg-4 mt-2 mt-lg-0">
+                                <button
+                                    className="btn btn-outline-secondary btn-sm"
+                                    onClick={() => {
+                                        setTempSearchNumber("")
+                                        setSearchNumber("")
+                                    }}
+                                    style={{ borderRadius: '6px' }}
+                                >
+                                    ✕ Hapus Pencarian
+                                </button>
+                            </div>
+                        )}
                     </div>
                 </div>
-                <div className="col d-flex justify-content-end align-items-center">
-                    <PaginationComponent table={table} currentPage={currentPage} pageCount={pageCount} pageList={pageList}></PaginationComponent>
+            </div>
+
+            <div className="row">
+                <div className="col-12">
+                    <div className="table-responsive">
+                        <table className="table table-sm table-striped table-hover table-bordered align-middle text-center">
+                            <thead className="table-dark">
+                                {table.getHeaderGroups().map(headerGroup => (
+                                    <tr key={headerGroup.id}>
+                                        {headerGroup.headers.map(header => (
+                                            <th key={header.id} scope="col" className="text-white fw-semibold" style={{ minWidth: `${header.getSize()}px` }}>
+                                                {flexRender(header.column.columnDef.header, header.getContext())}
+                                            </th>
+                                        ))}
+                                    </tr>
+                                ))}
+                            </thead>
+                            <tbody className="table-group-divider">
+                                {isLoadingListNomorPengembalian &&
+                                    <tr>
+                                        <td colSpan={8} className="text-center py-4 text-muted fst-italic">
+                                            <div className="spinner-border spinner-border-sm me-2" role="status">
+                                                <span className="visually-hidden">Loading...</span>
+                                            </div>
+                                            Loading ...
+                                        </td>
+                                    </tr>}
+
+                                {!isLoadingListNomorPengembalian && pengembalianNomorData?.length == 0 &&
+                                    <tr>
+                                        <td colSpan={8} className="text-center py-4 text-muted fst-italic">
+                                            <i className="fas fa-inbox me-2"></i>
+                                            Data Kosong
+                                        </td>
+                                    </tr>
+                                }
+
+                                {!isLoadingListNomorPengembalian && pengembalianNomorData?.length !== 0 &&
+                                    table.getRowModel().rows.map(row => (
+                                        <tr key={row.id} className="table-row-hover">
+                                            {row.getVisibleCells().map((cell) => (
+                                                <td key={cell.id} className={`text-nowrap ${cell.column.columnDef.meta?.className ?? ""}`} style={{ minWidth: `${cell.column.getSize()}px` }}>
+                                                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                                                </td>
+                                            ))}
+                                        </tr>
+                                    ))}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div className="card-footer">
+                <div className="row g-3 align-items-center">
+                    <div className="col-12 col-lg-6">
+                        <div className="row g-2 align-items-center justify-content-center justify-content-lg-start">
+                            <div className="col-auto">
+                                <small className="text-muted fw-medium">Data per halaman:</small>
+                            </div>
+                            <div className="col-auto">
+                                <select className="form-select form-select-sm"
+                                    value={table.getState().pagination.pageSize}
+                                    onChange={e => {
+                                        table.setPageSize(Number(e.target.value))
+                                    }}
+                                >
+                                    {[5, 10, 20, 30].map(pageSize => (
+                                        <option key={pageSize} value={pageSize}>
+                                            {pageSize}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                            <div className="col-auto">
+                                <small className="text-muted fw-medium">
+                                    Total: <span className="text-primary fw-semibold">{listNomorPengembalian && listNomorPengembalian.count}</span>
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="col-12 col-lg-6 d-flex justify-content-center justify-content-lg-end align-items-center">
+                        <PaginationComponent table={table} currentPage={currentPage} pageCount={pageCount} pageList={pageList}></PaginationComponent>
+                    </div>
                 </div>
             </div>
             <Modal
@@ -402,6 +587,15 @@ export default function TableLihatNomor({ idData }: { idData: string | number })
                     <Button variant="primary" onClick={handleConfirm} disabled={isLoadingAdd}>Confirm</Button>
                 </Modal.Footer>
             </Modal>
-        </div>
+
+            <ModalAuditTrail
+                key={`${modalAuditData.id}-${showModalHistory}`}
+                show={showModalHistory}
+                onClose={() => {
+                    setShowModalHistory(false)
+                }}
+                data={modalAuditData}
+            />
+        </>
     );
 }

@@ -37,7 +37,7 @@ export default auth((req) => {
 
     if (!session && !isLogin) {
 
-        console.log("Pathname: ", req.nextUrl.pathname, session)
+        //console.log("Pathname: ", req.nextUrl.pathname, session)
 
         const loginUrl = new URL(`/mbr/login?code=session_expired&next=${encodeURIComponent(req.nextUrl.pathname.substring(4))}`, req.nextUrl.origin)
 
@@ -48,7 +48,7 @@ export default auth((req) => {
         return NextResponse.redirect(new URL(`/`, req.nextUrl.origin))
     }
 
-    axios.get(`${process.env.NEXT_PUBLIC_APIENDPOINT_URL! as string}`).then(res => {
+    axios.get(`${process.env.NEXT_PUBLIC_APIENDPOINT_URL! as string + "/api/v1"}`).then(res => {
         return NextResponse.next()
     }).catch(e => {
         if (e instanceof AxiosError) {

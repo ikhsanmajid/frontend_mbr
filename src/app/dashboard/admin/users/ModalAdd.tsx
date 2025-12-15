@@ -12,7 +12,9 @@ export default function ModalAdd({ show, onClose, mutate }: { show: boolean, onC
     const [isLoadingAdd, setIsLoadingAdd] = useState(false)
 
     async function checkNIK(nik: string) {
-        const NIKCheck = await api.get("/admin/users/checkNIK/?nik=" + nik)
+        const NIKCheck = await api.get("/admin/users/check-nik/?nik=" + nik,
+            { apiVersion: "2" }
+        )
         return NIKCheck
     }
 
@@ -74,13 +76,13 @@ export default function ModalAdd({ show, onClose, mutate }: { show: boolean, onC
 
     async function add_user(data: any) {
         const addProcess = await api.post(
-            "/admin/users/addUser",
+            "/admin/users/add-user",
             {
                 email: data.email,
                 nik: data.nik,
                 nama: data.fullName,
                 password: data.repeatedPassword
-            })
+            }, { apiVersion: "2" })
 
         return addProcess.data
     }

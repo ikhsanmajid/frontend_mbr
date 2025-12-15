@@ -11,15 +11,17 @@ import Select from "react-select";
 export default function FilterComponentPermintaan() {
     const [isMounted, setIsMounted] = useState<boolean>(false);
     const [keyword, setKeyword] = useState<string>("")
+    const [idTransaksiTemp, setIdTransaksiTemp] = useState<number | null>(null)
 
     const [date1, setDate1] = useState<Date | null>(null)
     const [idBagianChoosen, setIdBagianChoosen] = useState<number | null>(useFilterState((state) => state.idBagian));
     const [statusUsed, setStatusUsed] = useState<"all" | "onlyUsed" | "onlyAvailable">(useFilterState((state) => state.StatusDipakai))
-    const [statusConfirmed, setStatusConfirmed] = useState<"all" | "onlyConfirmed" | "onlyPending" | "onlyRejected">(useFilterState((state) => state.StatusKonfirmasi))
+    const [statusConfirmed, setStatusConfirmed] = useState<"all" | "onlyConfirmed" | "onlyPending" | "onlyRejected">(useFilterState((state) => state.StatusKonfirmasi) || "onlyPending")
     const [idProdukChoosen, setIdProdukChoosen] = useState<number | null>(useFilterState((state) => state.idProduk));
     const [bagianList, setBagianList] = useState<{ value: number | null; label: string }[]>([]);
     const [productList, setProductList] = useState<{ value: number | null; label: string }[]>([]);
-
+    
+    const setIdTransaksi = useFilterState((state) => state.setIdTransaksi)
     const setFilterYear = useFilterState((state) => state.setFilterYear)
     const setIdProduk = useFilterState((state) => state.setIdProduk)
     const setNIKNama = useFilterState((state) => state.setNIKNama)
@@ -93,10 +95,11 @@ export default function FilterComponentPermintaan() {
             setBagianList([])
         }
 
-        //     eslint-disable-next-line react-hooks/exhaustive-deps
+        //eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isLoadingBagian])
 
     function handleSubmit() {
+        setIdTransaksi(idTransaksiTemp)
         setNIKNama(keyword)
         setStatusKonfirmasi(statusConfirmed)
         setStatusDipakai(statusUsed)
@@ -111,12 +114,25 @@ export default function FilterComponentPermintaan() {
                 <Accordion.Header><span className="fw-bold">Filter</span></Accordion.Header>
                 <Accordion.Body>
                     <div className="row w-100">
-                        <div className="col col-6">
-                            <div className="row mb-2 row mb-2 align-items-center">
-                                <div className="col col-3">
+                        <div className="col-12 col-lg-6">
+                            <div className="row mb-3 align-items-center">
+                                <div className="col-12 col-md-3 mb-2 mb-md-0">
+                                    <span>ID transaksi: </span>
+                                </div>
+                                <div className="col-12 col-md-9">
+                                    <div className="input-group">
+                                        <input onChange={(e) => {
+                                            setIdTransaksiTemp(Number(e.target.value))
+                                        }} type="text" autoComplete="off" className="form-control" id="inputSearchIdTrx" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="row mb-3 align-items-center">
+                                <div className="col-12 col-md-3 mb-2 mb-md-0">
                                     <span>NIK/Nama: </span>
                                 </div>
-                                <div className="col col-8">
+                                <div className="col-12 col-md-9">
                                     <div className="input-group">
                                         <input onChange={(e) => {
                                             setKeyword(e.target.value)
@@ -125,11 +141,11 @@ export default function FilterComponentPermintaan() {
                                 </div>
                             </div>
 
-                            <div className="row mb-2 align-items-center">
-                                <div className="col col-3">
+                            <div className="row mb-3 align-items-center">
+                                <div className="col-12 col-md-3 mb-2 mb-md-0">
                                     <span>Bagian: </span>
                                 </div>
-                                <div className="col col-8">
+                                <div className="col-12 col-md-9">
                                     {isMounted && (
                                         <Select
                                             options={bagianList}
@@ -143,11 +159,11 @@ export default function FilterComponentPermintaan() {
                                 </div>
                             </div>
 
-                            <div className="row mb-2 align-items-center">
-                                <div className="col col-3">
+                            <div className="row mb-3 align-items-center">
+                                <div className="col-12 col-md-3 mb-2 mb-md-0">
                                     <span>Nama Produk: </span>
                                 </div>
-                                <div className="col col-8">
+                                <div className="col-12 col-md-9">
                                     {isMounted && !isLoadingBagian && (
                                         <Select
                                             options={productList}
@@ -161,13 +177,13 @@ export default function FilterComponentPermintaan() {
                                 </div>
                             </div>
 
-                            <div className="row mb-2 align-items-center">
-                                <div className="col col-3">
+                            <div className="row mb-3 align-items-center">
+                                <div className="col-12 col-md-3 mb-2 mb-md-0">
                                     <span>Tahun Permintaan: </span>
                                 </div>
-                                <div className="col col-8">
-                                    <div className="row row-cols-auto align-items-center">
-                                        <div className="col">
+                                <div className="col-12 col-md-9">
+                                    <div className="row g-2 align-items-center">
+                                        <div className="col-12 col-sm-auto">
                                             <DatePicker
                                                 className="form-control"
                                                 selected={date1}
@@ -186,14 +202,14 @@ export default function FilterComponentPermintaan() {
                                 </div>
                             </div>
                         </div>
-                        <div className="col col-auto">
-                            <div className="row mb-2 row mb-2 align-items-center">
-                                <div className="col col-2">
-                                    <span>Status Konfirmasi: </span>
+                        <div className="col-12 col-lg-6">
+                            <div className="row mb-3 align-items-center">
+                                <div className="col-12 mb-2">
+                                    <span className="fw-semibold">Status Konfirmasi: </span>
                                 </div>
-                                <div className="col col-auto">
-                                    <div className="row">
-                                        <div className="col col-auto">
+                                <div className="col-12">
+                                    <div className="row g-2">
+                                        <div className="col-12 col-sm-6 col-md-auto">
                                             <div className="form-check form-check-inline">
                                                 <input className="form-check-input" type="radio" name="confirmed" id="inlineRadio1" value="onlyConfirmed" onChange={(e) => {
                                                     setStatusConfirmed(e.target.value as "onlyConfirmed" | "onlyPending" | "onlyRejected" | "all")
@@ -201,7 +217,7 @@ export default function FilterComponentPermintaan() {
                                                 <label className="form-check-label" htmlFor="inlineRadio1">Dikonfirmasi</label>
                                             </div>
                                         </div>
-                                        <div className="col col-auto">
+                                        <div className="col-12 col-sm-6 col-md-auto">
                                             <div className="form-check form-check-inline">
                                                 <input className="form-check-input" type="radio" name="confirmed" id="inlineRadio2" value="onlyPending" onChange={(e) => {
                                                     setStatusConfirmed(e.target.value as "onlyConfirmed" | "onlyPending" | "onlyRejected" | "all")
@@ -209,7 +225,7 @@ export default function FilterComponentPermintaan() {
                                                 <label className="form-check-label" htmlFor="inlineRadio2">Pending</label>
                                             </div>
                                         </div>
-                                        <div className="col col-auto">
+                                        <div className="col-12 col-sm-6 col-md-auto">
                                             <div className="form-check form-check-inline">
                                                 <input className="form-check-input" type="radio" name="confirmed" id="inlineRadio4" value="onlyRejected" onChange={(e) => {
                                                     setStatusConfirmed(e.target.value as "onlyConfirmed" | "onlyPending" | "onlyRejected" | "all")
@@ -217,7 +233,7 @@ export default function FilterComponentPermintaan() {
                                                 <label className="form-check-label" htmlFor="inlineRadio4">Ditolak</label>
                                             </div>
                                         </div>
-                                        <div className="col col-auto">
+                                        <div className="col-12 col-sm-6 col-md-auto">
                                             <div className="form-check form-check-inline">
                                                 <input className="form-check-input" type="radio" name="confirmed" id="inlineRadio3" value="all" onChange={(e) => {
                                                     setStatusConfirmed(e.target.value as "onlyConfirmed" | "onlyPending" | "onlyRejected" | "all")
@@ -229,13 +245,13 @@ export default function FilterComponentPermintaan() {
                                 </div>
                             </div>
 
-                            {(statusConfirmed !== "onlyPending" && statusConfirmed !== "onlyRejected") && <div className="row mb-2 row mb-2 align-items-center">
-                                <div className="col col-2">
-                                    <span>Status Dipakai: </span>
+                            {(statusConfirmed !== "onlyPending" && statusConfirmed !== "onlyRejected") && <div className="row mb-3 align-items-center">
+                                <div className="col-12 mb-2">
+                                    <span className="fw-semibold">Status Dipakai: </span>
                                 </div>
-                                <div className="col col-auto">
-                                    <div className="row">
-                                        <div className="col col-auto">
+                                <div className="col-12">
+                                    <div className="row g-2">
+                                        <div className="col-12 col-sm-6 col-md-auto">
                                             <div className="form-check form-check-inline">
                                                 <input className="form-check-input" type="radio" name="used" id="inlineRadio7" value="onlyUsed" onChange={(e) => {
                                                     setStatusUsed(e.target.value as "onlyUsed" | "onlyAvailable" | "all")
@@ -243,7 +259,7 @@ export default function FilterComponentPermintaan() {
                                                 <label className="form-check-label" htmlFor="inlineRadio7">Sudah Dipakai</label>
                                             </div>
                                         </div>
-                                        <div className="col col-auto">
+                                        <div className="col-12 col-sm-6 col-md-auto">
                                             <div className="form-check form-check-inline">
                                                 <input className="form-check-input" type="radio" name="used" id="inlineRadio5" value="onlyAvailable" onChange={(e) => {
                                                     setStatusUsed(e.target.value as "onlyUsed" | "onlyAvailable" | "all")
@@ -251,7 +267,7 @@ export default function FilterComponentPermintaan() {
                                                 <label className="form-check-label" htmlFor="inlineRadio5">Belum Dipakai</label>
                                             </div>
                                         </div>
-                                        <div className="col col-auto">
+                                        <div className="col-12 col-sm-6 col-md-auto">
                                             <div className="form-check form-check-inline">
                                                 <input className="form-check-input" type="radio" name="used" id="inlineRadio6" value="all" onChange={(e) => {
                                                     setStatusUsed(e.target.value as "onlyUsed" | "onlyAvailable" | "all")
@@ -264,9 +280,9 @@ export default function FilterComponentPermintaan() {
                             </div>}
                         </div>
 
-                        <div className="row mb-1 mt-1">
-                            <div className="col col-auto">
-                                <button className="btn btn-primary" onClick={(e) => {
+                        <div className="row mb-1 mt-3">
+                            <div className="col-12 col-md-auto">
+                                <button className="btn btn-primary w-100 w-md-auto" onClick={(e) => {
                                     e.preventDefault()
                                     handleSubmit()
                                 }}>Cari</button>

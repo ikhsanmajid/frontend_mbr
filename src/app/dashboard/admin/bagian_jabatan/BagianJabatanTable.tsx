@@ -2,11 +2,12 @@
 import { Button } from "react-bootstrap"
 import { flexRender, getCoreRowModel, useReactTable, createColumnHelper, PaginationState, getPaginationRowModel } from '@tanstack/react-table'
 import { useEffect, useMemo, useState } from "react"
-import { useGetAllBagianJabatan } from "@/app/lib/admin/users/userAPIRequest"
+import { useGetAllBagianJabatan, useGetAllBagian } from "@/app/lib/admin/users/userAPIRequest"
 import ModalEdit from "./ModalEdit"
 import RowActions from "./RowActions"
 import ModalDelete from "./ModalDelete"
 import PaginationComponent from "@/app/component/pagination/Pagination"
+import FilterComponent from "./FilterComponent"
 
 export interface IBagianJabatan {
     id: number
@@ -32,6 +33,8 @@ export default function BagianJabatanTable({ onAdd, mutate }: { onAdd: (state: b
     const { pageIndex, pageSize } = pagination
     const [pageList, setPageList] = useState<Array<number>>([])
 
+    const [selectedBagian, setSelectedBagian] = useState<{value: number, label: string} | null>(null)
+
     const [jabatanData, _setBagianData] = useState<IBagianJabatan[] | null>(null)
 
     const [showModalEdit, _setShowModalEdit] = useState<boolean>(false)
@@ -40,7 +43,12 @@ export default function BagianJabatanTable({ onAdd, mutate }: { onAdd: (state: b
     const [showModalDelete, _setShowModalDelete] = useState<boolean>(false)
     const [dataDelete, _setDataDelete] = useState<IBagianJabatan | null>(null)
 
-    const { detailBagianJabatan, isLoadingBagianJabatan, error, mutateBagianJabatan } = useGetAllBagianJabatan(pageSize, pageIndex * pageSize, "asc");
+    const filterOptions = useMemo(() => {
+        return selectedBagian ? { bagian: selectedBagian.value.toString() } : {}
+    }, [selectedBagian])
+    
+    const { detailBagianJabatan, isLoadingBagianJabatan, error, mutateBagianJabatan } = useGetAllBagianJabatan(pageSize, pageIndex * pageSize, "asc", filterOptions);
+    const { detailBagian, isLoadingBagian, error: errorBagian, mutateBagian } = useGetAllBagian(false, 1000, 0)
 
     const columns = useMemo(() => [
         columnHelper.display({
@@ -53,10 +61,16 @@ export default function BagianJabatanTable({ onAdd, mutate }: { onAdd: (state: b
         columnHelper.accessor("idBagianFK.namaBagian", {
             header: "Nama Bagian",
             cell: info => info.getValue(),
+            meta: {
+                className: "text-start"
+            }
         }),
         columnHelper.accessor("idJabatanFK.namaJabatan", {
             header: "Nama Jabatan",
             cell: info => info.getValue(),
+            meta: {
+                className: "text-start"
+            }
         }),
         columnHelper.display({
             header: "Actions",
@@ -68,6 +82,15 @@ export default function BagianJabatanTable({ onAdd, mutate }: { onAdd: (state: b
 
 
     const data = useMemo(() => jabatanData ?? [], [jabatanData])
+
+    const bagianOptions = useMemo(() => {
+        if (!detailBagian?.data) return []
+        
+        return detailBagian.data.map((bagian: any) => ({
+            value: bagian.id,
+            label: bagian.namaBagian
+        }))
+    }, [detailBagian])
 
     const table = useReactTable({
         columns,
@@ -103,7 +126,15 @@ export default function BagianJabatanTable({ onAdd, mutate }: { onAdd: (state: b
         setPageList(pageListTemp)
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [isLoadingBagianJabatan, pageCount])
+    }, [isLoadingBagianJabatan, pageCount, filterOptions])
+
+    // Reset pagination ke halaman pertama ketika filter bagian berubah
+    useEffect(() => {
+        setPagination(prev => ({
+            ...prev,
+            pageIndex: 0
+        }))
+    }, [selectedBagian])
 
 
     const handleEdit = (data: IBagianJabatan) => {
@@ -125,66 +156,95 @@ export default function BagianJabatanTable({ onAdd, mutate }: { onAdd: (state: b
                 }>Tambah Bagian vs Jabatan</button></>
             </div>
             <div className="card-body">
-                <div className="table-responsive">
-                    <table className="table table-sm table-striped table-bordered align-middle text-center">
-                        <thead>
-                            {table.getHeaderGroups().map(headerGroup => (
-                                <tr key={headerGroup.id}>
-                                    {headerGroup.headers.map(header => (
-                                        <th key={header.id} scope="col" style={{ width: `${header.getSize()}px` }}>
-                                            {flexRender(header.column.columnDef.header, header.getContext())}
-                                        </th>
-                                    ))}
-                                </tr>
-                            ))}
-                        </thead>
-                        <tbody className="table-group-divider">
-                            {isLoadingBagianJabatan ? <tr>
-                                <td colSpan={4} className="text-center"> Loading ....</td>
-                            </tr> : ""}
-                            {table.getRowModel().rows.map(row => (
-                                <tr key={row.id}>
-                                    {row.getVisibleCells().map((cell) => (
-                                        <td key={cell.id} style={{ width: `${cell.column.getSize()}px` }}>
-                                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                                        </td>
-                                    ))}
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
-
+                <FilterComponent 
+                    selectedBagian={selectedBagian}
+                    bagianOptions={bagianOptions}
+                    isLoadingBagian={isLoadingBagian}
+                    onBagianChange={setSelectedBagian}
+                />
                 
-            </div>
+                <div className="row">
+                    <div className="col-12">
+                        <div className="table-responsive">
+                            <table className="table table-sm table-striped table-hover table-bordered align-middle text-center">
+                                <thead className="table-dark">
+                                    {table.getHeaderGroups().map(headerGroup => (
+                                        <tr key={headerGroup.id}>
+                                            {headerGroup.headers.map(header => (
+                                                <th key={header.id} scope="col" className="text-white fw-semibold" style={{ minWidth: `${header.getSize()}px` }}>
+                                                    {flexRender(header.column.columnDef.header, header.getContext())}
+                                                </th>
+                                            ))}
+                                        </tr>
+                                    ))}
+                                </thead>
+                                <tbody className="table-group-divider">
+                                    {isLoadingBagianJabatan ? 
+                                        <tr>
+                                            <td colSpan={4} className="text-center py-4 text-muted fst-italic">
+                                                <div className="spinner-border spinner-border-sm me-2" role="status">
+                                                    <span className="visually-hidden">Loading...</span>
+                                                </div>
+                                                Loading ...
+                                            </td>
+                                        </tr> : ""
+                                    }
 
-            <div className="card-footer d-flex justify-content-between px-4 pt-3">
-                <div className="col">
-                    <div className="row g-3 align-items-center">
-                        <div className="col-auto">
-                            <label className="col-form-label">Data ditampilkan: </label>
-                        </div>
-                        <div className="col-auto">
-                            <select className="form-select"
-                                value={table.getState().pagination.pageSize}
-                                onChange={e => {
-                                    table.setPageSize(Number(e.target.value))
-                                }}
-                            >
-                                {[5, 10, 20, 30].map(pageSize => (
-                                    <option key={pageSize} value={pageSize}>
-                                        {pageSize}
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
-                        <div className="col-auto">
-                            <label className="col-form-label">Total Data: {detailBagianJabatan && detailBagianJabatan.count} </label>
+                                    {(!isLoadingBagianJabatan && detailBagianJabatan.count == 0) ?
+                                        <tr>
+                                            <td colSpan={4} className="text-center py-4 text-muted fst-italic">
+                                                <i className="fas fa-inbox me-2"></i>
+                                                Data Kosong
+                                            </td>
+                                        </tr> :
+                                        table.getRowModel().rows.map(row => (
+                                            <tr key={row.id} className="table-row-hover">
+                                                {row.getVisibleCells().map((cell) => (
+                                                    <td key={cell.id} className={`text-nowrap ${cell.column.columnDef.meta?.className || 'text-center'}`} style={{ minWidth: `${cell.column.getSize()}px` }}>
+                                                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                                                    </td>
+                                                ))}
+                                            </tr>
+                                        ))
+                                    }
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
-                <div className="col d-flex justify-content-end align-items-center">
-                    <PaginationComponent table={table} currentPage={currentPage} pageCount={pageCount} pageList={pageList}></PaginationComponent>
+            </div>
+
+            <div className="card-footer">
+                <div className="row g-3 align-items-center">
+                    <div className="col-12 col-lg-6">
+                        <div className="row g-2 align-items-center justify-content-center justify-content-lg-start">
+                            <div className="col-auto">
+                                <small className="text-muted fw-medium">Data per halaman:</small>
+                            </div>
+                            <div className="col-auto">
+                                <select className="form-select form-select-sm"
+                                    value={table.getState().pagination.pageSize}
+                                    onChange={e => {
+                                        table.setPageSize(Number(e.target.value))
+                                    }}
+                                >
+                                    {[5, 10, 20, 30].map(pageSize => (
+                                        <option key={pageSize} value={pageSize}>
+                                            {pageSize}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                            <div className="col-auto">
+                                <small className="text-muted fw-medium">
+                                    Total: <span className="text-primary fw-semibold">{detailBagianJabatan && detailBagianJabatan.count}</span>
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="col-12 col-lg-6 d-flex justify-content-center justify-content-lg-end align-items-center">
+                        <PaginationComponent table={table} currentPage={currentPage} pageCount={pageCount} pageList={pageList}></PaginationComponent>
+                    </div>
                 </div>
             </div>
 

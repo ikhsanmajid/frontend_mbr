@@ -2,12 +2,10 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './custom.css';
 import Navbar from './component/navbar/Navbar';
 import NextAuthProvider from './NextAuthProvider';
-import ImportBootstrap from './BootstrapJS';
-import { SpeedInsights } from "@vercel/speed-insights/next"
 import { ToastContainer } from 'react-toastify';
 
 export const metadata = {
-  title: "Monitoring MBR",
+  title: "Aplikasi e-RB",
   description: "Aplikasi monitoring MBR PT Konimex",
   robots: {
     index: false,
@@ -28,7 +26,6 @@ export default async function RootLayout({
   return (
     <html lang="en" style={{ height: "100%" }}>
       <body style={{ height: "100%" }}>
-        <SpeedInsights />
         <NextAuthProvider>
           <Navbar></Navbar>
           <div className="container-fluid h-100">
@@ -36,7 +33,6 @@ export default async function RootLayout({
             <ToastContainer theme='colored' />
           </div>
         </NextAuthProvider>
-        <ImportBootstrap />
       </body>
     </html>
   );

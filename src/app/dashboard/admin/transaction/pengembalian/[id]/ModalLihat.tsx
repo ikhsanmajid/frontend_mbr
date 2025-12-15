@@ -6,84 +6,86 @@ export default function ModalLihat({ show, onClose, data }: { show: boolean, onC
 
     return (
         <>
-            <Modal show={show} onHide={onClose} style={{ zIndex: 1050 }} backdrop="static" animation={true} keyboard={false} dialogClassName="modal-80w">
+            <Modal show={show} onHide={onClose} size="xl" style={{ zIndex: 1050 }} backdrop="static" animation={true} keyboard={false}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Pengembalian MBR</Modal.Title>
+                    <Modal.Title>Detail Pengembalian MBR</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <div className="row">
-                        <div className="row mb-3">
-                            <div className="col col-6">
-                                <div className="row mb-1 align-items-center">
-                                    <div className="col col-3">
-                                        <span>Nama Produk: </span>
-                                    </div>
-                                    <div className="col col-9">
-                                        {data?.namaProduk}
-                                    </div>
-                                </div>
-
-                                <div className="row mb-1 align-items-center">
-                                    <div className="col col-3">
-                                        <span>No Dokumen MBR: </span>
-                                    </div>
-                                    <div className="col col-9">
-                                        {data?.nomorMBR}
+                    {/* Header Information */}
+                    <div className="card mb-4">
+                        <div className="card-header">
+                            <h6 className="mb-0 fw-bold">Informasi Pengembalian</h6>
+                        </div>
+                        <div className="card-body">
+                            <div className="row g-3">
+                                <div className="col-12 col-md-6 col-lg-4">
+                                    <div className="border rounded p-3 h-100">
+                                        <div className="d-flex flex-column">
+                                            <small className="text-muted">Nama Produk</small>
+                                            <span className="fw-semibold">{data?.namaProduk}</span>
+                                        </div>
                                     </div>
                                 </div>
-
-                                <div className="row mb-1 align-items-center">
-                                    <div className="col col-3">
-                                        <span>No Awal - No Akhir: </span>
-                                    </div>
-                                    <div className="col col-9">
-                                        {data?.nomorAwal} - {data?.nomorAkhir}
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="col col-6">
-                                <div className="row mb-1 align-items-center">
-                                    <div className="col col-4">
-                                        <span>Tipe MBR: </span>
-                                    </div>
-                                    <div className="col col-8">
-                                        {data?.tipeMBR}
+                                <div className="col-12 col-md-6 col-lg-4">
+                                    <div className="border rounded p-3 h-100">
+                                        <div className="d-flex flex-column">
+                                            <small className="text-muted">No Dokumen MBR</small>
+                                            <span className="fw-semibold">{data?.nomorMBR}</span>
+                                        </div>
                                     </div>
                                 </div>
-
-                                <div className="row mb-1 align-items-center">
-                                    <div className="col col-4">
-                                        <span>Tanggal Pembuatan: </span>
-                                    </div>
-                                    <div className="col col-8">
-                                        {data?.tanggalBulan}-{data?.tahun}
+                                <div className="col-12 col-md-6 col-lg-4">
+                                    <div className="border rounded p-3 h-100">
+                                        <div className="d-flex flex-column">
+                                            <small className="text-muted">No Awal - No Akhir</small>
+                                            <span className="fw-semibold">{data?.nomorAwal} - {data?.nomorAkhir}</span>
+                                        </div>
                                     </div>
                                 </div>
-
-                                <div className="row mb-1 align-items-center">
-                                    <div className="col col-4">
-                                        <span>Jumlah RB Belum Kembali: </span>
+                                <div className="col-12 col-md-6 col-lg-4">
+                                    <div className="border rounded p-3 h-100">
+                                        <div className="d-flex flex-column">
+                                            <small className="text-muted">Tipe MBR</small>
+                                            <span className="fw-semibold">{data?.tipeMBR}</span>
+                                        </div>
                                     </div>
-                                    <div className="col col-8">
-                                        {data?.RBBelumKembali}
+                                </div>
+                                <div className="col-12 col-md-6 col-lg-4">
+                                    <div className="border rounded p-3 h-100">
+                                        <div className="d-flex flex-column">
+                                            <small className="text-muted">Tanggal Pembuatan</small>
+                                            <span className="fw-semibold">{data?.tanggalBulan}-{data?.tahun}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="col-12 col-md-6 col-lg-4">
+                                    <div className="border rounded p-3 h-100">
+                                        <div className="d-flex flex-column">
+                                            <small className="text-muted">Jumlah RB Belum Kembali</small>
+                                            <span className="fw-semibold">{data?.RBBelumKembali}</span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div className="row">
+                    </div>
+
+                    {/* Table Detail */}
+                    <div className="card mb-4">
+                        <div className="card-header">
+                            <h6 className="mb-0 fw-bold">Detail Nomor RB</h6>
+                        </div>
+                        <div className="card-body p-0">
                             <TableLihatNomor idData={data?.id}/>
                         </div>
-
                     </div>
                 </Modal.Body>
-                <Modal.Footer>
+                <Modal.Footer className="d-flex justify-content-end">
                     <Button variant="secondary" onClick={onClose}>
                         Tutup
                     </Button>
-
                 </Modal.Footer>
-
-            </Modal >
+            </Modal>
         </>
     )
 }

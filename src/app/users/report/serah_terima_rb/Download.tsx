@@ -25,7 +25,7 @@ export default function DownloadRB() {
 
         try {
             setIsLoading(true);
-            let query = `users/rb/generateReportSerahTerima/?startDate=${startDate}&endDate=${endDate}`;
+            let query = `/users/rb/generateReportSerahTerima/?startDate=${startDate}&endDate=${endDate}`;
 
             const response = await api.get(query, {
                 responseType: "blob"
