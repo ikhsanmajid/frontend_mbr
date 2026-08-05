@@ -71,7 +71,7 @@ export default function TableLihatNomor({ idData }: { idData: string | number })
 
             if (updateData.data.status === "success") {
                 toast.success("Data berhasil diupdate")
-                
+
                 pengembalianNomorData?.map((data) => {
                     if (data.id === idEdit) {
                         data.nomorBatch = nomorBatchRef.current?.value.toUpperCase() ?? ""
@@ -84,7 +84,7 @@ export default function TableLihatNomor({ idData }: { idData: string | number })
                         }
                     }
                 })
-                
+
                 setIdEdit(null)
             }
 
@@ -92,7 +92,7 @@ export default function TableLihatNomor({ idData }: { idData: string | number })
 
             if (err instanceof AxiosError) {
                 if (err.response?.status === 401) {
-                    window.location.href = "/mbr/login?code=session_expired"
+                    window.location.href = "/login?code=session_expired"
                 }
                 if (err.response?.status === 400) {
                     toast.error(err.response.data.message, {
@@ -258,7 +258,7 @@ export default function TableLihatNomor({ idData }: { idData: string | number })
                         </>
                     )
                 } else {
-                    const isReceived = info.row.original?.namaUserTerima != null; 
+                    const isReceived = info.row.original?.namaUserTerima != null;
 
                     return (
                         <>
@@ -280,7 +280,7 @@ export default function TableLihatNomor({ idData }: { idData: string | number })
                                 className="ms-1 btn btn-sm btn-primary text-white"
                                 onClick={() => {
                                     setShowModalHistory(true);
-                                    setModalAuditData((prev) => ({...prev, id: info.row.original.id, nomorUrut: info.row.original.nomorUrut}))
+                                    setModalAuditData((prev) => ({ ...prev, id: info.row.original.id, nomorUrut: info.row.original.nomorUrut }))
                                 }}
                             >
                                 <FontAwesomeIcon icon={faClockRotateLeft} /> History

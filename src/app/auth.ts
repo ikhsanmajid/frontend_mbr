@@ -85,6 +85,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
                 } catch (e: unknown) {
                     if (e instanceof AxiosError) {
+                        console.log("error: ", e)
                         throw new CustomError("Server Error")
                     } else {
                         throw e
@@ -137,10 +138,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         },
         async redirect({ url, baseUrl }) {
             //console.log("Redirect: ", baseUrl)
-            return url.startsWith(baseUrl) ? url : baseUrl + '/mbr/login';
+            return url.startsWith(baseUrl) ? url : baseUrl + '/login';
         },
     },
     pages: {
-        signIn: "/mbr/login",
+        signIn: "/login",
     }
 })

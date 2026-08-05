@@ -77,7 +77,7 @@ export default function TableLihatNomor({ idData }: { idData: string | number })
         } catch (err) {
             if (err instanceof AxiosError) {
                 if (err.response?.status === 401) {
-                    window.location.href = '/mbr/login?code=session_expired';
+                    window.location.href = '/login?code=session_expired';
                 }
 
                 toast.error(`Data gagal dikonfirmasi, ${err.response?.data.message}`)
@@ -131,7 +131,7 @@ export default function TableLihatNomor({ idData }: { idData: string | number })
         } catch (err) {
             if (err instanceof AxiosError) {
                 if (error.response?.status === 401) {
-                    window.location.href = '/mbr/login?code=session_expired';
+                    window.location.href = '/login?code=session_expired';
                 }
             }
             //console.log(err)

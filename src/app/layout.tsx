@@ -13,7 +13,7 @@ export const metadata = {
     nocache: true,
   },
   icons: {
-    icon: "/mbr/konimex.ico"
+    icon: "/konimex.ico"
   },
 };
 

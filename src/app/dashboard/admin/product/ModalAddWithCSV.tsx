@@ -75,7 +75,7 @@ export default function ModalAddWithCSV({ show, onClose, mutate }: { show: boole
 
             if (e instanceof AxiosError) {
                 if (e.response?.status === 401) {
-                    window.location.href = '/mbr/login?code=session_expired';
+                    window.location.href = '/login?code=session_expired';
                 }
                 toast.error("File CSV Gagal Diupload")
             }

@@ -448,8 +448,8 @@ export default function ModalLihat({ data, show, onClose, onSave }: ModalLihatPr
                                 </div>
                                 <div className="col-12 col-lg-auto">
                                     <span className={`badge fs-6 px-3 py-2 ${data?.status === 'DITERIMA' ? 'bg-success' :
-                                            data?.status === 'DITOLAK' ? 'bg-danger' :
-                                                'bg-warning text-dark'
+                                        data?.status === 'DITOLAK' ? 'bg-danger' :
+                                            'bg-warning text-dark'
                                         }`}>
                                         {data?.status}
                                     </span>
