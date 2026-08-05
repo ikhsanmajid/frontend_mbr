@@ -33,18 +33,18 @@ import axios, { AxiosError } from 'axios'
 
 export default auth((req) => {
     const session = req.auth ?? null
-    const isLogin = req.nextUrl.pathname === "/mbr/login/" || req.nextUrl.pathname === "/mbr/login"
+    const isLogin = req.nextUrl.pathname === "/login/" || req.nextUrl.pathname === "/login"
 
     if (!session && !isLogin) {
 
         //console.log("Pathname: ", req.nextUrl.pathname, session)
 
-        const loginUrl = new URL(`/mbr/login?code=session_expired&next=${encodeURIComponent(req.nextUrl.pathname.substring(4))}`, req.nextUrl.origin)
+        const loginUrl = new URL(`/login?code=session_expired&next=${encodeURIComponent(req.nextUrl.pathname.substring(4))}`, req.nextUrl.origin)
 
         return NextResponse.redirect(loginUrl)
     }
 
-    if (isLogin && session){
+    if (isLogin && session) {
         return NextResponse.redirect(new URL(`/`, req.nextUrl.origin))
     }
 
@@ -62,5 +62,5 @@ export default auth((req) => {
 
 
 export const config = {
-    matcher: ["/login" ,"/dashboard/:path*", "/user/:path*"],
+    matcher: ["/login", "/dashboard/:path*", "/user/:path*"],
 }

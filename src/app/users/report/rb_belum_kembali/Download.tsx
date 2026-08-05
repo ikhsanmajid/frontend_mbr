@@ -29,7 +29,7 @@ export default function DownloadRB() {
                 query += `&startDate=${startDate}&endDate=${endDate}`;
             }
 
-            if (statusKembali === "belum"){
+            if (statusKembali === "belum") {
                 query += `&includeUnConfirmed=${includeUnConfirmed}`
             }
 
@@ -67,9 +67,9 @@ export default function DownloadRB() {
             window.URL.revokeObjectURL(url);
             setIsLoading(false);
         } catch (error) {
-            if (error instanceof AxiosError){
+            if (error instanceof AxiosError) {
                 if (error.response?.status === 401) {
-                    window.location.href = '/mbr/login?code=session_expired'; 
+                    window.location.href = '/login?code=session_expired';
                 }
             }
             toast.error("Gagal Me-request Data");
@@ -83,7 +83,7 @@ export default function DownloadRB() {
             </div>
             <div className="card-body">
                 <div className="row">
-                    <FilterComponentLaporanRB/>
+                    <FilterComponentLaporanRB />
                 </div>
 
                 <div className="row mb-2 mt-3">

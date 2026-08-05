@@ -122,7 +122,7 @@ export default function ModalAdd({ show, onClose, mutate }: { show: boolean, onC
             }
             if (e instanceof axios.AxiosError) {
                 if (e.response?.status === 401) {
-                    window.location.href = '/mbr/login?code=session_expired';
+                    window.location.href = '/login?code=session_expired';
                 }
             }
             //console.log("add user catch ", e)

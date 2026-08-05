@@ -30,8 +30,8 @@ export default function NavigationNav() {
                             <NavDropdown
                                 id="nav-dropdown"
                                 title={
-                                    <span className="d-inline-block user-name-display" 
-                                          title={session.user?.name || "User"}>
+                                    <span className="d-inline-block user-name-display"
+                                        title={session.user?.name || "User"}>
                                         {session.user?.name || "User"}
                                     </span>
                                 }
@@ -50,7 +50,7 @@ export default function NavigationNav() {
                                         localStorage.removeItem('idBagianChoosen');
                                         await signOut({
                                             redirect: true,
-                                            callbackUrl: "/mbr/login",
+                                            callbackUrl: "/login",
                                         });
                                     }}
                                 >

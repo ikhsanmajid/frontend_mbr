@@ -1,5 +1,5 @@
 "use client"
-import {  toast } from 'react-toastify'
+import { toast } from 'react-toastify'
 import { addBagianJabatan, checkEmail, deleteBagianJabatanUser, GetDetailUserInfo, GetJabatanByIDBagian, updateDataUser, updateDataUserBagianJabatan, useGetAllBagian } from '@/app/lib/admin/users/userAPIRequest'
 import { AxiosError } from 'axios'
 import { faBan, faPlus, faCaretLeft } from '@fortawesome/free-solid-svg-icons'
@@ -102,7 +102,7 @@ export function EditUser({ id }: { id: number }) {
     //console.log("data jabatan ", (defaultBagian))
 
     async function checkNIK(nik: string) {
-        const NIKCheck = await api.get( "/admin/users/check-nik/?nik=" + nik, 
+        const NIKCheck = await api.get("/admin/users/check-nik/?nik=" + nik,
             { apiVersion: "2" }
         )
 
@@ -139,7 +139,7 @@ export function EditUser({ id }: { id: number }) {
                         message: "NIK harus berupa angka",
                     });
                 }
-                
+
                 if (nik == "00000") {
                     ctx.addIssue({
                         code: "custom",
@@ -335,7 +335,7 @@ export function EditUser({ id }: { id: number }) {
                 }
             } catch (e) {
                 e instanceof AxiosError && toast.error("Tambah Bagian Jabatan Gagal")
-            }finally{
+            } finally {
                 setIsLoadingAdd(false)
             }
         } else {
@@ -350,7 +350,7 @@ export function EditUser({ id }: { id: number }) {
                 }
             } catch (e) {
                 e instanceof AxiosError && toast.error("Tambah Bagian Jabatan Gagal")
-            }finally{
+            } finally {
                 setIsLoadingAdd(false)
             }
         }
@@ -388,17 +388,17 @@ export function EditUser({ id }: { id: number }) {
                         <div className="w-100 row align-items-start g-2 g-md-3">
                             {/* Profile Photo */}
                             <div className="col-12 col-md-3 d-flex justify-content-center mb-3 mb-md-0">
-                                <Image 
-                                    src="/mbr/users-profile/default-profile.jpg" 
-                                    width={60} 
-                                    height={90} 
+                                <Image
+                                    src="/users-profile/default-profile.jpg"
+                                    width={60}
+                                    height={90}
                                     className="d-block d-md-none"
                                     alt="profilephoto"
                                 />
-                                <Image 
-                                    src="/mbr/users-profile/default-profile.jpg" 
-                                    width={80} 
-                                    height={120} 
+                                <Image
+                                    src="/users-profile/default-profile.jpg"
+                                    width={80}
+                                    height={120}
                                     className="d-none d-md-block"
                                     alt="profilephoto"
                                 />
@@ -564,7 +564,7 @@ export function EditUser({ id }: { id: number }) {
                                                                             e.preventDefault()
                                                                             setDisabledBagianJabatanEditMode(false)
                                                                         }} className='btn btn-sm btn-warning text-white flex-fill flex-sm-shrink-0' disabled={isLoadingAdd}>
-                                                                            <FontAwesomeIcon icon={faPenToSquare} /> 
+                                                                            <FontAwesomeIcon icon={faPenToSquare} />
                                                                             <span className="d-none d-sm-inline"> Edit</span> Bagian Jabatan
                                                                         </button>
 
@@ -573,7 +573,7 @@ export function EditUser({ id }: { id: number }) {
                                                                             e.preventDefault()
                                                                             setDeleteModalShow(true)
                                                                         }} className='btn btn-sm btn-danger text-white flex-fill flex-sm-shrink-0'>
-                                                                            <FontAwesomeIcon icon={faTrashCan} /> 
+                                                                            <FontAwesomeIcon icon={faTrashCan} />
                                                                             <span className="d-none d-sm-inline"> Hapus</span> Bagian Jabatan
                                                                         </button>
 
@@ -618,7 +618,7 @@ export function EditUser({ id }: { id: number }) {
                                                                             setDefaultValueJabatan(newIdBagianJabatan)
                                                                             handleSaveBagianJabatan(currentIdBagianJabatanKey, newIdBagianJabatan, userId)
                                                                         }} className='btn btn-sm btn-success text-white flex-fill flex-sm-shrink-0' disabled={isLoadingAdd}>
-                                                                            <FontAwesomeIcon icon={faFloppyDisk} /> 
+                                                                            <FontAwesomeIcon icon={faFloppyDisk} />
                                                                             <span className="d-none d-sm-inline"> Simpan</span> Bagian Jabatan
                                                                         </button>
                                                                     </>

@@ -4,8 +4,8 @@ import { ReactNode } from "react"
 
 export default function NextAuthProvider({
     children
-}:{
+}: {
     children: ReactNode
-}){
-    return <SessionProvider basePath="/mbr/api/auth">{children}</SessionProvider>
+}) {
+    return <SessionProvider basePath="/api/auth">{children}</SessionProvider>
 }

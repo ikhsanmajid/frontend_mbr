@@ -81,7 +81,7 @@ export default function ModalEdit({ show, onClose, editData, mutate }: { show: b
 
             if (e instanceof AxiosError) {
                 if (e.response?.status === 401) {
-                    window.location.href = '/mbr/login?code=session_expired';
+                    window.location.href = '/login?code=session_expired';
                 }
                 toast.error("Produk Gagal Diupdate")
             }
