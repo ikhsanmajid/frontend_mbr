@@ -74,21 +74,22 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
                     if (user.data?.errors?.[0]) {
                         const error = user.data.errors[0]
-                        // throw new Error(user.data.errors[0].message)
-                        //throw new InvalidLoginError()
-                        //console.log("errors: ", user.data.errors)
+                        console.error("Login Error Cause (errors array):", error)
                         throw new CustomError(error.message || "Unknown error")
-                        // console.log("errors: ", user.data.errors[0])
                     } else if (user.data?.message) {
+                        console.error("Login Error Cause (message):", user.data.message)
                         throw new CustomError(user.data.message)
                     } else if (!isOk) {
+                        console.error("Login Error Cause (!isOk): status code =", user.status, ", data =", user.data)
                         throw new CustomError("Authentication failed")
                     }
 
                     return null
 
                 } catch (e: unknown) {
+                    console.error("Login Error Exception:", e)
                     if (e instanceof AxiosError) {
+                        console.error("Axios Error Response:", e.response?.data)
                         throw new CustomError("Server Error")
                     } else {
                         throw e
