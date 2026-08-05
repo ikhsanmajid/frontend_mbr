@@ -48,7 +48,7 @@ export default auth((req) => {
         return NextResponse.redirect(new URL(`/`, req.nextUrl.origin))
     }
 
-    axios.get(`${process.env.NEXT_PUBLIC_APIENDPOINT_URL! as string + "/api/v1"}`).then(res => {
+    axios.get(`${process.env.NEXT_PUBLIC_APIENDPOINT_URL! as string}`).then(res => {
         return NextResponse.next()
     }).catch(e => {
         if (e instanceof AxiosError) {
