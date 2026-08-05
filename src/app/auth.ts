@@ -72,13 +72,17 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                         }
                     }
 
-                    if (user.data.errors[0]) {
+                    if (user.data?.errors?.[0]) {
                         const error = user.data.errors[0]
                         // throw new Error(user.data.errors[0].message)
                         //throw new InvalidLoginError()
                         //console.log("errors: ", user.data.errors)
-                        throw new CustomError(error.message)
+                        throw new CustomError(error.message || "Unknown error")
                         // console.log("errors: ", user.data.errors[0])
+                    } else if (user.data?.message) {
+                        throw new CustomError(user.data.message)
+                    } else if (!isOk) {
+                        throw new CustomError("Authentication failed")
                     }
 
                     return null
