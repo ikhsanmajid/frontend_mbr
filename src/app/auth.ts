@@ -85,7 +85,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
                 } catch (e: unknown) {
                     if (e instanceof AxiosError) {
-                        console.log("error: ", e)
                         throw new CustomError("Server Error")
                     } else {
                         throw e
