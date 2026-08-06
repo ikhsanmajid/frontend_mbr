@@ -4,7 +4,7 @@ import Credentials from "next-auth/providers/credentials"
 import { CredentialsSignin } from "next-auth"
 
 
-export const apiURL = process.env.NEXT_PUBLIC_APIENDPOINT_URL! as string
+export const apiURL = process.env.NEXT_PUBLIC_APIENDPOINT_URL! as string + "/api/v1/login"
 
 class CustomError extends CredentialsSignin {
     constructor(code: string) {
