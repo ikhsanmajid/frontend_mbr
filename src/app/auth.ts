@@ -37,7 +37,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                 try {
 
                     const user = await axios.post(
-                        `${apiURL}/login`,
+                        `${apiURL}`,
                         {
                             email: credentials?.email,
                             password: credentials?.password
