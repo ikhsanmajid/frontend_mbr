@@ -4,7 +4,7 @@ import Credentials from "next-auth/providers/credentials"
 import { CredentialsSignin } from "next-auth"
 
 
-export const apiURL = process.env.NEXT_PUBLIC_APIENDPOINT_URL! as string + "/api/v1/login"
+export const apiURL = process.env.NEXT_PUBLIC_APIENDPOINT_URL! as string + "/api/v1"
 
 class CustomError extends CredentialsSignin {
     constructor(code: string) {
@@ -37,7 +37,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                 try {
 
                     const user = await axios.post(
-                        `${apiURL}`,
+                        `${apiURL}/login`,
                         {
                             email: credentials?.email,
                             password: credentials?.password
